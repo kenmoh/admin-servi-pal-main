@@ -8,13 +8,15 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
 } from "@/components/ui/sidebar";
+import { LucideProps } from "lucide-react";
 
 interface NavDocumentItem {
   name: string;
   url: string;
-  icon: React.ComponentType<any>;
+  icon?: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
 }
 
 export function NavDocuments({
@@ -22,8 +24,6 @@ export function NavDocuments({
 }: {
   items: NavDocumentItem[];
 }): ReactElement {
-  const { isMobile } = useSidebar();
-
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Services</SidebarGroupLabel>
@@ -32,7 +32,7 @@ export function NavDocuments({
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <a href={item.url}>
-                <item.icon />
+                {item.icon && <item.icon />}
                 <span>{item.name}</span>
               </a>
             </SidebarMenuButton>
