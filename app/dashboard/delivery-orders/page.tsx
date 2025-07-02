@@ -5,7 +5,7 @@ import React from "react";
 import data from "../data.json";
 import { getOrders } from "@/actions/order";
 
-const UserPage = async () => {
+const Page = async () => {
   const orders = await getOrders();
   console.log(orders);
 
@@ -24,4 +24,4 @@ const UserPage = async () => {
   );
 };
 
-export default UserPage;
+export default Page;

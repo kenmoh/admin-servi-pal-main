@@ -1,7 +1,6 @@
 "use client";
 
-import { IconCirclePlusFilled, IconMail } from "@tabler/icons-react";
-import { type LucideIcon } from "lucide-react";
+import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react";
 import { ReactElement } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,11 +11,14 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import { LucideProps } from "lucide-react";
 
 interface NavItem {
   title: string;
   url: string;
-  icon?: React.ComponentType<any>;
+  icon?: React.ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
+  >;
 }
 
 export function NavMain({ items }: { items: NavItem[] }): ReactElement {
@@ -47,9 +49,7 @@ export function NavMain({ items }: { items: NavItem[] }): ReactElement {
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton tooltip={item.title}>
                 {item.icon && <item.icon />}
-                <Link href={item.url}>
-                  {item.title}
-                </Link>
+                <Link href={item.url}>{item.title}</Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
