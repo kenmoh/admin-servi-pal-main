@@ -1,103 +1,544 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useState } from 'react';
+import { Link } from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  ChevronRight, 
+  Check, 
+  ArrowRight, 
+  Package, 
+  Utensils, 
+  WashingMachine, 
+  Handshake, 
+  ArrowDown, 
+  LogIn,
+  Apple,
+  PlayCircle,
+  Users,
+  MessageCircle,
+  Star,
+  Clock
+} from 'lucide-react';
+
+const Home = () => {
+  const [email, setEmail] = useState('');
+  
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+  
+  const services = [
+    {
+      icon: <Package className="h-8 w-8 text-primary" />,
+      title: "Item Delivery",
+      description: "Fast and reliable package delivery services with real-time tracking and secure handling."
+    },
+    {
+      icon: <Utensils className="h-8 w-8 text-primary" />,
+      title: "Food Ordering",
+      description: "Order delicious meals from local restaurants with quick delivery and special offers."
+    },
+    {
+      icon: <WashingMachine className="h-8 w-8 text-primary" />,
+      title: "Laundry Service",
+      description: "Convenient laundry pickup and delivery with professional cleaning and care for all fabrics."
+    },
+    {
+      icon: <Handshake className="h-8 w-8 text-primary" />,
+      title: "P2P Marketplace",
+      description: "Connect directly with local service providers and buyers in a secure peer-to-peer environment."
+    }
+  ];
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+    <div className="min-h-screen flex flex-col dark">
+      {/* Header */}
+      <header className="sticky top-0 z-30 w-full backdrop-blur-sm bg-background/80 border-b border-border/50">
+        <div className="container mx-auto flex h-16 items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img 
+              src="/mainicon.png" 
+              alt="ServiPal Logo" 
+              className="h-10 w-10"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            <div className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary via-brand-orange to-brand-blue">
+              ServiPal
+            </div>
+          </div>
+          <nav className="hidden md:flex items-center gap-6">
+            <button 
+              onClick={() => scrollToSection('services')} 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Services
+            </button>
+            <button 
+              onClick={() => scrollToSection('how-it-works')} 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              How It Works
+            </button>
+            <button 
+              onClick={() => scrollToSection('testimonials')} 
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Testimonials
+            </button>
+          </nav>
+          <div className="flex items-center gap-3">
+          
+           
+              <Button>
+                <LogIn className="mr-2 h-4 w-4" />
+                Admin Login
+              </Button>
+          
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </header>
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-orange/10 via-background to-brand-blue/5 -z-10"></div>
+        <div className="absolute top-1/2 right-0 w-1/2 aspect-square rounded-full bg-gradient-to-br from-brand-orange/20 via-primary/10 to-transparent blur-3xl -z-10"></div>
+        <div className="container mx-auto px-4 py-24 md:py-32">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <h1 className="font-extrabold text-4xl md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-brand-blue via-primary to-brand-orange">
+                Your All-In-One Service Platform
+              </h1>
+              <p className="text-xl text-muted-foreground">
+                Connecting you with essential services - from food delivery to laundry - all in one convenient app.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <button onClick={() => scrollToSection('services')} className="group">
+                  <Button size="lg" className="w-full group bg-gradient-to-r from-brand-blue to-primary hover:from-brand-blue/90 hover:to-primary/90">
+                    Explore Services <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                </button>
+                <button onClick={() => scrollToSection('how-it-works')}>
+                  <Button size="lg" variant="outline" className="w-full border-primary/20 hover:bg-brand-orange/10">
+                    Learn More
+                  </Button>
+                </button>
+              </div>
+              <button 
+                onClick={() => scrollToSection('services')}
+                className="flex items-center text-muted-foreground hover:text-primary transition-all gap-2 mt-8 mx-auto md:mx-0"
+              >
+                <span>Scroll to discover</span>
+                <ArrowDown className="animate-bounce" />
+              </button>
+            </div>
+            <div className="relative">
+              <div className="absolute -inset-0.5 rounded-xl bg-gradient-to-r from-brand-blue via-primary to-brand-orange opacity-70 blur-lg"></div>
+              <div className="relative h-[400px] rounded-xl overflow-hidden bg-gradient-to-br from-background/80 to-muted/50 shadow-2xl border border-border/20">
+                <div className="absolute top-4 left-4 right-4 h-8 rounded-md bg-muted/80 flex items-center px-4 space-x-2 shadow-sm">
+                  <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                  <div className="w-2 h-2 rounded-full bg-yellow-500"></div>
+                  <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                  <div className="ml-2 text-xs text-muted-foreground">ServiPal</div>
+                </div>
+                <div className="absolute top-16 left-4 right-4 bottom-4 bg-card/80 backdrop-blur-sm rounded-md shadow-lg p-4 border border-border/30">
+                  <div className="space-y-4 h-full">
+                    {/* Header with connecting people */}
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-primary/10 to-brand-orange/10 rounded-lg border border-border/20">
+                      <div className="flex items-center gap-2">
+                        <Users className="h-5 w-5 text-primary" />
+                        <span className="text-sm font-medium">Connecting People</span>
+                      </div>
+                      <div className="flex -space-x-2">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white"></div>
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-green-400 to-green-600 border-2 border-white"></div>
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 border-2 border-white"></div>
+                      </div>
+                    </div>
+                    
+                    {/* Service connections */}
+                    <div className="grid grid-cols-2 gap-3 flex-1">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-3 rounded-lg border border-blue-200/50 dark:border-blue-800/30">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Package className="h-4 w-4 text-blue-600" />
+                          <span className="text-xs font-medium">Delivery</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Clock className="h-3 w-3 text-blue-500" />
+                          <span className="text-xs text-muted-foreground">15 min</span>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-3 rounded-lg border border-orange-200/50 dark:border-orange-800/30">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Utensils className="h-4 w-4 text-orange-600" />
+                          <span className="text-xs font-medium">Food</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Star className="h-3 w-3 text-orange-500 fill-current" />
+                          <span className="text-xs text-muted-foreground">4.9</span>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 p-3 rounded-lg border border-green-200/50 dark:border-green-800/30">
+                        <div className="flex items-center gap-2 mb-2">
+                          <WashingMachine className="h-4 w-4 text-green-600" />
+                          <span className="text-xs font-medium">Laundry</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MessageCircle className="h-3 w-3 text-green-500" />
+                          <span className="text-xs text-muted-foreground">Chat</span>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-3 rounded-lg border border-purple-200/50 dark:border-purple-800/30">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Handshake className="h-4 w-4 text-purple-600" />
+                          <span className="text-xs font-medium">P2P</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Users className="h-3 w-3 text-purple-500" />
+                          <span className="text-xs text-muted-foreground">Active</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section */}
+      <section id="services" className="py-20 bg-gradient-to-br from-brand-orange/5 to-brand-blue/5">
+        <div className="max-w-[75vw] mx-auto px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">Our Services</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              We bring together essential services on one powerful platform
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {services.map((service, index) => (
+              <div key={index} className="relative bg-background/60 backdrop-blur-sm rounded-lg p-6 shadow-lg hover-card transition-all group border border-border/30">
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-brand-orange/5 via-transparent to-brand-blue/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="bg-gradient-to-br from-brand-orange/10 to-brand-blue/10 p-3 rounded-full w-fit mb-4 shadow-sm border border-border/20">
+                    {service.icon}
+                  </div>
+                  <h3 className="font-semibold text-lg mb-2">{service.title}</h3>
+                  <p className="text-muted-foreground">{service.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section id="how-it-works" className="py-20">
+        <div className="max-w-[75vw] mx-auto px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-orange to-brand-blue">How It Works</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Simple, fast and efficient - here's how our platform brings services to your doorstep
+            </p>
+          </div>
+
+          <div className="space-y-12 md:space-y-24">
+            {/* Service 1 - Item Delivery */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-brand-blue/30 to-brand-orange/30 opacity-70 blur-xl rounded-xl"></div>
+                  <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-background/80 to-background flex items-center justify-center">
+                      <Package className="w-24 h-24 text-primary/50" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="order-1 md:order-2">
+                <h3 className="text-2xl font-bold mb-4">Fast Package Delivery</h3>
+                <p className="text-muted-foreground mb-6">
+                  Get your packages delivered quickly and securely. From documents to large parcels, we handle it all with care.
+                </p>
+                <ul className="space-y-3">
+                  {["Real-time tracking", "Secure handling", "Flexible delivery options", "Proof of delivery"].map((item, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <div className="mr-3 mt-1 bg-primary/20 rounded-full p-1 shadow-sm border border-border/20">
+                        <Check className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+
+            {/* Service 2 - Food Ordering */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h3 className="text-2xl font-bold mb-4">Delicious Food Delivery</h3>
+                <p className="text-muted-foreground mb-6">
+                  Order from your favorite local restaurants and enjoy hot, fresh meals delivered to your doorstep.
+                </p>
+                <ul className="space-y-3">
+                  {["Wide restaurant selection", "Special offers and discounts", "Contactless delivery", "Easy reordering"].map((item, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <div className="mr-3 mt-1 bg-primary/20 rounded-full p-1 shadow-sm border border-border/20">
+                        <Check className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange/30 to-brand-blue/30 opacity-70 blur-xl rounded-xl"></div>
+                  <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30">
+                    <div className="absolute inset-0 bg-gradient-to-bl from-purple-500/20 via-background/80 to-background flex items-center justify-center">
+                      <Utensils className="w-24 h-24 text-primary/50" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Service 3 - Laundry */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="order-2 md:order-1">
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-brand-blue/30 to-primary/30 opacity-70 blur-xl rounded-xl"></div>
+                  <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30">
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-background/80 to-background flex items-center justify-center">
+                      <WashingMachine className="w-24 h-24 text-primary/50" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="order-1 md:order-2">
+                <h3 className="text-2xl font-bold mb-4">Convenient Laundry Service</h3>
+                <p className="text-muted-foreground mb-6">
+                  Let us handle your laundry with professional care. Schedule pickups and deliveries that fit your busy schedule.
+                </p>
+                <ul className="space-y-3">
+                  {["Professional cleaning", "Fabric-specific care", "Scheduled pickups", "Fast turnaround"].map((item, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <div className="mr-3 mt-1 bg-primary/20 rounded-full p-1 shadow-sm border border-border/20">
+                        <Check className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            
+            {/* Service 4 - P2P Marketplace */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div>
+                <h3 className="text-2xl font-bold mb-4">P2P Marketplace</h3>
+                <p className="text-muted-foreground mb-6">
+                  Connect directly with local service providers and sellers in a secure peer-to-peer marketplace.
+                </p>
+                <ul className="space-y-3">
+                  {["Verified providers", "Secure transactions", "Rating system", "Direct communication"].map((item, idx) => (
+                    <li key={idx} className="flex items-start">
+                      <div className="mr-3 mt-1 bg-primary/20 rounded-full p-1 shadow-sm border border-border/20">
+                        <Check className="h-4 w-4 text-primary" />
+                      </div>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-brand-orange/30 to-brand-blue/30 opacity-70 blur-xl rounded-xl"></div>
+                  <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30">
+                    <div className="absolute inset-0 bg-gradient-to-bl from-green-500/20 via-background/80 to-background flex items-center justify-center">
+                      <Handshake className="w-24 h-24 text-primary/50" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials */}
+     {/* <section id="testimonials" className="py-20 bg-gradient-to-br from-brand-blue/5 to-brand-orange/5">
+        <div className="max-w-[75vw] mx-auto px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">What Our Customers Say</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Real experiences from people who use our services every day
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                quote: "The food delivery is always on time and the food arrives hot. I use this app almost daily!",
+                author: "Sarah Johnson",
+                role: "Regular Customer"
+              },
+              {
+                quote: "Their laundry service saved me so much time. The clothes come back perfectly clean and neatly folded.",
+                author: "Michael Chen",
+                role: "Premium Subscriber"
+              },
+              {
+                quote: "I've found amazing local service providers through the marketplace. It's like having a trusted network at your fingertips.",
+                author: "Jessica Miller",
+                role: "Business Owner"
+              }
+            ].map((testimonial, idx) => (
+              <div key={idx} className="relative bg-background/60 backdrop-blur-sm rounded-lg p-8 shadow-lg group border border-border/30">
+                <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-brand-orange/5 via-transparent to-brand-blue/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="text-4xl font-serif text-primary">"</div>
+                  <p className="my-4 italic">{testimonial.quote}</p>
+                  <div className="mt-6">
+                    <p className="font-semibold">{testimonial.author}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>*/}
+
+      {/* CTA Section with Download Buttons */}
+      <section className="py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-brand-orange/5 to-brand-blue/5 -z-10"></div>
+        <div className="absolute top-0 right-0 w-1/2 aspect-square rounded-full bg-gradient-to-br from-brand-orange/10 to-transparent blur-3xl -z-10"></div>
+        <div className="absolute bottom-0 left-0 w-1/2 aspect-square rounded-full bg-gradient-to-tr from-brand-blue/10 to-transparent blur-3xl -z-10"></div>
+        
+        <div className="max-w-[75vw] mx-auto px-8">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">Ready to Simplify Your Life?</h2>
+            <p className="text-xl text-muted-foreground mb-8">
+              Join thousands of users who are making their lives easier with our multi-service platform.
+            </p>
+            
+            {/* Download buttons for mobile apps with icons */}
+            {/*<div className="flex flex-col sm:flex-row justify-center gap-4 mb-12">
+              <Button size="lg" className="w-full sm:w-auto flex items-center gap-2">
+                <PlayCircle size={20} />
+                Download for Android
+              </Button>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto flex items-center gap-2 border-border/30">
+                <Apple size={20} />
+                Download for iOS
+              </Button>
+            </div>*/}
+
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                  <a
+                    href="https://play.google.com/store"
+                    className="bg-gray-800 p-3 rounded-lg flex items-center gap-2 hover:animate-scale-hover active:scale-95"
+                  >
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-10" />
+                  </a>
+                  <a
+                    href="https://www.apple.com/app-store/"
+                    className="bg-gray-800 p-3 rounded-lg flex items-center gap-2 hover:animate-scale-hover active:scale-95"
+                  >
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-10" />
+                  </a>
+                </div>
+            
+            <div className="mt-12 p-8 bg-background/60 backdrop-blur-sm rounded-xl shadow-lg relative group border border-border/30">
+              <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-brand-orange/5 via-transparent to-brand-blue/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative">
+                <h3 className="text-xl font-bold mb-6">Stay Updated</h3>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Input 
+                    type="email" 
+                    placeholder="Enter your email" 
+                    value={email} 
+                    onChange={(e) => setEmail(e.target.value)} 
+                    className="flex-grow bg-background/50 border-border/30"
+                  />
+                  <Button className="whitespace-nowrap">
+                    Subscribe
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4">
+                  By subscribing, you agree to our Privacy Policy and receive updates from our team.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-muted/30 py-12 border-t border-border/30">
+        <div className="max-w-[75vw] mx-auto px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+            <div>
+              <h3 className="font-bold mb-4">ServiPal</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">About Us</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Careers</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Press</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Blog</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Services</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Item Delivery</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Food Ordering</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Laundry Service</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">P2P Marketplace</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Resources</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Help Center</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">FAQs</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Safety</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Support</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="font-bold mb-4">Legal</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Cookie Policy</a></li>
+                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">GDPR</a></li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-border/30 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-muted-foreground">© 2025 ServiPal. All rights reserved.</p>
+            <div className="flex gap-4 mt-4 md:mt-0">
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Twitter</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">LinkedIn</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">GitHub</a>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );
-}
+};
+
+export default Home;

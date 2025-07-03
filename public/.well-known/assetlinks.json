@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.kenmoh.servipal",
+      "sha256_cert_fingerprints": [
+        "68:2A:2A:61:6B:DE:33:C0:C2:92:F2:64:5B:AB:39:99:89:ED:92:DF:DB:6F:C3:65:5D:99:46:11:DA:D8:E6:E8"
+      ]
+    }
+  }
+]
