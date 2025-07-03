@@ -119,16 +119,15 @@ const Home = () => {
                 Connecting you with essential services - from food delivery to laundry - all in one convenient app.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <button onClick={() => scrollToSection('services')} className="group">
-                  <Button size="lg" className="w-full group bg-gradient-to-r from-brand-blue to-primary hover:from-brand-blue/90 hover:to-primary/90">
+                                 <Button size="lg" className="w-full group bg-gradient-to-r from-brand-blue to-primary hover:from-brand-blue/90 hover:to-primary/90">
                     Explore Services <ChevronRight className="ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
-                </button>
-                <button onClick={() => scrollToSection('how-it-works')}>
+                
+             
                   <Button size="lg" variant="outline" className="w-full border-primary/20 hover:bg-brand-orange/10">
                     Learn More
                   </Button>
-                </button>
+               
               </div>
               <button 
                 onClick={() => scrollToSection('services')}
