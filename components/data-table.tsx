@@ -27,7 +27,7 @@ import {
   IconChevronsLeft,
   IconChevronsRight,
   IconCircleCheckFilled,
-  IconDotsVertical,
+  IconEye,
   IconGripVertical,
   IconLayoutColumns,
   IconLoader,
@@ -106,15 +106,22 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 
+
 export const schema = z.object({
-  id: z.number(),
-  header: z.string(),
-  type: z.string(),
-  status: z.string(),
-  target: z.string(),
-  limit: z.string(),
-  reviewer: z.string(),
-})
+  id: z.string(),
+  sender_id: z.string(),
+  vendor_id: z.string(),
+  dispatch_id: z.string(),
+  rider_id: z.string(),
+  delivery_type: z.enum(["food", "laundry", "package"]),
+  delivery_status: z.enum(["pending", "received", "accepted"]),
+  distance: z.string(),
+  duration: z.string(),
+  origin: z.string(),
+  destination: z.string(),
+  delivery_fee: z.string(),
+  created_at: z.string(),
+});
 
 // Create a separate component for the drag handle
 function DragHandle({ id }: { id: number }) {
@@ -137,11 +144,6 @@ function DragHandle({ id }: { id: number }) {
 }
 
 const columns: ColumnDef<z.infer<typeof schema>>[] = [
-  {
-    id: "drag",
-    header: () => null,
-    cell: ({ row }) => <DragHandle id={row.original.id} />,
-  },
   {
     id: "select",
     header: ({ table }) => (
@@ -169,147 +171,98 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "header",
-    header: "Header",
+    accessorKey: "id",
+    header: "Delivery ID",
     cell: ({ row }) => {
       return <TableCellViewer item={row.original} />
     },
     enableHiding: false,
   },
+  //  {
+  //   accessorKey: "rider_id",
+  //   header: "Rider ID",
+  //   cell: ({ row }) => {
+  //     return <TableCellViewer item={row.original} />
+  //   },
+  //   enableHiding: false,
+  // },
+  // {
+  //   accessorKey: "vendor_id",
+  //   header: "Vendor ID",
+  //   cell: ({ row }) => {
+  //     return <TableCellViewer item={row.original} />
+  //   },
+  //   enableHiding: false,
+  // },
   {
-    accessorKey: "type",
-    header: "Section Type",
+    accessorKey: "delivery_type",
+    header: "Type",
     cell: ({ row }) => (
-      <div className="w-32">
-        <Badge variant="outline" className="text-muted-foreground px-1.5">
-          {row.original.type}
-        </Badge>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => (
-      <Badge variant="outline" className="text-muted-foreground px-1.5">
-        {row.original.status === "Done" ? (
-          <IconCircleCheckFilled className="fill-green-500 dark:fill-green-400" />
-        ) : (
-          <IconLoader />
-        )}
-        {row.original.status}
+      <Badge variant="outline" className="capitalize">
+        {row.original.delivery_type}
       </Badge>
     ),
   },
   {
-    accessorKey: "target",
-    header: () => <div className="w-full text-right">Target</div>,
+    accessorKey: "delivery_status",
+    header: "Status",
     cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-            error: "Error",
-          })
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-target`} className="sr-only">
-          Target
-        </Label>
-        <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-          defaultValue={row.original.target}
-          id={`${row.original.id}-target`}
-        />
-      </form>
+      <Badge variant={row.original.delivery_status === "received" ? "default" : "secondary"}>
+        {row.original.delivery_status === "received" ? (
+          <IconCircleCheckFilled className="mr-1 size-3" />
+        ) : (
+          <IconLoader className="mr-1 size-3" />
+        )}
+        {row.original.delivery_status}
+      </Badge>
     ),
   },
   {
-    accessorKey: "limit",
-    header: () => <div className="w-full text-right">Limit</div>,
-    cell: ({ row }) => (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          toast.promise(new Promise((resolve) => setTimeout(resolve, 1000)), {
-            loading: `Saving ${row.original.header}`,
-            success: "Done",
-            error: "Error",
-          })
-        }}
-      >
-        <Label htmlFor={`${row.original.id}-limit`} className="sr-only">
-          Limit
-        </Label>
-        <Input
-          className="hover:bg-input/30 focus-visible:bg-background dark:hover:bg-input/30 dark:focus-visible:bg-input/30 h-8 w-16 border-transparent bg-transparent text-right shadow-none focus-visible:border dark:bg-transparent"
-          defaultValue={row.original.limit}
-          id={`${row.original.id}-limit`}
-        />
-      </form>
-    ),
+    accessorKey: "origin",
+    header: "Origin",
+    cell: ({ row }) => <div className="max-w-[200px] truncate">{row.original.origin}</div>,
   },
   {
-    accessorKey: "reviewer",
-    header: "Reviewer",
-    cell: ({ row }) => {
-      const isAssigned = row.original.reviewer !== "Assign reviewer"
-
-      if (isAssigned) {
-        return row.original.reviewer
-      }
-
-      return (
-        <>
-          <Label htmlFor={`${row.original.id}-reviewer`} className="sr-only">
-            Reviewer
-          </Label>
-          <Select>
-            <SelectTrigger
-              className="w-38 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate"
-              size="sm"
-              id={`${row.original.id}-reviewer`}
-            >
-              <SelectValue placeholder="Assign reviewer" />
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-              <SelectItem value="Jamik Tashpulatov">
-                Jamik Tashpulatov
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </>
-      )
-    },
+    accessorKey: "destination",
+    header: "Destination",
+    cell: ({ row }) => <div className="max-w-[200px] truncate">{row.original.destination}</div>,
+  },
+  {
+    accessorKey: "distance",
+    header: "Distance",
+    cell: ({ row }) => `${row.original.distance} km`,
+  },
+  {
+    accessorKey: "duration",
+    header: "Duration",
+    cell: ({ row }) => row.original.duration,
+  },
+  {
+    accessorKey: "delivery_fee",
+    header: "Fee",
+    cell: ({ row }) => `₦${parseFloat(row.original.delivery_fee).toLocaleString()}`,
+  },
+  {
+    accessorKey: "created_at",
+    header: "Created At",
+    cell: ({ row }) => new Date(row.original.created_at).toLocaleString(),
   },
   {
     id: "actions",
     cell: () => (
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted text-muted-foreground flex size-8"
-            size="icon"
-          >
-            <IconDotsVertical />
-            <span className="sr-only">Open menu</span>
+        
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <IconEye className="h-4 w-4" />
           </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-32">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-          <DropdownMenuItem>Make a copy</DropdownMenuItem>
-          <DropdownMenuItem>Favorite</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
-        </DropdownMenuContent>
+       
+       
       </DropdownMenu>
     ),
   },
-]
+
+];
+
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
@@ -339,9 +292,19 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
 export function DataTable({
   data: initialData,
 }: {
-  data: z.infer<typeof schema>[]
+  data: Array<{
+    delivery: z.infer<typeof schema> | null;
+    order: any;
+  }>;
 }) {
-  const [data, setData] = React.useState(() => initialData)
+
+
+  const deliveryData = initialData
+    .filter(item => item.delivery !== null)
+    .map(item => item.delivery!);
+
+  const [data, setData] = React.useState(() => deliveryData);
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -647,161 +610,95 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
+
+
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
       <DrawerTrigger asChild>
         <Button variant="link" className="text-foreground w-fit px-0 text-left">
-          {item.header}
+          {item.id}
         </Button>
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="gap-1">
-          <DrawerTitle>{item.header}</DrawerTitle>
+          <DrawerTitle>Delivery Details</DrawerTitle>
           <DrawerDescription>
-            Showing total visitors for the last 6 months
+            {item.delivery_type} delivery from {item.origin} to {item.destination}
           </DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col gap-4 overflow-y-auto px-4 text-sm">
-          {!isMobile && (
-            <>
-              <ChartContainer config={chartConfig}>
-                <AreaChart
-                  accessibilityLayer
-                  data={chartData}
-                  margin={{
-                    left: 0,
-                    right: 10,
-                  }}
-                >
-                  <CartesianGrid vertical={false} />
-                  <XAxis
-                    dataKey="month"
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => value.slice(0, 3)}
-                    hide
-                  />
-                  <ChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="dot" />}
-                  />
-                  <Area
-                    dataKey="mobile"
-                    type="natural"
-                    fill="var(--color-mobile)"
-                    fillOpacity={0.6}
-                    stroke="var(--color-mobile)"
-                    stackId="a"
-                  />
-                  <Area
-                    dataKey="desktop"
-                    type="natural"
-                    fill="var(--color-desktop)"
-                    fillOpacity={0.4}
-                    stroke="var(--color-desktop)"
-                    stackId="a"
-                  />
-                </AreaChart>
-              </ChartContainer>
-              <Separator />
-              <div className="grid gap-2">
-                <div className="flex gap-2 leading-none font-medium">
-                  Trending up by 5.2% this month{" "}
-                  <IconTrendingUp className="size-4" />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <Label>Status</Label>
+              <div className="text-sm font-medium">
+                <Badge variant={item.delivery_status === "received" ? "default" : "secondary"}>
+                  {item.delivery_status}
+                </Badge>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label>Type</Label>
+              <div className="text-sm font-medium capitalize">
+                {item.delivery_type}
+              </div>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <Label>Distance</Label>
+              <div className="text-sm font-medium">
+                {item.distance} km
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label>Duration</Label>
+              <div className="text-sm font-medium">
+                {item.duration}
+              </div>
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="flex flex-col gap-1">
+            <Label>Route</Label>
+            <div className="text-sm font-medium">
+              <div className="flex items-center gap-2">
+                <div className="flex flex-col items-center">
+                  <div className="size-2 rounded-full bg-primary" />
+                  <div className="h-6 w-px bg-border" />
+                  <div className="size-2 rounded-full bg-destructive" />
                 </div>
-                <div className="text-muted-foreground">
-                  Showing total visitors for the last 6 months. This is just
-                  some random text to test the layout. It spans multiple lines
-                  and should wrap around.
+                <div className="flex flex-col">
+                  <span>{item.origin}</span>
+                  <span className="text-muted-foreground text-xs">Pickup location</span>
+                  <span>{item.destination}</span>
+                  <span className="text-muted-foreground text-xs">Dropoff location</span>
                 </div>
               </div>
-              <Separator />
-            </>
-          )}
-          <form className="flex flex-col gap-4">
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="header">Header</Label>
-              <Input id="header" defaultValue={item.header} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="type">Type</Label>
-                <Select defaultValue={item.type}>
-                  <SelectTrigger id="type" className="w-full">
-                    <SelectValue placeholder="Select a type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Table of Contents">
-                      Table of Contents
-                    </SelectItem>
-                    <SelectItem value="Executive Summary">
-                      Executive Summary
-                    </SelectItem>
-                    <SelectItem value="Technical Approach">
-                      Technical Approach
-                    </SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Capabilities">Capabilities</SelectItem>
-                    <SelectItem value="Focus Documents">
-                      Focus Documents
-                    </SelectItem>
-                    <SelectItem value="Narrative">Narrative</SelectItem>
-                    <SelectItem value="Cover Page">Cover Page</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="status">Status</Label>
-                <Select defaultValue={item.status}>
-                  <SelectTrigger id="status" className="w-full">
-                    <SelectValue placeholder="Select a status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Done">Done</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Not Started">Not Started</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+          </div>
+
+          <Separator />
+
+          <div className="flex flex-col gap-1">
+            <Label>Delivery Fee</Label>
+            <div className="text-lg font-bold">
+              ₦{parseFloat(item.delivery_fee).toLocaleString()}
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="target">Target</Label>
-                <Input id="target" defaultValue={item.target} />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="limit">Limit</Label>
-                <Input id="limit" defaultValue={item.limit} />
-              </div>
-            </div>
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="reviewer">Reviewer</Label>
-              <Select defaultValue={item.reviewer}>
-                <SelectTrigger id="reviewer" className="w-full">
-                  <SelectValue placeholder="Select a reviewer" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Eddie Lake">Eddie Lake</SelectItem>
-                  <SelectItem value="Jamik Tashpulatov">
-                    Jamik Tashpulatov
-                  </SelectItem>
-                  <SelectItem value="Emily Whalen">Emily Whalen</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </form>
+          </div>
         </div>
         <DrawerFooter>
-          <Button>Submit</Button>
+          <Button>Update Status</Button>
           <DrawerClose asChild>
-            <Button variant="outline">Done</Button>
+            <Button variant="outline">Close</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
-  )
+  );
 }
