@@ -5,44 +5,12 @@ import React from "react";
 import data from "../data.json";
 import { getOrders } from "@/actions/order";
 import { DeliveryDetail } from "@/types/order-types";
+import {calculateOrderStats} from '@/lib/utils'
 
-
-export function calculateOrderStats(orders: OrderWithDelivery[]) {
-  const stats = {
-    totalPending: 0,
-    pendingFood: 0,
-    pendingPackage: 0,
-    pendingLaundry: 0,
-  };
-
-  orders.forEach((order) => {
-    if (order.delivery?.delivery_status === "pending") {
-      stats.totalPending++;
-      
-      switch (order.delivery.delivery_type) {
-        case "food":
-          stats.pendingFood++;
-          break;
-        case "package":
-          stats.pendingPackage++;
-          break;
-        case "laundry":
-          stats.pendingLaundry++;
-          break;
-      }
-    }
-  });
-
-  return stats;
-}
 
 const Page = async () => {
   const orders = await getOrders();
   const stats = calculateOrderStats(orders);
-
-  console.log(stats)
-
-
 
   return (
     <div className="flex flex-1 flex-col">
