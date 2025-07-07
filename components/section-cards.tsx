@@ -17,7 +17,7 @@ export function SectionCards({stats}) {
         <CardHeader>
           <CardDescription>Total Pending Deliveries</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-           {stats.totalPending}
+           {stats?.totalPending}
           </CardTitle>
           
         </CardHeader>
@@ -26,7 +26,7 @@ export function SectionCards({stats}) {
             Current total pending deliveries 
           </div>
           <div className="text-muted-foreground">
-            Visitors for the last 6 months
+           {stats?.totalPending} total deliveries waiting 
           </div>
         </CardFooter>
       </Card>
@@ -34,7 +34,7 @@ export function SectionCards({stats}) {
         <CardHeader>
           <CardDescription>Food Deliveries</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {stats.pendingFood}
+            {stats?.pendingFood}
           </CardTitle>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
@@ -42,7 +42,7 @@ export function SectionCards({stats}) {
             Pending food deliveries
           </div>
           <div className="text-muted-foreground">
-            Acquisition needs attention
+           {stats?.pendingFood} total food order deliveries waiting
           </div>
         </CardFooter>
       </Card>
@@ -50,7 +50,7 @@ export function SectionCards({stats}) {
         <CardHeader>
           <CardDescription>Package Deliveries</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {stats.pendingPackage}
+            {stats?.pendingPackage}
           </CardTitle>
           
         </CardHeader>
@@ -58,27 +58,22 @@ export function SectionCards({stats}) {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Pending package deliveries
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground"> {stats?.pendingPackage} total package deliveries waiting</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
           <CardDescription>Laundry Deliveries</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            {stats.pendingLaundry}
+            {stats?.pendingLaundry}
           </CardTitle>
-          <CardAction>
-            <Badge variant="outline">
-              <IconTrendingUp />
-              +4.5%
-            </Badge>
-          </CardAction>
+        
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
             Pending laundry deliveries
           </div>
-          <div className="text-muted-foreground">Meets growth projections</div>
+          <div className="text-muted-foreground">{stats?.pendingLaundry} total laundry order deliveries waiting</div>
         </CardFooter>
       </Card>
     </div>

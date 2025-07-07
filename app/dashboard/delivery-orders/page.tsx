@@ -40,6 +40,8 @@ const Page = async () => {
   const orders = await getOrders();
   const stats = calculateOrderStats(orders);
 
+  console.log(stats)
+
 
 
   return (

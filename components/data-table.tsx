@@ -300,8 +300,9 @@ export function DataTable({
 
 
   const deliveryData = initialData
-    .filter(item => item.delivery !== null)
-    .map(item => item.delivery!);
+  .filter(item => item?.delivery !== null && item?.delivery !== undefined)
+  .map(item => item.delivery!)
+  .filter(delivery => delivery && delivery.id);
 
   const [data, setData] = React.useState(() => deliveryData);
 
@@ -323,10 +324,15 @@ export function DataTable({
     useSensor(KeyboardSensor, {})
   )
 
+  // const dataIds = React.useMemo<UniqueIdentifier[]>(
+  //   () => data?.map(({ id }) => id) || [],
+  //   [data]
+  // )
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ id }) => id) || [],
-    [data]
-  )
+  () => data?.map((item) => item?.id).filter(Boolean) || [],
+  [data]
+)
 
   const table = useReactTable({
     data,
