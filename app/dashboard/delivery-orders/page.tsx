@@ -2,9 +2,7 @@ import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import React from "react";
-import data from "../data.json";
 import { getOrders } from "@/actions/order";
-import { DeliveryDetail } from "@/types/order-types";
 import {calculateOrderStats} from '@/lib/utils'
 
 
