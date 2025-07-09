@@ -1,12 +1,10 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import { DeliveryDetail } from "@/types/order-types";
 
-
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-
 
 export function calculateOrderStats(orders: DeliveryDetail[]) {
   const stats = {
@@ -22,26 +20,26 @@ export function calculateOrderStats(orders: DeliveryDetail[]) {
   orders.forEach((order) => {
     // Count by delivery status
     switch (order.delivery?.delivery_status) {
-      case 'pending':
+      case "pending":
         stats.pendingOrders++;
         break;
-      case 'delivered':
+      case "delivered":
         stats.deliveredOrders++;
         break;
-      case 'accept':
+      case "accepted":
         stats.assignedOrders++;
         break;
     }
 
     // Count by order type
     switch (order.order?.order_type) {
-      case 'food':
+      case "food":
         stats.totalFoodOrders++;
         break;
-      case 'package':
+      case "package":
         stats.totalPackageOrders++;
         break;
-      case 'laundry':
+      case "laundry":
         stats.totalLaundryOrders++;
         break;
     }
