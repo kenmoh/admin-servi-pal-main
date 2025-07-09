@@ -33,8 +33,6 @@ export const getToken = async () => {
   return token;
 };
 
-
-
 export async function loginUser(previousState: unknown, data: FormData) {
   const formData = Object.fromEntries(data);
   const parsedData = loginSchema.safeParse(formData);
@@ -52,13 +50,13 @@ export async function loginUser(previousState: unknown, data: FormData) {
     apiFormData.append("username", parsedData.data.username);
     apiFormData.append("password", parsedData.data.password);
 
-    const response = await fetch(`${API_URL}/auth/login`, {
+    const response = await fetch(`${authsUrl}/auth/login`, {
       method: "POST",
       body: apiFormData,
     });
 
     const data = await response.json();
-console.log(data, '=======================')
+    console.log(data, "=======================");
     if (!response.ok) {
       // API returned an error
       return {
@@ -75,14 +73,13 @@ console.log(data, '=======================')
         maxAge: 60 * 60 * 24 * 7, // 1 week
         path: "/",
       });
-      
+
       cookieStore.set("refresh_token", data.refresh_token, {
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 14,
         path: "/",
       });
-      
-      
+
       cookieStore.set("allowed_routes", data.allowed_routes, {
         httpOnly: true,
         path: "/",
