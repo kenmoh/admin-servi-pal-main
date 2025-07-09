@@ -113,6 +113,9 @@ export const schema = z.object({
   id: z.string(),
   email: z.string(),
   user_type: z.string(),
+  order_cancel_count: z.string().optional(),
+  is_blocked: z.boolean(),
+  account_status: z.boolean(),
   created_at: z.string().optional(),
   profile: z.object({
     phone_number: z.string().optional(),
@@ -670,6 +673,16 @@ export function UserDataTable({
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   const isMobile = useIsMobile();
+  const [isBlocked, setIsBlocked] = React.useState(item.is_blocked);
+
+  // Helper for account status pill
+  function AccountStatusPill({ status }: { status: boolean }) {
+    return status ? (
+      <Badge variant="default" className="bg-green-500 text-white">Confirmed</Badge>
+    ) : (
+      <Badge variant="default" className="text-gray-500 border">Pending</Badge>
+    );
+  }
 
   return (
     <Drawer direction={isMobile ? "bottom" : "right"}>
@@ -793,6 +806,43 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
             </div>
           </div>
 
+          <Separator />
+
+          {/* New fields: is_blocked, order_cancel_count, account_status */}
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <Label>Blocked Status</Label>
+              <div className="text-sm font-medium">
+                {isBlocked ? (
+                  <Badge variant="destructive">Blocked</Badge>
+                ) : (
+                  <Badge variant="outline" className="text-green-600 border-green-600">Active</Badge>
+                )}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label>Order Cancel Count</Label>
+              <div className="text-sm font-medium">
+                {item.order_cancel_count || 0}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1 mt-2">
+            <Label>Account Status</Label>
+            <div className="text-sm font-medium">
+              <AccountStatusPill status={item.account_status} />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1 mt-4">
+            <Button
+              variant={isBlocked ? "default" : "destructive"}
+              onClick={() => setIsBlocked(b => !b)}
+            >
+              {isBlocked ? "Unblock User" : "Block User"}
+            </Button>
+          </div>
 
         </div>
         <DrawerFooter>
