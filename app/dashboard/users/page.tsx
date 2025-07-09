@@ -10,60 +10,34 @@ const Page = async () => {
     return <div>Error: {users.error}</div>;
   }
 
-  // Calculate user counts by type
-  const userCounts = users.reduce((acc, user) => {
-    acc.total++;
-    acc[user.user_type] = (acc[user.user_type] || 0) + 1;
-    return acc;
-  }, {
-    total: 0,
-    restaurant_vendor: 0,
-    laundry_vendor: 0,
-    rider: 0,
-  });
-
-  // Prepare cards data
-  const userCards: SectionCardConfig[] = [
-    { 
-      title: "Total Users", 
-      value: userCounts.total, 
-      description: "All registered users", 
-      footer: `${userCounts.total} users in total` 
+  // Map users to expected shape for UserDataTable
+  const tableUsers = users.map(user => ({
+    ...user,
+    is_blocked: user.is_blocked,
+    // Convert string status to boolean: true if 'confirmed', false otherwise
+    account_status: user.account_status === 'confirmed',
+    profile: user.profile ?? {
+      phone_number: '',
+      business_name: '',
+      business_address: '',
+      business_registration_number: '',
+      full_name: '',
+      account_holder_name: '',
+      bank_name: '',
+      store_name: '',
+      bank_account_number: '',
+      bike_number: '',
     },
-    { 
-      title: "Restaurant Vendors", 
-      value: userCounts.restaurant_vendor, 
-      description: "Restaurant Vendors", 
-      footer: `${userCounts.restaurant_vendor} active restaurant vendors` 
-    },
-    { 
-      title: "Laundry Vendors", 
-      value: userCounts.laundry_vendor, 
-      description: "Laundry vendors", 
-      footer: `${userCounts.laundry_vendor} active laundry vendors` 
-    },
-    { 
-      title: "Riders", 
-      value: userCounts.rider, 
-      description: "Delivery riders", 
-      footer: `${userCounts.rider} active riders` 
-    },
-    
-  ];
+    order_cancel_count: String(user.order_cancel_count ?? 0),
+  }));
 
   return (
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
           {/*<SectionCards cards={userCards} />*/}
-          <UserDataTable 
-            data={users} 
-            initialFilters={[
-              {
-                id: "user_type",
-                value: "all", // Default to show all users
-              }
-            ]}
+          <UserDataTable
+            data={tableUsers}
           />
         </div>
       </div>
