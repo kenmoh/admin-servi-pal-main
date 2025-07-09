@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginUser } from "@/actions/user";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader } from "lucide-react";
+import { ControllerRenderProps } from "react-hook-form";
 
 
 export const LoginSchema = z.object({
@@ -68,7 +69,7 @@ export default function Login() {
               <FormField
                 control={form.control}
                 name="username"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<LoginValues, "username"> }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
@@ -82,7 +83,7 @@ export default function Login() {
               <FormField
                 control={form.control}
                 name="password"
-                render={({ field }) => (
+                render={({ field }: { field: ControllerRenderProps<LoginValues, "password"> }) => (
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
