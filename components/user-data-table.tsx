@@ -106,6 +106,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
 export const schema = z.object({
   id: z.string(),
@@ -338,87 +340,167 @@ export function UserDataTable({
     }
   }
 
+  const [filterText, setFilterText] = React.useState("");
+
+  // Helper: flatten all string fields for search
+  function userMatchesFilter(user: any, filter: string) {
+    if (!filter) return true;
+    const lower = filter.toLowerCase();
+    // Recursively check all string fields
+    function check(obj: any): boolean {
+      if (typeof obj === 'string') return obj.toLowerCase().includes(lower);
+      if (typeof obj === 'object' && obj !== null) return Object.values(obj).some(check);
+      return false;
+    }
+    return check(user);
+  }
+
+  const filteredData = data.filter(item => userMatchesFilter(item, filterText));
+
+  const [open, setOpen] = React.useState(false);
+
   return (
     <Tabs
       defaultValue="users"
       className="w-full flex-col justify-start gap-6"
     >
-      <div className="flex items-center justify-between px-4 lg:px-6">
-        <Label htmlFor="view-selector" className="sr-only">
-          View
-        </Label>
-        <Select defaultValue="users">
-          <SelectTrigger
-            className="flex w-fit @4xl/main:hidden"
-            size="sm"
-            id="view-selector"
-          >
-            <SelectValue placeholder="Select a view" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="users">All Users</SelectItem>
-            <SelectItem value="restaurant">Restaurant Vendors</SelectItem>
-            <SelectItem value="laundry">Laundry Vendor</SelectItem>
-            <SelectItem value="customers">Customers</SelectItem>
-            <SelectItem value="riders">Riders</SelectItem>
-
-
-          </SelectContent>
-        </Select>
-        <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-          <TabsTrigger value="users">All Users</TabsTrigger>
-          <TabsTrigger value="restaurant">
-            Restaurant Vendors
-          </TabsTrigger>
-          <TabsTrigger value="laundry">
-            Laundry Vendor
-          </TabsTrigger>
-          <TabsTrigger value="customers">
-            Customers <Badge variant="secondary">2</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="riders">
-            Riders
-          </TabsTrigger>
-        </TabsList>
-        <div className="flex items-center gap-2">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
-                <IconLayoutColumns />
-                <span className="hidden lg:inline">Customize Columns</span>
-                <span className="lg:hidden">Columns</span>
-                <IconChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              {table
-                .getAllColumns()
-                .filter(
-                  (column) =>
-                    typeof column.accessorFn !== "undefined" &&
-                    column.getCanHide()
-                )
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id.replace(/profile\./, '').replace(/_/g, ' ')}
-                    </DropdownMenuCheckboxItem>
+      <div className="flex flex-col gap-2 px-4 lg:px-6">
+        <div className="flex items-center justify-between">
+          <Label htmlFor="view-selector" className="sr-only">
+            View
+          </Label>
+          <Select defaultValue="users">
+            <SelectTrigger
+              className="flex w-fit @4xl/main:hidden"
+              size="sm"
+              id="view-selector"
+            >
+              <SelectValue placeholder="Select a view" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="users">All Users</SelectItem>
+              <SelectItem value="restaurant">Restaurant Vendors</SelectItem>
+              <SelectItem value="laundry">Laundry Vendor</SelectItem>
+              <SelectItem value="customers">Customers</SelectItem>
+              <SelectItem value="riders">Riders</SelectItem>
+            </SelectContent>
+          </Select>
+          <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
+            <TabsTrigger value="users">All Users</TabsTrigger>
+            <TabsTrigger value="restaurant">
+              Restaurant Vendors
+            </TabsTrigger>
+            <TabsTrigger value="laundry">
+              Laundry Vendor
+            </TabsTrigger>
+            <TabsTrigger value="customers">
+              Customers <Badge variant="secondary">2</Badge>
+            </TabsTrigger>
+            <TabsTrigger value="riders">
+              Riders
+            </TabsTrigger>
+          </TabsList>
+          <div className="flex items-center gap-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <IconLayoutColumns />
+                  <span className="hidden lg:inline">Customize Columns</span>
+                  <span className="lg:hidden">Columns</span>
+                  <IconChevronDown />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                {table
+                  .getAllColumns()
+                  .filter(
+                    (column) =>
+                      typeof column.accessorFn !== "undefined" &&
+                      column.getCanHide()
                   )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button variant="outline" size="sm">
-            <IconPlus />
-            <span className="hidden lg:inline">Add User</span>
-          </Button>
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id.replace(/profile\./, '').replace(/_/g, ' ')}
+                      </DropdownMenuCheckboxItem>
+                    )
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+                  <IconPlus />
+                  <span className="hidden lg:inline">Add User</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Add User</DialogTitle>
+                  <DialogDescription>Fill in the details to add a new user.</DialogDescription>
+                </DialogHeader>
+                <Form>
+                  <FormField name="email">
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="Email" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </FormField>
+                  <FormField name="phone_number">
+                    <FormItem>
+                      <FormLabel>Phone Number</FormLabel>
+                      <FormControl>
+                        <Input type="tel" placeholder="Phone Number" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </FormField>
+                  <FormField name="password">
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Password" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </FormField>
+                  <FormField name="confirm_password">
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Confirm Password" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </FormField>
+                </Form>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">Cancel</Button>
+                  </DialogClose>
+                  <Button type="submit">Add User</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
+        <Input
+          type="text"
+          placeholder="Filter users by any field..."
+          value={filterText}
+          onChange={e => setFilterText(e.target.value)}
+          className="max-w-md"
+        />
       </div>
       <TabsContent
         value="users"
@@ -558,28 +640,28 @@ export function UserDataTable({
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         {/* Restaurant Vendors Table */}
-        <UserDataTable data={data.filter(item => item.user_type === 'restaurant_vendor')} />
+        <UserDataTable data={filteredData.filter(item => item.user_type === 'restaurant_vendor')} />
       </TabsContent>
       <TabsContent
         value="laundry"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         {/* Laundry Vendors Table */}
-        <UserDataTable data={data.filter(item => item.user_type === 'laundry_vendor')} />
+        <UserDataTable data={filteredData.filter(item => item.user_type === 'laundry_vendor')} />
       </TabsContent>
       <TabsContent
         value="customers"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         {/* Customers Table */}
-        <UserDataTable data={data.filter(item => item.user_type === 'customer')} />
+        <UserDataTable data={filteredData.filter(item => item.user_type === 'customer')} />
       </TabsContent>
       <TabsContent
         value="riders"
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         {/* Riders Table */}
-        <UserDataTable data={data.filter(item => item.user_type === 'rider')} />
+        <UserDataTable data={filteredData.filter(item => item.user_type === 'rider')} />
       </TabsContent>
     </Tabs>
   )
