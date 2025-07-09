@@ -72,18 +72,8 @@ const data = {
   ],
   services: [
     {
-      name: "Delivery Orders",
-      url: "/dashboard/delivery-orders",
-      icon: ListCheck,
-    },
-    {
-      name: "Food Orders",
-      url: "/dashboard/food-orders",
-      icon: ListCheck,
-    },
-    {
-      name: "Laundry Orders",
-      url: "/dashboard/lundry-orders",
+      name: "Orders",
+      url: "/dashboard/orders",
       icon: ListCheck,
     },
     {
@@ -96,11 +86,7 @@ const data = {
       url: "/dashboard/laundry-items",
       icon: WashingMachine,
     },
-    {
-      name: "P2P Marketplace",
-      url: "/dashboard/maketplace-items",
-      icon: Handshake,
-    },
+    
   ],
 };
 

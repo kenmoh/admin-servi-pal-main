@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
-const PUBLIC_PATHS = ["/", "/login"];
+const PUBLIC_PATHS = ["/", "/dashboard"];
 
 function isJwtExpired(token: string): boolean {
   try {
@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
 
   const jwt = request.cookies.get("jwt")?.value || "";
   if (!jwt || isJwtExpired(jwt)) {
-    const response = NextResponse.redirect(new URL("/login", request.url));
+    const response = NextResponse.redirect(new URL("/dashboard", request.url));
     response.cookies.delete("jwt");
     return response;
   }

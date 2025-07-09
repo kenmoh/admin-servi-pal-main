@@ -10,27 +10,40 @@ export function cn(...inputs: ClassValue[]) {
 
 export function calculateOrderStats(orders: DeliveryDetail[]) {
   const stats = {
-    totalPending: 0,
-    pendingFood: 0,
-    pendingPackage: 0,
-    pendingLaundry: 0,
+    totalOrders: orders.length,
+    assignedOrders: 0,
+    deliveredOrders: 0,
+    pendingOrders: 0,
+    totalFoodOrders: 0,
+    totalLaundryOrders: 0,
+    totalPackageOrders: 0,
   };
 
   orders.forEach((order) => {
-    if (order.delivery?.delivery_status === "pending") {
-      stats.totalPending++;
-      
-      switch (order.delivery.delivery_type) {
-        case "food":
-          stats.pendingFood++;
-          break;
-        case "package":
-          stats.pendingPackage++;
-          break;
-        case "laundry":
-          stats.pendingLaundry++;
-          break;
-      }
+    // Count by delivery status
+    switch (order.delivery?.delivery_status) {
+      case 'pending':
+        stats.pendingOrders++;
+        break;
+      case 'delivered':
+        stats.deliveredOrders++;
+        break;
+      case 'accept':
+        stats.assignedOrders++;
+        break;
+    }
+
+    // Count by order type
+    switch (order.order?.order_type) {
+      case 'food':
+        stats.totalFoodOrders++;
+        break;
+      case 'package':
+        stats.totalPackageOrders++;
+        break;
+      case 'laundry':
+        stats.totalLaundryOrders++;
+        break;
     }
   });
 
