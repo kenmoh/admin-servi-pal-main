@@ -143,7 +143,7 @@ export async function loginUser(data: FormData) {
 }
 
 export const getUserProfile = async (userId: string): Promise<
-  ProfileSchema[] | { error: string }
+  ProfileSchema | { error: string }
 > => {
 
   try {

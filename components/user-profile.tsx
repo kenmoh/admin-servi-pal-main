@@ -52,7 +52,7 @@ export function UserProfileModal({ userId, trigger }: UserProfileModalProps) {
             <DialogHeader>
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={profile.profile_image_url || profile. backdrop_image_url} />
+                  <AvatarImage src={profile.profile_image_url || profile.backdrop_image_url} />
                   <AvatarFallback>
                     {profile?.full_name?.charAt(0) || profile?.business_name?.charAt(0)}
                   </AvatarFallback>
