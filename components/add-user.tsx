@@ -59,7 +59,7 @@ export function AddUserDialog() {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }: { field: ControllerRenderProps<RegisterValue, "email"> }) => (
+              render={({ field }: { field: ControllerRenderProps<RegisterValues, "email"> }) => (
                 <FormItem className='my-10'>
                   <FormLabel className='my-3'>Email</FormLabel>
                   <FormControl>
@@ -76,7 +76,7 @@ export function AddUserDialog() {
            <FormField
               control={form.control}
               name="phone_number"
-              render={({ field }: { field: ControllerRenderProps<RegisterValue, "phone_number"> }) => (
+              render={({ field }: { field: ControllerRenderProps<RegisterValues, "phone_number"> }) => (
                 <FormItem className='my-10'>
                   <FormLabel className='my-3'>Phone Number</FormLabel>
                   <FormControl>
@@ -93,7 +93,7 @@ export function AddUserDialog() {
              <FormField
               control={form.control}
               name="password"
-              render={({ field }: { field: ControllerRenderProps<RegisterValue, "password"> }) => (
+              render={({ field }: { field: ControllerRenderProps<RegisterValues, "password"> }) => (
                 <FormItem className='my-10'>
                   <FormLabel className='my-3'>Password</FormLabel>
                   <FormControl>
@@ -110,7 +110,7 @@ export function AddUserDialog() {
             <FormField
               control={form.control}
               name="password"
-              render={({ field }: { field: ControllerRenderProps<RegisterValue, "password"> }) => (
+              render={({ field }: { field: ControllerRenderProps<RegisterValues, "password"> }) => (
                 <FormItem className='my-10'>
                   <FormLabel className='my-3'>Confirm Password</FormLabel>
                   <FormControl>
