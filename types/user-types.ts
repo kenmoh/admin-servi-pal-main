@@ -23,3 +23,61 @@ export interface User {
     backdrop_image_url: string;
   };
 }
+
+type PaymentStatus =
+  | "failed"
+  | "paid"
+  | "cancelled"
+  | "pending"
+  | "completed"
+  | "successful";
+
+type TransactionType = "credit" | "debit" | "fund wallet" | "paid with wallet";
+
+// Transaction interface
+export interface TransactionSchema {
+  id: string;
+  wallet_id: string;
+  amount: number;
+  payment_status: PaymentStatus;
+  payment_by: string;
+  payment_link?: string;
+  transaction_type: TransactionType;
+  created_at: Date;
+}
+
+// Wallet interface
+export interface WalletSchema {
+  id: string;
+  balance: number;
+  escrow_balance: number;
+  transactions: TransactionSchema[];
+}
+
+// Profile interface
+interface ProfileSchema {
+  user_id?: string;
+  phone_number?: string;
+  bike_number?: string;
+  bank_account_number?: string;
+  bank_name?: string;
+  full_name?: string;
+  business_name?: string;
+  store_name?: string;
+  business_address?: string;
+  business_registration_number?: string;
+  closing_hours?: string;
+  opening_hours?: string;
+  account_holder_name?: string;
+  profile_image_url?: string;
+  backdrop_image_url?: string;
+}
+
+export interface UserProfileResponse {
+  email: string;
+  user_type: string;
+  id: string;
+  profile?: ProfileSchema;
+}
+
+// emdpoints ("/wallets", /{user_id}/current-user-profile)

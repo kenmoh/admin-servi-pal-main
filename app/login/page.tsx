@@ -1,60 +1,82 @@
 'use client'
-import { useActionState, useEffect } from "react";
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
-
+import { useForm, ControllerRenderProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginUser } from "@/actions/user";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader } from "lucide-react";
-import { ControllerRenderProps } from "react-hook-form";
-
+import { toast } from "sonner"; // Optional: for better error handling
 
 const LoginSchema = z.object({
   username: z.string().email({ message: "Invalid email address" }),
   password: z.string().min(1, { message: "Password is required" }),
 });
 
-
-
 type LoginValues = z.infer<typeof LoginSchema>;
 
 export default function Login() {
-  const router = useRouter()
-  const [state, action, isPending] = useActionState(loginUser, undefined)
+  const router = useRouter();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
       username: "",
       password: "",
-
     },
   });
 
+  const { isPending, mutate, error, data } = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => {
+      if (data?.success) {
+        // Optional: Show success toast
+        // toast.success("Login successful!");
+        router.push('/dashboard');
+      } else {
+        // Handle server-side validation errors
+        if (data?.errors) {
+          // Set form errors for specific fields
+          Object.entries(data.errors).forEach(([field, message]) => {
+            form.setError(field as keyof LoginValues, {
+              type: 'server',
+              message: Array.isArray(message) ? message.join(", ") : message
+            });
+          });
+        }
+      }
+    },
+    onError: (error) => {
+      console.error('Login error:', error);
+
+      // toast.error("Something went wrong. Please try again.");
+    }
+  });
 
   const onSubmit = async (data: LoginValues) => {
+    // Clear any previous errors
+    form.clearErrors();
+    console.log(data, 'Data')
+
+    // Convert object to FormData to match backend expectation
     const formData = new FormData();
     formData.append('username', data.username);
     formData.append('password', data.password);
-    action(formData);
+
+    mutate(formData);
   };
 
-  // Handle successful login
-  useEffect(() => {
-    if (state?.success) {
-      router.push('/dashboard');
-    }
-  }, [state?.success, router]);
-
+  // Handle general server errors
+  const serverError = data?.message && !data?.success ? data.message : null;
 
   return (
-    <div className="max-h-screen w-full flex items-center my-[200] justify-center bg-background p-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-background p-4">
       <Card className="w-1/4 max-w-md rounded-sm shadow-none p-6 glass-card animate-fade-in">
         <div className="space-y-6">
           <div className="space-y-2 text-center">
@@ -63,44 +85,75 @@ export default function Login() {
               Enter your credentials to access your account
             </p>
           </div>
-          {<p className="text-red-300 text-sm text-center">{state?.message}</p>}
-          <Form {...form} >
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }: { field: ControllerRenderProps<LoginValues, "username"> }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Email" {...field} />
-                    </FormControl>
 
-                    {state?.errors?.username && <p className="text-red-300 text-sm text-center">{state?.errors?.username.join(',')}</p>}
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }: { field: ControllerRenderProps<LoginValues, "password"> }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
+          {/* Display server errors */}
+          {serverError && (
+            <div className="text-red-300 text-sm text-center bg-red-400/10 p-3 rounded-md border border-red-400/10">
+              {serverError}
+            </div>
+          )}
 
-                    {state?.errors?.password && <p className="text-red-300 text-sm text-center">{state?.errors?.password.join(',')}</p>}
-                  </FormItem>
-                )}
-              />
 
-              <Button disabled={isPending} type="submit" className="w-full my-10 text-white ">
-                {isPending ? <Loader /> : ' Login'}
 
-              </Button>
-            </form>
+          <Form {...form}>
+
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }: { field: ControllerRenderProps<LoginValues, "username"> }) => (
+                <FormItem className='my-10'>
+                  <FormLabel className='my-3'>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="email@example.com"
+                      type="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }: { field: ControllerRenderProps<LoginValues, "password"> }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="password"
+                      placeholder="Enter your password"
+                      autoComplete="current-password"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button
+              className="w-full my-10"
+              type="button"
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                "Sign in"
+              )}
+            </Button>
+
           </Form>
+
+
+
         </div>
       </Card>
     </div>

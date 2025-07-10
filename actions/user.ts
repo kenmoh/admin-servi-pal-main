@@ -4,7 +4,7 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { usersUrl, authsUrl } from "@/lib/constant";
-import { User } from "@/types/user-types";
+import { User, WalletSchema, UserProfileResponse } from "@/types/user-types";
 
 export const getUsers = async (): Promise<User[] | { error: string }> => {
   try {
@@ -33,7 +33,7 @@ export const getToken = async () => {
   return token;
 };
 
-export async function loginUser(previousState: unknown, data: FormData) {
+export async function loginUser(data: FormData) {
   const formData = Object.fromEntries(data);
   const parsedData = loginSchema.safeParse(formData);
 
@@ -56,7 +56,6 @@ export async function loginUser(previousState: unknown, data: FormData) {
     });
 
     const data = await response.json();
-    console.log(data, "=======================");
     if (!response.ok) {
       // API returned an error
       return {
@@ -99,3 +98,35 @@ export async function loginUser(previousState: unknown, data: FormData) {
   }
   redirect("/dashboard");
 }
+
+export const getWallets = async (): Promise<
+  WalletSchema[] | { error: string }
+> => {
+  try {
+    const result = await fetch(`${usersUrl}/wallets`);
+    
+    // Check if the response is ok
+    if (!result.ok) {
+      return { error: `HTTP error! status: ${result.status}` };
+    }
+    
+    const data = await result.json();
+    console.log(data); // Log the parsed data instead
+    return data;
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : 'An unknown error occurred' };
+  }
+};
+
+export const getUserProfile = async (
+  user_id: string
+): Promise<UserProfileResponse | { error: string }> => {
+  try {
+    const result = await fetch(
+      `${usersUrl.replace("/users", `/${user_id}/current-user-profile`)}`
+    );
+    return result.json();
+  } catch (error) {
+    return { error: error as string };
+  }
+};

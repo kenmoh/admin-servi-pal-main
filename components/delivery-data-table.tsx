@@ -272,9 +272,7 @@ export function DeliveryDataTable({
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -287,13 +285,43 @@ export function DeliveryDataTable({
     useSensor(KeyboardSensor, {})
   )
 
+  const [activeTab, setActiveTab] = React.useState("orders");
+  const [filterText, setFilterText] = React.useState("");
+
+  // Helper: flatten all string fields for search
+  function orderMatchesFilter(order: DeliveryDetail, filter: string) {
+    if (!filter) return true;
+    const lower = filter.toLowerCase();
+    function check(obj: any): boolean {
+      if (typeof obj === 'string') return obj.toLowerCase().includes(lower);
+      if (typeof obj === 'object' && obj !== null) return Object.values(obj).some(check);
+      return false;
+    }
+    return check(order);
+  }
+
+  // Tab filtering
+  function tabFilter(item: DeliveryDetail) {
+    if (activeTab === "orders") return true;
+    if (activeTab === "delivered") return item.delivery?.delivery_status === "delivered";
+    if (activeTab === "pending") return item.delivery?.delivery_status === "pending";
+    if (activeTab === "assigned") return item.delivery?.delivery_status === "accepted";
+    if (activeTab === "food") return item.order?.order_type === "food";
+    if (activeTab === "package") return item.order?.order_type === "package";
+    if (activeTab === "laundry") return item.order?.order_type === "laundry";
+    return true;
+  }
+
+  const filteredData = data.filter(tabFilter).filter(item => orderMatchesFilter(item, filterText));
+  const stats = calculateOrderStats(data);
+
   const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => data?.map(({ order }) => order.id) || [],
-    [data]
+    () => filteredData?.map(({ order }) => order.id) || [],
+    [filteredData]
   )
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
       sorting,
@@ -328,41 +356,13 @@ export function DeliveryDataTable({
     }
   }
 
-  const [filterText, setFilterText] = React.useState("");
-
-  // Helper: flatten all string fields for search
-  function orderMatchesFilter(order: DeliveryDetail, filter: string) {
-    if (!filter) return true;
-    const lower = filter.toLowerCase();
-    // Recursively check all string fields
-    function check(obj: any): boolean {
-      if (typeof obj === 'string') return obj.toLowerCase().includes(lower);
-      if (typeof obj === 'object' && obj !== null) return Object.values(obj).some(check);
-      return false;
-    }
-    return check(order);
-  }
-
-  const filteredData = data.filter(item => orderMatchesFilter(item, filterText));
-
-  const stats = calculateOrderStats(filteredData);
-
   return (
-    <Tabs
-      defaultValue="orders"
-      className="w-full flex-col justify-start gap-6"
-    >
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-col justify-start gap-6">
       <div className="flex flex-col gap-2 px-4 lg:px-6">
         <div className="flex items-center justify-between">
-          <Label htmlFor="view-selector" className="sr-only">
-            View
-          </Label>
-          <Select defaultValue="orders">
-            <SelectTrigger
-              className="flex w-fit @4xl/main:hidden"
-              size="sm"
-              id="view-selector"
-            >
+          <Label htmlFor="view-selector" className="sr-only">View</Label>
+          <Select value={activeTab} onValueChange={setActiveTab}>
+            <SelectTrigger className="flex w-fit @4xl/main:hidden" size="sm" id="view-selector">
               <SelectValue placeholder="Select a view" />
             </SelectTrigger>
             <SelectContent>
@@ -376,27 +376,13 @@ export function DeliveryDataTable({
             </SelectContent>
           </Select>
           <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-            <TabsTrigger value="orders">All Order
-              <Badge variant="secondary">{stats.totalOrders}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="delivered">
-              Delivered <Badge variant="secondary">{stats.pendingOrders}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="pending">
-              Pending <Badge variant="secondary">{stats.pendingOrders}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="assigned">
-              Assigned <Badge variant="secondary">{stats.assignedOrders}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="food">
-              Food Orders <Badge variant="secondary">{stats.totalFoodOrders}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="package">
-              Package Orders <Badge variant="secondary">{stats.totalPackageOrders}</Badge>
-            </TabsTrigger>
-            <TabsTrigger value="laundry">
-              Laundry Orders <Badge variant="secondary">{stats.totalLaundryOrders}</Badge>
-            </TabsTrigger>
+            <TabsTrigger value="orders">All Order <Badge variant="secondary">{stats.totalOrders}</Badge></TabsTrigger>
+            <TabsTrigger value="delivered">Delivered <Badge variant="secondary">{stats.deliveredOrders}</Badge></TabsTrigger>
+            <TabsTrigger value="pending">Pending <Badge variant="secondary">{stats.pendingOrders}</Badge></TabsTrigger>
+            <TabsTrigger value="assigned">Assigned <Badge variant="secondary">{stats.assignedOrders}</Badge></TabsTrigger>
+            <TabsTrigger value="food">Food Orders <Badge variant="secondary">{stats.totalFoodOrders}</Badge></TabsTrigger>
+            <TabsTrigger value="package">Package Orders <Badge variant="secondary">{stats.totalPackageOrders}</Badge></TabsTrigger>
+            <TabsTrigger value="laundry">Laundry Orders <Badge variant="secondary">{stats.totalLaundryOrders}</Badge></TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-2">
             <DropdownMenu>
@@ -409,27 +395,18 @@ export function DeliveryDataTable({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
-                {table
-                  .getAllColumns()
-                  .filter(
-                    (column) =>
-                      typeof column.accessorFn !== "undefined" &&
-                      column.getCanHide()
+                {table.getAllColumns().filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide()).map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    >
+                      {column.id.replace(/profile\./, '').replace(/_/g, ' ')}
+                    </DropdownMenuCheckboxItem>
                   )
-                  .map((column) => {
-                    return (
-                      <DropdownMenuCheckboxItem
-                        key={column.id}
-                        className="capitalize"
-                        checked={column.getIsVisible()}
-                        onCheckedChange={(value) =>
-                          column.toggleVisibility(!!value)
-                        }
-                      >
-                        {column.id.replace(/profile\./, '').replace(/_/g, ' ')}
-                      </DropdownMenuCheckboxItem>
-                    )
-                  })}
+                })}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -443,7 +420,7 @@ export function DeliveryDataTable({
         />
       </div>
       <TabsContent
-        value="orders"
+        value={activeTab}
         className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
       >
         <div className="overflow-hidden rounded-lg border">
@@ -573,58 +550,6 @@ export function DeliveryDataTable({
               </Button>
             </div>
           </div>
-        </div>
-      </TabsContent>
-      <TabsContent
-        value="delivered"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
-        {/* Delivered Orders Table */}
-        <DeliveryDataTable data={filteredData.filter(item => item.delivery?.delivery_status === 'delivered')} />
-      </TabsContent>
-      <TabsContent
-        value="pending"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
-        {/* Pending Orders Table */}
-        <DeliveryDataTable data={filteredData.filter(item => item.delivery?.delivery_status === 'pending')} />
-      </TabsContent>
-      <TabsContent
-        value="assigned"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
-        {/* Assigned Orders Table */}
-        <DeliveryDataTable data={filteredData.filter(item => item.delivery?.delivery_status === 'accepted')} />
-      </TabsContent>
-      <TabsContent
-        value="food"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
-        {/* Food Orders Table */}
-        <DeliveryDataTable data={filteredData.filter(item => item.order?.order_type === 'food')} />
-      </TabsContent>
-      <TabsContent
-        value="package"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
-        {/* Package Orders Table */}
-        <DeliveryDataTable data={filteredData.filter(item => item.order?.order_type === 'package')} />
-      </TabsContent>
-      <TabsContent
-        value="laundry"
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
-        {/* Laundry Orders Table */}
-        <DeliveryDataTable data={filteredData.filter(item => item.order?.order_type === 'laundry')} />
-      </TabsContent>
-      <TabsContent value="customer" className="flex flex-col px-4 lg:px-6">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed">
-          Customers
-        </div>
-      </TabsContent>
-      <TabsContent value="riders" className="flex flex-col px-4 lg:px-6">
-        <div className="aspect-video w-full flex-1 rounded-lg border border-dashed">
-          Riders
         </div>
       </TabsContent>
     </Tabs>
