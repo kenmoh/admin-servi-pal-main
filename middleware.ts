@@ -16,17 +16,22 @@ function isJwtExpired(token: string): boolean {
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
   if (PUBLIC_PATHS.includes(pathname)) {
     return NextResponse.next();
   }
-
-  const jwt = request.cookies.get("jwt")?.value || "";
-  if (!jwt || isJwtExpired(jwt)) {
+  
+  // Check for access_token instead of jwt
+  const accessToken = request.cookies.get("access_token")?.value || "";
+  
+  if (!accessToken || isJwtExpired(accessToken)) {
     const response = NextResponse.redirect(new URL("/login", request.url));
-    response.cookies.delete("jwt");
+    // Clear both tokens
+    response.cookies.delete("access_token");
+    response.cookies.delete("refresh_token");
     return response;
   }
-
+  
   return NextResponse.next();
 }
 
