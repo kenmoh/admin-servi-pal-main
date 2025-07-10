@@ -351,16 +351,16 @@ export function UserDataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event
-    if (active && over && active.id !== over.id) {
-      setData((data) => {
-        const oldIndex = dataIds.indexOf(active.id)
-        const newIndex = dataIds.indexOf(over.id)
-        return arrayMove(data, oldIndex, newIndex)
-      })
-    }
-  }
+  // function handleDragEnd(event: DragEndEvent) {
+  //   const { active, over } = event
+  //   if (active && over && active.id !== over.id) {
+  //     setData((data) => {
+  //       const oldIndex = dataIds.indexOf(active.id)
+  //       const newIndex = dataIds.indexOf(over.id)
+  //       return arrayMove(data, oldIndex, newIndex)
+  //     })
+  //   }
+  // }
 
   const [open, setOpen] = React.useState(false);
 
@@ -412,13 +412,13 @@ export function UserDataTable({
       
       <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
-          <DndContext
+         {/* <DndContext
             collisionDetection={closestCenter}
             modifiers={[restrictToVerticalAxis]}
             onDragEnd={handleDragEnd}
             sensors={sensors}
             id={sortableId}
-          >
+          >*/}
             <Table>
               <TableHeader className="bg-muted sticky top-0 z-10">
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -460,7 +460,7 @@ export function UserDataTable({
                 )}
               </TableBody>
             </Table>
-          </DndContext>
+          {/*</DndContext>*/}
         </div>
         <div className="flex items-center justify-between px-4">
           <div className="text-muted-foreground hidden flex-1 text-sm lg:flex">
