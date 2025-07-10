@@ -91,7 +91,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator"  
+import {AddUserDialog} from "@/components/add-user"  
 import {
   Table,
   TableBody,
@@ -100,12 +101,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
@@ -128,11 +123,9 @@ export const schema = z.object({
     store_name: z.string().optional(),
     bank_account_number: z.string().optional(),
     bike_number: z.string().optional(),
-
   })
 })
 
-// Create a separate component for the drag handle
 function DragHandle({ id }: { id: string }) {
   const { attributes, listeners } = useSortable({
     id,
@@ -239,18 +232,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       </div>
     ),
   },
-
-
-  {
-    id: "actions",
-    cell: () => (
-      <div>
-
-        <IconEye />
-
-      </div>
-    ),
-  },
+ 
 ]
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
@@ -285,14 +267,31 @@ export function UserDataTable({
 }) {
   const [data, setData] = React.useState(() => initialData);
   const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   })
+  const [filterText, setFilterText] = React.useState("");
+  const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  // Fix hydration error by waiting for component to mount
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Debounce the filter text to avoid excessive re-renders
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFilterText(filterText);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [filterText]);
+
   const sortableId = React.useId()
   const sensors = useSensors(
     useSensor(MouseSensor, {}),
@@ -300,35 +299,30 @@ export function UserDataTable({
     useSensor(KeyboardSensor, {})
   )
 
-  const [activeTab, setActiveTab] = React.useState("users");
-  const [filterText, setFilterText] = React.useState("");
+  // Memoized filtered data with phone_number added to search
+  const filteredData = React.useMemo(() => {
+    if (!debouncedFilterText) return data;
+    
+    const searchTerm = debouncedFilterText.toLowerCase();
+    
+    return data.filter(user => {
+      const fieldsToSearch = [
+        user.id,
+        user.email,
+        user.user_type,
+        user.profile.full_name || "",
+        user.profile.business_name || "",
+        user.profile.phone_number || ""
+      ];
+      
+      return fieldsToSearch.some(field => 
+        field.toLowerCase().includes(searchTerm)
+      );
+    });
+  }, [data, debouncedFilterText]);
 
-  // Helper: flatten all string fields for search
-  function userMatchesFilter(user: any, filter: string) {
-    if (!filter) return true;
-    const lower = filter.toLowerCase();
-    function check(obj: any): boolean {
-      if (typeof obj === 'string') return obj.toLowerCase().includes(lower);
-      if (typeof obj === 'object' && obj !== null) return Object.values(obj).some(check);
-      return false;
-    }
-    return check(user);
-  }
-
-  // Tab filtering
-  function tabFilter(item: z.infer<typeof schema>) {
-    if (activeTab === "users") return true;
-    if (activeTab === "restaurant") return item.user_type === "restaurant_vendor";
-    if (activeTab === "laundry") return item.user_type === "laundry_vendor";
-    if (activeTab === "customers") return item.user_type === "customer";
-    if (activeTab === "riders") return item.user_type === "rider";
-    return true;
-  }
-
-  const filteredData = data.filter(tabFilter).filter(item => userMatchesFilter(item, filterText));
-
-  const dataIds = React.useMemo<UniqueIdentifier[]>(
-    () => filteredData?.map(({ id }) => id) || [],
+  const dataIds = React.useMemo(() => 
+    filteredData.map(({ id }) => id),
     [filteredData]
   )
 
@@ -370,30 +364,15 @@ export function UserDataTable({
 
   const [open, setOpen] = React.useState(false);
 
+  if (!isMounted) {
+    return null; 
+  }
+
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full flex-col justify-start gap-6">
-      <div className="flex flex-col gap-2 px-4 lg:px-6">
+   <div className="w-full flex-col justify-start gap-6">
+      <div className="flex flex-col gap-4 px-4 lg:px-6">
         <div className="flex items-center justify-between">
-          <Label htmlFor="view-selector" className="sr-only">View</Label>
-          <Select value={activeTab} onValueChange={setActiveTab}>
-            <SelectTrigger className="flex w-fit @4xl/main:hidden" size="sm" id="view-selector">
-              <SelectValue placeholder="Select a view" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="users">All Users</SelectItem>
-              <SelectItem value="restaurant">Restaurant Vendors</SelectItem>
-              <SelectItem value="laundry">Laundry Vendor</SelectItem>
-              <SelectItem value="customers">Customers</SelectItem>
-              <SelectItem value="riders">Riders</SelectItem>
-            </SelectContent>
-          </Select>
-          <TabsList className="**:data-[slot=badge]:bg-muted-foreground/30 hidden **:data-[slot=badge]:size-5 **:data-[slot=badge]:rounded-full **:data-[slot=badge]:px-1 @4xl/main:flex">
-            <TabsTrigger value="users">All Users</TabsTrigger>
-            <TabsTrigger value="restaurant">Restaurant Vendors</TabsTrigger>
-            <TabsTrigger value="laundry">Laundry Vendor</TabsTrigger>
-            <TabsTrigger value="customers">Customers</TabsTrigger>
-            <TabsTrigger value="riders">Riders</TabsTrigger>
-          </TabsList>
+          <h2 className="text-2xl font-bold">User Management</h2>
           <div className="flex items-center gap-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -419,78 +398,19 @@ export function UserDataTable({
                 })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
-                  <IconPlus />
-                  <span className="hidden lg:inline">Add User</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Add User</DialogTitle>
-                  <DialogDescription>Fill in the details to add a new user.</DialogDescription>
-                </DialogHeader>
-                <Form>
-                  <FormField name="email">
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input type="email" placeholder="Email" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
-                  <FormField name="phone_number">
-                    <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
-                      <FormControl>
-                        <Input type="tel" placeholder="Phone Number" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
-                  <FormField name="password">
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Password" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
-                  <FormField name="confirm_password">
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Confirm Password" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </FormField>
-                </Form>
-                <DialogFooter>
-                  <DialogClose asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </DialogClose>
-                  <Button type="submit">Add User</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <AddUserDialog />
           </div>
         </div>
         <Input
           type="text"
-          placeholder="Filter users by any field..."
+          placeholder="Search by ID, email, phone, user type, full name, or business name..."
           value={filterText}
-          onChange={e => setFilterText(e.target.value)}
-          className="max-w-md"
+          onChange={(e) => setFilterText(e.target.value)}
+          className="max-w-md mb-8"
         />
       </div>
-      <TabsContent
-        value={activeTab}
-        className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6"
-      >
+      
+      <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
           <DndContext
             collisionDetection={closestCenter}
@@ -534,7 +454,7 @@ export function UserDataTable({
                       colSpan={columns.length}
                       className="h-24 text-center"
                     >
-                      No results.
+                      No results found.
                     </TableCell>
                   </TableRow>
                 )}
@@ -619,23 +539,30 @@ export function UserDataTable({
             </div>
           </div>
         </div>
-      </TabsContent>
-    </Tabs>
+      </div>
+    </div>
   )
 }
-
 
 function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   const isMobile = useIsMobile();
   const [isBlocked, setIsBlocked] = React.useState(item.is_blocked);
+  const [isMounted, setIsMounted] = React.useState(false);
 
-  // Helper for account status pill
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   function AccountStatusPill({ status }: { status: boolean }) {
     return status ? (
       <Badge variant="default" className="bg-green-500 text-white">Confirmed</Badge>
     ) : (
-      <Badge variant="default" className="text-gray-500 border">Pending</Badge>
+      <Badge variant="default" className="text-white border rounded-full">Pending</Badge>
     );
+  }
+
+  if (!isMounted) {
+    return <span>{item.id}</span>; // Simple fallback during SSR
   }
 
   return (
@@ -762,7 +689,6 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
 
           <Separator />
 
-          {/* New fields: is_blocked, order_cancel_count, account_status */}
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <Label>Blocked Status</Label>
@@ -770,7 +696,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
                 {isBlocked ? (
                   <Badge variant="destructive">Blocked</Badge>
                 ) : (
-                  <Badge variant="outline" className="text-green-600 border-green-600">Active</Badge>
+                  <Badge variant="outline" className="text-green-600 border-green-600 rounded-full">Active</Badge>
                 )}
               </div>
             </div>
@@ -809,4 +735,3 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
     </Drawer>
   );
 }
-

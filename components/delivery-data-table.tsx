@@ -312,7 +312,15 @@ export function DeliveryDataTable({
     return true;
   }
 
-  const filteredData = data.filter(tabFilter).filter(item => orderMatchesFilter(item, filterText));
+  let filteredData: DeliveryDetail[] = [];
+  try {
+    filteredData = Array.isArray(data)
+      ? data.filter(tabFilter).filter(item => orderMatchesFilter(item, filterText))
+      : [];
+  } catch (e) {
+    console.error('Error filtering delivery data:', e);
+    filteredData = [];
+  }
   const stats = calculateOrderStats(data);
 
   const dataIds = React.useMemo<UniqueIdentifier[]>(

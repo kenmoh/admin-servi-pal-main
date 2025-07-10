@@ -60,8 +60,7 @@ export default function Login() {
   const onSubmit = async (data: LoginValues) => {
     // Clear any previous errors
     form.clearErrors();
-    console.log(data, 'Data')
-
+ 
     // Convert object to FormData to match backend expectation
     const formData = new FormData();
     formData.append('username', data.username);
