@@ -4,7 +4,7 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { usersUrl, authsUrl } from "@/lib/constant";
-import { User, WalletSchema, UserProfileResponse } from "@/types/user-types";
+import { User, WalletSchema, UserProfileResponse, ProfileSchema } from "@/types/user-types";
 
 export const getUsers = async (): Promise<User[] | { error: string }> => {
   try {
@@ -142,30 +142,28 @@ export async function loginUser(data: FormData) {
   redirect("/dashboard");
 }
 
-// export const getWallets = async (): Promise<
-//   WalletSchema[] | { error: string }
-// > => {
+export const getUserProfile = async (userId: string): Promise<
+  ProfileSchema[] | { error: string }
+> => {
 
-//   const token = await getToken()
-//   console.log(token.value)
-//   try {
-//     const result = await fetch(`${usersUrl}/wallets`);
+  try {
+    const result = await authenticatedFetch(`${usersUrl}/${userId}/profile`);
 
-//     // Check if the response is ok
-//     if (!result.ok) {
-//       return { error: `HTTP error! status: ${result.status}` };
-//     }
+    // Check if the response is ok
+    if (!result.ok) {
+      return { error: `HTTP error! status: ${result.status}` };
+    }
 
-//     const data = await result.json();
-//     console.log(data); // Log the parsed data instead
-//     return data;
-//   } catch (error) {
-//     return {
-//       error:
-//         error instanceof Error ? error.message : "An unknown error occurred",
-//     };
-//   }
-// };
+    const data = await result.json();
+    return data;
+
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
+  }
+};
 
 export const getWallets = async (): Promise<
   WalletSchema[] | { error: string }
@@ -184,15 +182,15 @@ export const getWallets = async (): Promise<
 };
 
 
-export const getUserProfile = async (
-  user_id: string
-): Promise<UserProfileResponse | { error: string }> => {
-  try {
-    const result = await fetch(
-      `${usersUrl.replace("/users", `/${user_id}/current-user-profile`)}`
-    );
-    return result.json();
-  } catch (error) {
-    return { error: error as string };
-  }
-};
+// export const getUserProfile = async (
+//   user_id: string
+// ): Promise<UserProfileResponse | { error: string }> => {
+//   try {
+//     const result = await fetch(
+//       `${usersUrl.replace("/users", `/${user_id}/current-user-profile`)}`
+//     );
+//     return result.json();
+//   } catch (error) {
+//     return { error: error as string };
+//   }
+// };
