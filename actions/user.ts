@@ -33,6 +33,54 @@ export const getToken = async () => {
   return token;
 };
 
+
+interface AuthenticatedFetchOptions {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  body?: any;
+  headers?: Record<string, string>;
+}
+
+export async function authenticatedFetch(
+  url: string, 
+  options: AuthenticatedFetchOptions = {}
+) {
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get('access_token')?.value;
+  
+  if (!accessToken) {
+    throw new Error('No access token found. Please log in again.');
+  }
+  
+  const { method = 'GET', body, headers = {} } = options;
+  
+  const config: RequestInit = {
+    method,
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  };
+  
+  if (body && method !== 'GET') {
+    config.body = JSON.stringify(body);
+  }
+  
+  const response = await fetch(url, config);
+  
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('Unauthorized. Please log in again.');
+    }
+    if (response.status === 403) {
+      throw new Error('Access forbidden. You do not have permission to perform this action.');
+    }
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  
+  return response;
+}
+
 export async function loginUser(data: FormData) {
   const formData = Object.fromEntries(data);
   const parsedData = loginSchema.safeParse(formData);
@@ -94,19 +142,38 @@ export async function loginUser(data: FormData) {
   redirect("/dashboard");
 }
 
+// export const getWallets = async (): Promise<
+//   WalletSchema[] | { error: string }
+// > => {
+
+//   const token = await getToken()
+//   console.log(token.value)
+//   try {
+//     const result = await fetch(`${usersUrl}/wallets`);
+
+//     // Check if the response is ok
+//     if (!result.ok) {
+//       return { error: `HTTP error! status: ${result.status}` };
+//     }
+
+//     const data = await result.json();
+//     console.log(data); // Log the parsed data instead
+//     return data;
+//   } catch (error) {
+//     return {
+//       error:
+//         error instanceof Error ? error.message : "An unknown error occurred",
+//     };
+//   }
+// };
+
 export const getWallets = async (): Promise<
   WalletSchema[] | { error: string }
 > => {
   try {
-    const result = await fetch(`${usersUrl}/wallets`);
-
-    // Check if the response is ok
-    if (!result.ok) {
-      return { error: `HTTP error! status: ${result.status}` };
-    }
-
+    const result = await authenticatedFetch(`${usersUrl}/wallets`);
     const data = await result.json();
-    console.log(data); // Log the parsed data instead
+ 
     return data;
   } catch (error) {
     return {
@@ -115,6 +182,7 @@ export const getWallets = async (): Promise<
     };
   }
 };
+
 
 export const getUserProfile = async (
   user_id: string
