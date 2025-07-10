@@ -55,7 +55,7 @@ export interface WalletSchema {
 }
 
 // Profile interface
-interface ProfileSchema {
+export interface ProfileSchema {
   user_id?: string;
   phone_number?: string;
   bike_number?: string;
