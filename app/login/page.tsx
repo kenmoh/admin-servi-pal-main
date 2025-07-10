@@ -1,9 +1,7 @@
 'use client'
-import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { z } from "zod";
@@ -149,11 +147,7 @@ export default function Login() {
                 "Sign in"
               )}
             </Button>
-
           </Form>
-
-
-
         </div>
       </Card>
     </div>

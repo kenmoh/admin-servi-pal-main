@@ -50,7 +50,7 @@ export async function loginUser(data: FormData) {
     apiFormData.append("username", parsedData.data.username);
     apiFormData.append("password", parsedData.data.password);
 
-    const response = await fetch(`${authsUrl}/auth/login`, {
+    const response = await fetch(`${authsUrl}/login`, {
       method: "POST",
       body: apiFormData,
     });
@@ -69,18 +69,13 @@ export async function loginUser(data: FormData) {
       const cookieStore = await cookies();
       cookieStore.set("access_token", data.access_token, {
         httpOnly: true,
-        maxAge: 60 * 60 * 24 * 7, // 1 week
+        maxAge: 60 * 60 * 24,
         path: "/",
       });
 
       cookieStore.set("refresh_token", data.refresh_token, {
         httpOnly: true,
         maxAge: 60 * 60 * 24 * 14,
-        path: "/",
-      });
-
-      cookieStore.set("allowed_routes", data.allowed_routes, {
-        httpOnly: true,
         path: "/",
       });
 
@@ -104,17 +99,20 @@ export const getWallets = async (): Promise<
 > => {
   try {
     const result = await fetch(`${usersUrl}/wallets`);
-    
+
     // Check if the response is ok
     if (!result.ok) {
       return { error: `HTTP error! status: ${result.status}` };
     }
-    
+
     const data = await result.json();
     console.log(data); // Log the parsed data instead
     return data;
   } catch (error) {
-    return { error: error instanceof Error ? error.message : 'An unknown error occurred' };
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
   }
 };
 
