@@ -60,7 +60,7 @@ export function UserProfileModal({ userId, trigger }: UserProfileModalProps) {
                 <div>
                   <DialogTitle>User Profile</DialogTitle>
                   <DialogDescription>
-                    {profile?.business_name || profile.profile?.store_name || profile.user_type}
+                    {profile?.business_name || profile?.store_name || profile.user_type}
                   </DialogDescription>
                 </div>
               </div>
