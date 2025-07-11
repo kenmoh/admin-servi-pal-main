@@ -136,7 +136,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavDocuments items={data.navSecondary} title="Platform Settings" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userProfile} />
+        {userProfile && <NavUser user={userProfile} />}
       </SidebarFooter>
     </Sidebar>
   );
