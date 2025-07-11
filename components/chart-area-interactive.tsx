@@ -59,7 +59,7 @@ interface ChartAreaInteractiveProps {
 export function ChartAreaInteractive({ orderStats }: ChartAreaInteractiveProps) {
   const isMobile = useIsMobile()
   const [timeRange, setTimeRange] = React.useState<StatsPeriod>(StatsPeriod.LAST_7_DAYS)
-  const [data, setData] = React.useState<OrderStatsResponse | null>(orderStats)
+  const [data, setData] = React.useState<OrderStatsResponse | null>(orderStats || null)
   const [loading, setLoading] = React.useState(false)
 
   React.useEffect(() => {
