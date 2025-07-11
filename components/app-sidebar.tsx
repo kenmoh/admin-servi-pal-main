@@ -1,8 +1,6 @@
 "use client";
-
 import * as React from "react";
 import { IconInnerShadowTop } from "@tabler/icons-react";
-
 import { NavDocuments } from "@/components/nav-documents";
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
@@ -15,7 +13,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
 import {
   Handshake,
   ListCheck,
@@ -33,9 +30,9 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query"
 import { getUserProfileDetails } from "@/actions/user";
+import { User } from "@/types/user-types";
 
 const data = {
-  
   navMain: [
     {
       title: "Dashboard",
@@ -47,7 +44,6 @@ const data = {
       url: "/dashboard/users",
       icon: UsersRound,
     },
-
     {
       title: "Team",
       url: "/dashboard/team",
@@ -64,7 +60,6 @@ const data = {
       icon: DollarSign,
     },
   ],
-
   analytics: [
     {
       name: "User Analytics",
@@ -76,9 +71,7 @@ const data = {
       url: "/dashboard/operational-analytics",
       icon: Activity,
     },
-  
   ],
-
   navSecondary: [
     {
       name: "Settings",
@@ -102,22 +95,22 @@ const data = {
       url: "/dashboard/laundry-items",
       icon: WashingMachine,
     },
-    
   ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [userProfile, setUserProfile] = React.useState()
-
+  const [userProfile, setUserProfile] = React.useState<User | undefined>(undefined);
+  
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['currentUserProfile'],
     queryFn: getUserProfileDetails,
   });
 
-  if(profile){
-    setUserProfile(profile)
-  }
-
+  React.useEffect(() => {
+    if (profile && !('error' in profile)) {
+      setUserProfile(profile);
+    }
+  }, [profile]);
 
   return (
     <Sidebar collapsible="offcanvas" {...props}>
