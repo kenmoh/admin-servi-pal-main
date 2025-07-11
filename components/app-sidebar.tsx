@@ -107,13 +107,18 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [userProfile, setUserProfile] = React.useState()
 
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['currentUserProfile'],
     queryFn: getUserProfileDetails,
   });
 
-  console.log(profile)
+  if(profile){
+    setUserProfile(profile)
+  }
+
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -138,7 +143,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavDocuments items={data.navSecondary} title="Platform Settings" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={profile} />
+        <NavUser user={userProfile} />
       </SidebarFooter>
     </Sidebar>
   );
