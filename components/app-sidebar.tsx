@@ -26,14 +26,16 @@ import {
   SettingsIcon,
   LayoutDashboardIcon,
   DollarSign,
+  Users,
+  TrendingUp,
+  BarChart3,
+  Activity,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query"
+import { getUserProfileDetails } from "@/actions/user";
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+  
   navMain: [
     {
       title: "Dashboard",
@@ -63,10 +65,24 @@ const data = {
     },
   ],
 
+  analytics: [
+    {
+      name: "User Analytics",
+      url: "/dashboard/user-analytics",
+      icon: Users,
+    },
+    {
+      name: "Operational Analytics",
+      url: "/dashboard/operational-analytics",
+      icon: Activity,
+    },
+  
+  ],
+
   navSecondary: [
     {
-      title: "Settings",
-      url: "#",
+      name: "Settings",
+      url: "/dashboard/settings",
       icon: SettingsIcon,
     },
   ],
@@ -91,6 +107,13 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+
+  const { data: profile, isLoading, error } = useQuery({
+    queryKey: ['currentUserProfile'],
+    queryFn: getUserProfileDetails,
+  });
+
+  console.log(profile)
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -111,10 +134,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavDocuments items={data.services} />
-        {/* <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        <NavDocuments items={data.analytics} title="Analytics" />
+        <NavDocuments items={data.navSecondary} title="Platform Settings" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={profile} />
       </SidebarFooter>
     </Sidebar>
   );

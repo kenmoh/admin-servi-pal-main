@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 import { usersUrl, authsUrl } from "@/lib/constant";
 import { User, WalletSchema, UserProfileResponse, ProfileSchema } from "@/types/user-types";
 
@@ -33,6 +34,23 @@ export const getToken = async () => {
   return token;
 };
 
+export const getUserIdFromToken = async (): Promise<string | null> => {
+  try {
+    const token = await getToken();
+    if (!token?.value) {
+      return null;
+    }
+    
+    // Decode without verification (since we're only extracting the sub)
+    // Note: For production, you should verify the token with your secret
+    const decodedToken = jwtDecode(token.value)
+    
+    return decodedToken?.sub || null;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
+};
 
 interface AuthenticatedFetchOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -98,7 +116,7 @@ export async function loginUser(data: FormData) {
     apiFormData.append("username", parsedData.data.username);
     apiFormData.append("password", parsedData.data.password);
 
-    const response = await fetch(`${authsUrl}/login`, {
+    const response = await fetch(`${authsUrl}/admin-login`, {
       method: "POST",
       body: apiFormData,
     });
@@ -157,6 +175,37 @@ export const getUserProfile = async (userId: string): Promise<
     const data = await result.json();
     return data;
 
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
+  }
+};
+
+export const getUserProfileDetails = async (): Promise<
+  User | { error: string }
+> => {
+  try {
+    // Get the user ID from the token
+    const userId = await getUserIdFromToken();
+    
+    if (!userId) {
+      return { error: 'No valid user ID found in token' };
+    }
+
+    // Get the token for authorization header
+    const token = await getToken();
+    
+    const result = await authenticatedFetch(`${usersUrl}/${userId}/current-user-profile`);
+    
+    // Check if the response is ok
+    if (!result.ok) {
+      return { error: `HTTP error! status: ${result.status}` };
+    }
+    
+    const data = await result.json();
+    return data;
   } catch (error) {
     return {
       error:

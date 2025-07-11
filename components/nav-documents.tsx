@@ -19,14 +19,18 @@ interface NavDocumentItem {
   >;
 }
 
+interface NavDocumentsProps {
+  items: NavDocumentItem[];
+  title?: string;
+}
+
 export function NavDocuments({
   items,
-}: {
-  items: NavDocumentItem[];
-}): ReactElement {
+  title = "Services",
+}: NavDocumentsProps): ReactElement {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Services</SidebarGroupLabel>
+      <SidebarGroupLabel>{title}</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
