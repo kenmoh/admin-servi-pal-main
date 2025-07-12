@@ -64,16 +64,6 @@ import {
 } from "@/components/ui/chart"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-} from "@/components/ui/drawer"
-import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
@@ -174,16 +164,18 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
     {
         accessorKey: "id",
         header: "Transaction ID",
-        cell: ({ row }) => {
-            return <TableCellViewer item={row.original} />
-        },
+        cell: ({ row }) => (
+            <div className="max-w-32 truncate font-mono text-sm">
+                {row.original.id}
+            </div>
+        ),
         enableHiding: false,
     },
     {
         accessorKey: "wallet_id",
         header: "Wallet ID",
         cell: ({ row }) => (
-            <div className="max-w-32 truncate">
+            <div className="max-w-32 truncate font-mono text-sm">
                 {row.original.wallet_id}
             </div>
         ),
@@ -237,11 +229,29 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ),
     },
     {
+        accessorKey: "payment_by",
+        header: "Payment By",
+        cell: ({ row }) => (
+            <div className="max-w-32 truncate">
+                {row.original.payment_by || "N/A"}
+            </div>
+        ),
+    },
+    {
         accessorKey: "created_at",
-        header: "Date",
+        header: "Created At",
         cell: ({ row }) => (
             <div className="text-sm text-muted-foreground">
                 {new Date(row.original.created_at).toLocaleDateString()}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "updated_at",
+        header: "Updated At",
+        cell: ({ row }) => (
+            <div className="text-sm text-muted-foreground">
+                {new Date(row.original.updated_at).toLocaleDateString()}
             </div>
         ),
     },
@@ -454,98 +464,5 @@ export function TransactionDataTable({
                 </div>
             </div>
         </div>
-    )
-}
-
-function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
-    const [open, setOpen] = React.useState(false)
-
-    return (
-        <Drawer open={open} onOpenChange={setOpen}>
-            <DrawerTrigger asChild>
-                <Button variant="link" className="p-0 h-auto min-h-0 text-blue-600 cursor-pointer underline">
-                    {item.id}
-                </Button>
-            </DrawerTrigger>
-            <DrawerContent>
-                <DrawerHeader>
-                    <DrawerTitle>Transaction Details</DrawerTitle>
-                    <DrawerDescription>
-                        Detailed information about transaction {item.id}
-                    </DrawerDescription>
-                </DrawerHeader>
-                <div className="p-6 space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <Label className="text-sm font-medium">Transaction ID</Label>
-                            <p className="text-sm text-muted-foreground">{item.id}</p>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Wallet ID</Label>
-                            <p className="text-sm text-muted-foreground">{item.wallet_id}</p>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Amount</Label>
-                            <p className="text-sm text-muted-foreground">₦{item.amount.toLocaleString()}</p>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Type</Label>
-                            <Badge className="capitalize">{item.transaction_type}</Badge>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Status</Label>
-                            <Badge
-                                variant={
-                                    item.payment_status === "completed" || item.payment_status === "successful" || item.payment_status === "paid"
-                                        ? "default"
-                                        : item.payment_status === "pending"
-                                            ? "secondary"
-                                            : "destructive"
-                                }
-                                className="capitalize"
-                            >
-                                {item.payment_status}
-                            </Badge>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Payment Method</Label>
-                            <p className="text-sm text-muted-foreground capitalize">{item.payment_method || "N/A"}</p>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Created At</Label>
-                            <p className="text-sm text-muted-foreground">{new Date(item.created_at).toLocaleString()}</p>
-                        </div>
-                        <div>
-                            <Label className="text-sm font-medium">Updated At</Label>
-                            <p className="text-sm text-muted-foreground">{new Date(item.updated_at).toLocaleString()}</p>
-                        </div>
-                    </div>
-                    {item.payment_by && (
-                        <div>
-                            <Label className="text-sm font-medium">Payment By</Label>
-                            <p className="text-sm text-muted-foreground">{item.payment_by}</p>
-                        </div>
-                    )}
-                    {item.payment_link && (
-                        <div>
-                            <Label className="text-sm font-medium">Payment Link</Label>
-                            <a
-                                href={item.payment_link}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm text-blue-600 hover:underline"
-                            >
-                                View Payment Link
-                            </a>
-                        </div>
-                    )}
-                </div>
-                <DrawerFooter>
-                    <DrawerClose asChild>
-                        <Button variant="outline">Close</Button>
-                    </DrawerClose>
-                </DrawerFooter>
-            </DrawerContent>
-        </Drawer>
     )
 } 
