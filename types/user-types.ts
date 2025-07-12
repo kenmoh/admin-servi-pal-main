@@ -46,10 +46,17 @@ export interface TransactionSchema {
   created_at: Date;
 }
 
+interface WalletProfileData {
+  full_name?: string;
+  business_name?: string;
+  phone_number: string;
+}
+
 // Wallet interface
 export interface WalletSchema {
   id: string;
   balance: number;
+  profile: WalletProfileData;
   escrow_balance: number;
   transactions: TransactionSchema[];
 }

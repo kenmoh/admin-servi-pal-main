@@ -20,6 +20,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
+import { useMutation } from "@tanstack/react-query"
 import {
   IconEye,
   IconChevronDown,
@@ -52,6 +53,7 @@ import {
 } from "@tanstack/react-table"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 import { toast } from "sonner"
+import { Loader } from "lucide-react";
 import { z } from "zod"
 
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -91,8 +93,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"  
-import {AddUserDialog} from "@/components/add-user"  
+import { Separator } from "@/components/ui/separator"
+import { AddUserDialog } from "@/components/add-user"
 import {
   Table,
   TableBody,
@@ -101,6 +103,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { toggleBlockUser } from "@/actions/user";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 
@@ -232,7 +235,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
       </div>
     ),
   },
- 
+
 ]
 
 function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
@@ -278,6 +281,7 @@ export function UserDataTable({
   const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
   const [isMounted, setIsMounted] = React.useState(false);
 
+
   // Fix hydration error by waiting for component to mount
   React.useEffect(() => {
     setIsMounted(true);
@@ -302,9 +306,9 @@ export function UserDataTable({
   // Memoized filtered data with phone_number added to search
   const filteredData = React.useMemo(() => {
     if (!debouncedFilterText) return data;
-    
+
     const searchTerm = debouncedFilterText.toLowerCase();
-    
+
     return data.filter(user => {
       const fieldsToSearch = [
         user.id,
@@ -314,14 +318,14 @@ export function UserDataTable({
         user.profile.business_name || "",
         user.profile.phone_number || ""
       ];
-      
-      return fieldsToSearch.some(field => 
+
+      return fieldsToSearch.some(field =>
         field.toLowerCase().includes(searchTerm)
       );
     });
   }, [data, debouncedFilterText]);
 
-  const dataIds = React.useMemo(() => 
+  const dataIds = React.useMemo(() =>
     filteredData.map(({ id }) => id),
     [filteredData]
   )
@@ -351,25 +355,16 @@ export function UserDataTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  // function handleDragEnd(event: DragEndEvent) {
-  //   const { active, over } = event
-  //   if (active && over && active.id !== over.id) {
-  //     setData((data) => {
-  //       const oldIndex = dataIds.indexOf(active.id)
-  //       const newIndex = dataIds.indexOf(over.id)
-  //       return arrayMove(data, oldIndex, newIndex)
-  //     })
-  //   }
-  // }
+
 
   const [open, setOpen] = React.useState(false);
 
   if (!isMounted) {
-    return null; 
+    return null;
   }
 
   return (
-   <div className="w-full flex-col justify-start gap-6">
+    <div className="w-full flex-col justify-start gap-6">
       <div className="flex flex-col gap-4 px-4 lg:px-6">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold">User Management</h2>
@@ -409,57 +404,51 @@ export function UserDataTable({
           className="max-w-md mb-8"
         />
       </div>
-      
+
       <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
         <div className="overflow-hidden rounded-lg border">
-         {/* <DndContext
-            collisionDetection={closestCenter}
-            modifiers={[restrictToVerticalAxis]}
-            onDragEnd={handleDragEnd}
-            sensors={sensors}
-            id={sortableId}
-          >*/}
-            <Table>
-              <TableHeader className="bg-muted sticky top-0 z-10">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} colSpan={header.colSpan}>
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                        </TableHead>
-                      )
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody className="**:data-[slot=table-cell]:first:w-8">
-                {table.getRowModel().rows?.length ? (
-                  <SortableContext
-                    items={dataIds}
-                    strategy={verticalListSortingStrategy}
+
+          <Table>
+            <TableHeader className="bg-muted sticky top-0 z-10">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </TableHead>
+                    )
+                  })}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody className="**:data-[slot=table-cell]:first:w-8">
+              {table.getRowModel().rows?.length ? (
+                <SortableContext
+                  items={dataIds}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {table.getRowModel().rows.map((row) => (
+                    <DraggableRow key={row.id} row={row} />
+                  ))}
+                </SortableContext>
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
                   >
-                    {table.getRowModel().rows.map((row) => (
-                      <DraggableRow key={row.id} row={row} />
-                    ))}
-                  </SortableContext>
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-24 text-center"
-                    >
-                      No results found.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                    No results found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
           {/*</DndContext>*/}
         </div>
         <div className="flex items-center justify-between px-4">
@@ -548,6 +537,19 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
   const isMobile = useIsMobile();
   const [isBlocked, setIsBlocked] = React.useState(item.is_blocked);
   const [isMounted, setIsMounted] = React.useState(false);
+
+  const { mutate: toggleBlock, isPending } = useMutation({
+    mutationFn: toggleBlockUser,
+    onSuccess: (data) => {
+      if ("is_blocked" in data) {
+        setIsBlocked(data.is_blocked);
+      }
+      // Optionally handle error case here
+    },
+    onError: () => {
+      // toast.error("Failed to update user status");
+    }
+  });
 
   React.useEffect(() => {
     setIsMounted(true);
@@ -714,19 +716,25 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               <AccountStatusPill status={item.account_status} />
             </div>
           </div>
-
-          <div className="flex flex-col gap-1 mt-4">
-            <Button
-              variant={isBlocked ? "default" : "destructive"}
-              onClick={() => setIsBlocked(b => !b)}
-            >
-              {isBlocked ? "Unblock User" : "Block User"}
-            </Button>
-          </div>
-
         </div>
         <DrawerFooter>
-          <Button>Save Changes</Button>
+          <Button
+            className='cursor-pointer'
+            variant={isBlocked ? "default" : "destructive"}
+            onClick={() => toggleBlock(item.id)}
+            disabled={isPending}
+          >
+            {isPending ? (
+              <>
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+                {isBlocked ? "Unblocking..." : "Blocking..."}
+              </>
+            ) : isBlocked ? (
+              "Unblock"
+            ) : (
+              "Block"
+            )}
+          </Button>
           <DrawerClose asChild>
             <Button variant="outline">Close</Button>
           </DrawerClose>

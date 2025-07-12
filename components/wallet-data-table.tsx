@@ -41,19 +41,11 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { WalletSchema, UserProfileResponse } from "@/types/user-types";
-import { getUserProfile } from "@/actions/user";
-import {UserProfileModal} from '@/components/user-profile'
+import { WalletSchema } from "@/types/user-types";
+import { UserProfileModal } from '@/components/user-profile'
 
 function DragHandle({ id }: { id: string }) {
     const { attributes, listeners } = useSortable({ id });
@@ -74,9 +66,24 @@ const columns: ColumnDef<WalletSchema>[] = [
     {
         accessorKey: "id",
         header: "Wallet ID",
-        cell: ({ row }) => <WalletDrawer wallet={row.original} />, // clickable drawer
+        cell: ({ row }) => <WalletDrawer wallet={row.original} />,
         enableHiding: false,
     },
+
+
+    {
+        accessorKey: "profile.full_name",
+        header: "Name",
+        cell: ({ row }) => <span>{row.original?.profile?.business_name || row.original?.profile?.full_name || "N/A"}</span>,
+        enableHiding: false,
+    },
+    {
+        accessorKey: "profile.phone_number",
+        header: "Name",
+        cell: ({ row }) => <span>{row.original?.profile?.phone_number || "N/A"}</span>,
+        enableHiding: false,
+    },
+
     {
         accessorKey: "balance",
         header: "Balance",
@@ -119,9 +126,9 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader>
-                    <DrawerTitle><UserProfileModal userId={wallet.id}  /></DrawerTitle>
+                    <DrawerTitle><UserProfileModal userId={wallet.id} /></DrawerTitle>
                     <DrawerTitle>Transactions for Wallet:   {wallet.id}</DrawerTitle>
-                     <DrawerTitle>Total Transactions:   {wallet?.transactions.length}</DrawerTitle>
+                    <DrawerTitle>Total Transactions:   {wallet?.transactions.length}</DrawerTitle>
                 </DrawerHeader>
                 <Table>
                     <TableHeader>
@@ -149,48 +156,6 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
         </Drawer>
     );
 }
-
-// function UserProfileModal({ userId, trigger }: { userId: string; trigger: React.ReactNode }) {
-//     const [open, setOpen] = React.useState(false);
-//     const [profile, setProfile] = React.useState<UserProfileResponse | null>(null);
-//     React.useEffect(() => {
-//         if (open) {
-//             getUserProfile(userId).then((res) => {
-//                 if ("error" in res) setProfile(null);
-//                 else setProfile(res);
-//             });
-//         }
-//     }, [open, userId]);
-//     return (
-//         <Dialog open={open} onOpenChange={setOpen}>
-//             <DialogTrigger asChild>{trigger}</DialogTrigger>
-//             <DialogContent>
-//                 <DialogHeader>
-//                     <DialogTitle>User Profile</DialogTitle>
-//                 </DialogHeader>
-//                 {profile ? (
-//                     <div className="space-y-2">
-//                         <div><b>ID:</b> {profile.id}</div>
-//                         <div><b>Email:</b> {profile.email}</div>
-//                         <div><b>User Type:</b> {profile.user_type}</div>
-//                         {profile.profile && (
-//                             <>
-//                                 <div><b>Full Name:</b> {profile.profile.full_name}</div>
-//                                 <div><b>Phone:</b> {profile.profile.phone_number}</div>
-//                                 <div><b>Business Name:</b> {profile.profile.business_name}</div>
-//                                 <div><b>Store Name:</b> {profile.profile.store_name}</div>
-//                                 <div><b>Business Address:</b> {profile.profile.business_address}</div>
-//                                 <div><b>Bank Name:</b> {profile.profile.bank_name}</div>
-//                                 <div><b>Account Number:</b> {profile.profile.bank_account_number}</div>
-//                             </>
-//                         )}
-//                     </div>
-//                 ) : (
-//                     <div>Loading...</div>
-//                 )}
-//             </DialogContent>
-//         </Dialog>
-//     );
 // }
 
 export function WalletDataTable({ data: initialData }: { data: WalletSchema[] }) {

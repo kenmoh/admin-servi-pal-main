@@ -5,11 +5,20 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { usersUrl, authsUrl } from "@/lib/constant";
-import { User, WalletSchema, UserProfileResponse, ProfileSchema } from "@/types/user-types";
+import { User, WalletSchema, ProfileSchema } from "@/types/user-types";
 
 export const getUsers = async (): Promise<User[] | { error: string }> => {
   try {
     const result = await fetch(`${usersUrl}`);
+    return result.json();
+  } catch (error) {
+    return { error: error as string };
+  }
+};
+export const getTeams = async (): Promise<User[] | { error: string }> => {
+  try {
+    const result = await fetch(`${usersUrl}/teams`);
+    console.log(result.json());
     return result.json();
   } catch (error) {
     return { error: error as string };
@@ -40,62 +49,64 @@ export const getUserIdFromToken = async (): Promise<string | null> => {
     if (!token?.value) {
       return null;
     }
-    
+
     // Decode without verification (since we're only extracting the sub)
     // Note: For production, you should verify the token with your secret
-    const decodedToken = jwtDecode(token.value)
-    
+    const decodedToken = jwtDecode(token.value);
+
     return decodedToken?.sub || null;
   } catch (error) {
-    console.error('Error decoding token:', error);
+    console.error("Error decoding token:", error);
     return null;
   }
 };
 
 interface AuthenticatedFetchOptions {
-  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method?: "GET" | "POST" | "PUT" | "DELETE";
   body?: any;
   headers?: Record<string, string>;
 }
 
 export async function authenticatedFetch(
-  url: string, 
+  url: string,
   options: AuthenticatedFetchOptions = {}
 ) {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get('access_token')?.value;
-  
+  const accessToken = cookieStore.get("access_token")?.value;
+
   if (!accessToken) {
-    throw new Error('No access token found. Please log in again.');
+    throw new Error("No access token found. Please log in again.");
   }
-  
-  const { method = 'GET', body, headers = {} } = options;
-  
+
+  const { method = "GET", body, headers = {} } = options;
+
   const config: RequestInit = {
     method,
     headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
       ...headers,
     },
   };
-  
-  if (body && method !== 'GET') {
+
+  if (body && method !== "GET") {
     config.body = JSON.stringify(body);
   }
-  
+
   const response = await fetch(url, config);
-  
+
   if (!response.ok) {
     if (response.status === 401) {
-      throw new Error('Unauthorized. Please log in again.');
+      throw new Error("Unauthorized. Please log in again.");
     }
     if (response.status === 403) {
-      throw new Error('Access forbidden. You do not have permission to perform this action.');
+      throw new Error(
+        "Access forbidden. You do not have permission to perform this action."
+      );
     }
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  
+
   return response;
 }
 
@@ -160,10 +171,9 @@ export async function loginUser(data: FormData) {
   redirect("/dashboard");
 }
 
-export const getUserProfile = async (userId: string): Promise<
-  ProfileSchema | { error: string }
-> => {
-
+export const getUserProfile = async (
+  userId: string
+): Promise<ProfileSchema | { error: string }> => {
   try {
     const result = await authenticatedFetch(`${usersUrl}/${userId}/profile`);
 
@@ -174,7 +184,6 @@ export const getUserProfile = async (userId: string): Promise<
 
     const data = await result.json();
     return data;
-
   } catch (error) {
     return {
       error:
@@ -189,21 +198,23 @@ export const getUserProfileDetails = async (): Promise<
   try {
     // Get the user ID from the token
     const userId = await getUserIdFromToken();
-    
+
     if (!userId) {
-      return { error: 'No valid user ID found in token' };
+      return { error: "No valid user ID found in token" };
     }
 
     // Get the token for authorization header
     const token = await getToken();
-    
-    const result = await authenticatedFetch(`${usersUrl}/${userId}/current-user-profile`);
-    
+
+    const result = await authenticatedFetch(
+      `${usersUrl}/${userId}/current-user-profile`
+    );
+
     // Check if the response is ok
     if (!result.ok) {
       return { error: `HTTP error! status: ${result.status}` };
     }
-    
+
     const data = await result.json();
     return data;
   } catch (error) {
@@ -220,7 +231,7 @@ export const getWallets = async (): Promise<
   try {
     const result = await authenticatedFetch(`${usersUrl}/wallets`);
     const data = await result.json();
- 
+
     return data;
   } catch (error) {
     return {
@@ -230,16 +241,24 @@ export const getWallets = async (): Promise<
   }
 };
 
+interface BlockUser {
+  is_blocked: boolean;
+}
 
-// export const getUserProfile = async (
-//   user_id: string
-// ): Promise<UserProfileResponse | { error: string }> => {
-//   try {
-//     const result = await fetch(
-//       `${usersUrl.replace("/users", `/${user_id}/current-user-profile`)}`
-//     );
-//     return result.json();
-//   } catch (error) {
-//     return { error: error as string };
-//   }
-// };
+export const toggleBlockUser = async (
+  userId: string
+): Promise<BlockUser | { error: string }> => {
+  try {
+    const result = await authenticatedFetch(
+      `${usersUrl}/${userId}/toggle-block`,
+      {
+        method: "PUT",
+      }
+    );
+    console.log(result.json());
+
+    return result.json();
+  } catch (error) {
+    return { error: error as string };
+  }
+};
