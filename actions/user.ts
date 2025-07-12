@@ -5,7 +5,12 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { usersUrl, authsUrl } from "@/lib/constant";
-import { User, WalletSchema, ProfileSchema } from "@/types/user-types";
+import {
+  User,
+  WalletSchema,
+  ProfileSchema,
+  RiderProfile,
+} from "@/types/user-types";
 
 export const getUsers = async (): Promise<User[] | { error: string }> => {
   try {
@@ -208,6 +213,28 @@ export const getUserProfileDetails = async (): Promise<
 
     const result = await authenticatedFetch(
       `${usersUrl}/${userId}/current-user-profile`
+    );
+
+    // Check if the response is ok
+    if (!result.ok) {
+      return { error: `HTTP error! status: ${result.status}` };
+    }
+
+    const data = await result.json();
+    return data;
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
+  }
+};
+export const getRiderProfileDetails = async (
+  userId: string
+): Promise<RiderProfile | { error: string }> => {
+  try {
+    const result = await authenticatedFetch(
+      `${usersUrl}/${userId}/rider-profile`
     );
 
     // Check if the response is ok

@@ -79,7 +79,7 @@ const columns: ColumnDef<WalletSchema>[] = [
     },
     {
         accessorKey: "profile.phone_number",
-        header: "Name",
+        header: "Phone Number",
         cell: ({ row }) => <span>{row.original?.profile?.phone_number || "N/A"}</span>,
         enableHiding: false,
     },

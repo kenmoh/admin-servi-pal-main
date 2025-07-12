@@ -87,4 +87,11 @@ export interface UserProfileResponse {
   profile?: ProfileSchema;
 }
 
-// emdpoints ("/wallets", /{user_id}/current-user-profile)
+export interface RiderProfile {
+  profile_image_url: string;
+  full_name: string;
+  phone_number: string;
+  bike_number: string;
+  business_name: string;
+  business_address: string;
+}
