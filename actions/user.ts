@@ -33,6 +33,12 @@ const loginSchema = z.object({
   username: z.string().trim().email("Invalid email address"),
   password: z.string().trim().min(1, "Password is required"),
 });
+const createStaffSchema = z.object({
+  email: z.string().trim().email("Invalid email address"),
+  phone_number: z.string().trim().min(1, "Phone number is required"),
+  full_name: z.string().trim().min(1, "Full name is required"),
+  password: z.string().trim().min(1, "Password is required"),
+});
 
 export type FormState = {
   message: string;
@@ -281,10 +287,32 @@ export const toggleBlockUser = async (
         method: "PUT",
       }
     );
-    console.log(result.json());
-
-    return result.json();
+    const data = await result.json();
+    return data;
   } catch (error) {
     return { error: error as string };
+  }
+};
+
+export const createStaff = async (
+  staffData: z.infer<typeof createStaffSchema>
+): Promise<{ success: boolean; message: string } | { error: string }> => {
+  try {
+    const result = await authenticatedFetch(`${authsUrl}/create-staff`, {
+      method: "POST",
+      body: staffData,
+    });
+
+    const data = await result.json();
+    return {
+      success: true,
+      message: "Staff created successfully",
+      ...data,
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
   }
 };

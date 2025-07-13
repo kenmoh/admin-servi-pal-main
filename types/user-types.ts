@@ -95,3 +95,15 @@ export interface RiderProfile {
   business_name: string;
   business_address: string;
 }
+
+export interface StaffCreate {
+  email: string;
+  phone_number: string;
+  full_name: string;
+  password: string;
+}
+
+export interface StaffResponse {
+  email: string;
+  user_type: string;
+}

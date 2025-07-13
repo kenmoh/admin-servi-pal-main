@@ -16,16 +16,23 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { IconPlus } from "@tabler/icons-react"
+import { IconPlus, IconLoader } from "@tabler/icons-react"
 import { useState } from "react"
+import { useMutation } from "@tanstack/react-query"
+import { createStaff } from "@/actions/user"
+import { toast } from "sonner"
 
 
 const registerSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
-  phone_number: z.string().min(1, { message: "Invalid Phone Number" }),
-  password: z.string().min(1, { message: "Password is required" }),
-  confirm_password: z.string().min(1, { message: "Confirm Password is required" }),
 
+  email: z.string().email({ message: "Invalid email address" }),
+  phone_number: z.string().min(1, { message: "Phone number is required" }),
+  full_name: z.string().min(1, { message: "Full name is required" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  confirm_password: z.string().min(1, { message: "Confirm password is required" }),
+}).refine((data) => data.password === data.confirm_password, {
+  message: "Passwords don't match",
+  path: ["confirm_password"],
 });
 
 type RegisterValues = z.infer<typeof registerSchema>;
@@ -33,13 +40,30 @@ type RegisterValues = z.infer<typeof registerSchema>;
 export function AddUserDialog() {
   const [open, setOpen] = useState(false)
 
-   const form = useForm<RegisterValues>({
+  const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: "",
       phone_number: "",
+      full_name: "",
       password: "",
-      confirm_password:""
+      confirm_password: ""
+    },
+  });
+
+  const { mutate: createStaffMutation, isPending } = useMutation({
+    mutationFn: createStaff,
+    onSuccess: (data) => {
+      if ("success" in data) {
+        toast.success("Staff created successfully!");
+        setOpen(false);
+        form.reset();
+      } else {
+        toast.error(data.error || "Failed to create staff");
+      }
+    },
+    onError: (error) => {
+      toast.error("An error occurred while creating staff");
     },
   });
 
@@ -54,14 +78,17 @@ export function AddUserDialog() {
           <DialogTitle>Add User</DialogTitle>
           <DialogDescription>Fill in the details to add a new user.</DialogDescription>
         </DialogHeader>
-        <Form {...form}>
+        <form onSubmit={form.handleSubmit((data) => {
+          const { confirm_password, ...staffData } = data;
+          createStaffMutation(staffData);
+        })}>
           <div className="space-y-4">
             <FormField
               control={form.control}
               name="email"
               render={({ field }: { field: ControllerRenderProps<RegisterValues, "email"> }) => (
-                <FormItem className='my-10'>
-                  <FormLabel className='my-3'>Email</FormLabel>
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="email@example.com"
@@ -73,12 +100,29 @@ export function AddUserDialog() {
                 </FormItem>
               )}
             />
-           <FormField
+            <FormField
+              control={form.control}
+              name="full_name"
+              render={({ field }: { field: ControllerRenderProps<RegisterValues, "full_name"> }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="John Doe"
+                      type="text"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
               control={form.control}
               name="phone_number"
               render={({ field }: { field: ControllerRenderProps<RegisterValues, "phone_number"> }) => (
-                <FormItem className='my-10'>
-                  <FormLabel className='my-3'>Phone Number</FormLabel>
+                <FormItem>
+                  <FormLabel>Phone Number</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="23490989877"
@@ -90,12 +134,12 @@ export function AddUserDialog() {
                 </FormItem>
               )}
             />
-             <FormField
+            <FormField
               control={form.control}
               name="password"
               render={({ field }: { field: ControllerRenderProps<RegisterValues, "password"> }) => (
-                <FormItem className='my-10'>
-                  <FormLabel className='my-3'>Password</FormLabel>
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="**********"
@@ -109,10 +153,10 @@ export function AddUserDialog() {
             />
             <FormField
               control={form.control}
-              name="password"
-              render={({ field }: { field: ControllerRenderProps<RegisterValues, "password"> }) => (
-                <FormItem className='my-10'>
-                  <FormLabel className='my-3'>Confirm Password</FormLabel>
+              name="confirm_password"
+              render={({ field }: { field: ControllerRenderProps<RegisterValues, "confirm_password"> }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="********"
@@ -125,13 +169,22 @@ export function AddUserDialog() {
               )}
             />
           </div>
-        </Form>
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DialogClose>
-          <Button type="submit">Add User</Button>
-        </DialogFooter>
+          <DialogFooter className="mt-6">
+            <DialogClose asChild>
+              <Button variant="outline" type="button">Cancel</Button>
+            </DialogClose>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? (
+                <>
+                  <IconLoader className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Add Staff"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   )
