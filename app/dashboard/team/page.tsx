@@ -1,4 +1,3 @@
-
 import { TeamDataTable } from "@/components/team-data-table";
 import React from "react";
 import { getTeams } from "@/actions/user";

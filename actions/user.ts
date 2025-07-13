@@ -23,8 +23,8 @@ export const getUsers = async (): Promise<User[] | { error: string }> => {
 export const getTeams = async (): Promise<User[] | { error: string }> => {
   try {
     const result = await fetch(`${usersUrl}/teams`);
-    console.log(result.json());
-    return result.json();
+    const data = await result.json();
+    return data;
   } catch (error) {
     return { error: error as string };
   }
