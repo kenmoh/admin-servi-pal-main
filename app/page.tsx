@@ -62,7 +62,7 @@ const Home = () => {
               alt="ServiPal Logo"
               className="h-10 w-10"
             />
-            <div className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-primary via-brand-orange to-brand-blue">
+            <div className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-brand-orange via-primary to-brand-blue">
               ServiPal
             </div>
           </div>
@@ -128,13 +128,13 @@ const Home = () => {
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
                   href="https://play.google.com/store"
-                  className="bg-gray-800 p-3 rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
+                  className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
                 >
                   <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-10" />
                 </a>
                 <a
                   href="https://www.apple.com/app-store/"
-                  className="bg-gray-800 p-3 rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
+                  className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
                 >
                   <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-10" />
                 </a>
@@ -160,7 +160,7 @@ const Home = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg">Services Overview</h3>
-                    <div className="text-sm text-muted-foreground">Live</div>
+
                   </div>
 
                   {/* Service Cards */}

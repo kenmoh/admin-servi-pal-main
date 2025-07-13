@@ -23,10 +23,23 @@ export const getUsers = async (): Promise<User[] | { error: string }> => {
 export const getTeams = async (): Promise<User[] | { error: string }> => {
   try {
     const result = await fetch(`${usersUrl}/teams`);
+
+    if (!result.ok) {
+      return { error: `HTTP error! status: ${result.status}` };
+    }
+
+    const contentType = result.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      return { error: "Invalid response format - expected JSON" };
+    }
+
     const data = await result.json();
     return data;
   } catch (error) {
-    return { error: error as string };
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
   }
 };
 
