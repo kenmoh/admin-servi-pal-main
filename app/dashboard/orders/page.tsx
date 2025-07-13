@@ -1,9 +1,6 @@
 import { DeliveryDataTable } from "@/components/delivery-data-table";
-import { SectionCards } from "@/components/section-cards";
 import React from "react";
 import { getOrders } from "@/actions/order";
-import { DeliveryDetail } from "@/types/order-types";
-import { calculateOrderStats } from '@/lib/utils'
 
 
 const Page = async () => {

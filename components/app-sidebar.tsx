@@ -27,10 +27,12 @@ import {
   TrendingUp,
   BarChart3,
   Activity,
+  BugIcon,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query"
 import { getUserProfileDetails } from "@/actions/user";
 import { User } from "@/types/user-types";
+import { usePathname } from "next/navigation";
 
 const data = {
   navMain: [
@@ -59,6 +61,7 @@ const data = {
       url: "/dashboard/transactions",
       icon: DollarSign,
     },
+
   ],
   analytics: [
     {
@@ -70,6 +73,13 @@ const data = {
       name: "Operational Analytics",
       url: "/dashboard/operational-analytics",
       icon: Activity,
+    },
+  ],
+  navIssues: [
+    {
+      name: "Issues",
+      url: "/dashboard/issues",
+      icon: BugIcon,
     },
   ],
   navSecondary: [
@@ -100,7 +110,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [userProfile, setUserProfile] = React.useState<User | undefined>(undefined);
-  
+
   const { data: profile, isLoading, error } = useQuery({
     queryKey: ['currentUserProfile'],
     queryFn: getUserProfileDetails,
@@ -134,6 +144,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavDocuments items={data.services} />
         <NavDocuments items={data.analytics} title="Analytics" />
         <NavDocuments items={data.navSecondary} title="Platform Settings" />
+        <NavDocuments items={data.navIssues} title="Issues" />
       </SidebarContent>
       <SidebarFooter>
         {userProfile && <NavUser user={userProfile} />}
