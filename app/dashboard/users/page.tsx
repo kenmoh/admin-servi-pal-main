@@ -1,6 +1,5 @@
 
 import { UserDataTable } from "@/components/user-data-table";
-import { SectionCards, SectionCardConfig } from "@/components/section-cards";
 import React from "react";
 import { getUsers } from "@/actions/user";
 
