@@ -1,12 +1,26 @@
+"use client";
+
 import { TeamDataTable } from "@/components/team-data-table";
 import React from "react";
 import { getTeams } from "@/actions/user";
+import { useQuery } from "@tanstack/react-query";
 
-const Page = async () => {
-  const teams = await getTeams();
+const Page = () => {
+  const { data: teams, isLoading, error } = useQuery({
+    queryKey: ['teams'],
+    queryFn: getTeams,
+  });
 
-  if ("error" in teams) {
-    return <div>Error: {String(teams.error)}</div>;
+  if (isLoading) {
+    return <div>Loading teams...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {String(error)}</div>;
+  }
+
+  if (!teams || "error" in teams) {
+    return <div>Error: {String(teams?.error || "Failed to load teams")}</div>;
   }
 
   if (!Array.isArray(teams)) {

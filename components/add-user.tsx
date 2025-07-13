@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { IconPlus, IconLoader } from "@tabler/icons-react"
 import { useState } from "react"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { createStaff } from "@/actions/user"
 import { toast } from "sonner"
 
@@ -39,6 +39,7 @@ type RegisterValues = z.infer<typeof registerSchema>;
 
 export function AddUserDialog() {
   const [open, setOpen] = useState(false)
+  const queryClient = useQueryClient()
 
   const form = useForm<RegisterValues>({
     resolver: zodResolver(registerSchema),
@@ -58,6 +59,8 @@ export function AddUserDialog() {
         toast.success("Staff created successfully!");
         setOpen(false);
         form.reset();
+        // Invalidate and refetch teams data
+        queryClient.invalidateQueries({ queryKey: ['teams'] });
       } else {
         toast.error(data.error || "Failed to create staff");
       }
