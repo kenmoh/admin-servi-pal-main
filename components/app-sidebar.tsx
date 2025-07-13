@@ -33,6 +33,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getUserProfileDetails } from "@/actions/user";
 import { User } from "@/types/user-types";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const data = {
   navMain: [
@@ -131,10 +132,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
-                <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
-              </a>
+              <Link href="/dashboard">
+                {/* <IconInnerShadowTop className="!size-5" /> */}
+                <img
+                  src="/mainicon.png"
+                  alt="ServiPal Logo"
+                  className="h-10 w-10"
+                />
+                <span className="text-base font-semibold">ServiPal</span>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

@@ -28,28 +28,6 @@ export const getTeams = async (): Promise<User[] | { error: string }> => {
     return { error: error as string };
   }
 };
-// export const getTeams = async (): Promise<User[] | { error: string }> => {
-//   try {
-//     const result = await fetch(`${usersUrl}/teams`);
-
-//     if (!result.ok) {
-//       return { error: `HTTP error! status: ${result.status}` };
-//     }
-
-//     const contentType = result.headers.get("content-type");
-//     if (!contentType || !contentType.includes("application/json")) {
-//       return { error: "Invalid response format - expected JSON" };
-//     }
-
-//     const data = await result.json();
-//     return data;
-//   } catch (error) {
-//     return {
-//       error:
-//         error instanceof Error ? error.message : "An unknown error occurred",
-//     };
-//   }
-// };
 
 const loginSchema = z.object({
   username: z.string().trim().email("Invalid email address"),

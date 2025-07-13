@@ -296,12 +296,7 @@ export function UserDataTable({
     return () => clearTimeout(timer);
   }, [filterText]);
 
-  const sortableId = React.useId()
-  const sensors = useSensors(
-    useSensor(MouseSensor, {}),
-    useSensor(TouchSensor, {}),
-    useSensor(KeyboardSensor, {})
-  )
+
 
   // Memoized filtered data with phone_number added to search
   const filteredData = React.useMemo(() => {
