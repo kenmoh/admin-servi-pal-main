@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-
   Check,
-
   Package,
   Utensils,
   WashingMachine,
@@ -15,6 +13,7 @@ import {
   LogIn,
 
 } from 'lucide-react';
+import Link from 'next/link';
 
 const Home = () => {
   const [email, setEmail] = useState('');
@@ -89,11 +88,12 @@ const Home = () => {
           </nav>
           <div className="flex items-center gap-3">
 
-
-            <Button>
-              <LogIn className="mr-2 h-4 w-4" />
-              Admin Login
-            </Button>
+            <Link href='/login'>
+              <Button>
+                <LogIn className="mr-2 h-4 w-4" />
+                Login
+              </Button>
+            </Link>
 
           </div>
         </div>
