@@ -21,9 +21,15 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
   // Debounce ref for toasts
   const lastToastRef = useRef<ToastRecord>({});
   const TOAST_DEBOUNCE_MS = 3000;
+  const MAX_ATTEMPTS = 5;
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const connectionAttemptsRef = useRef(0);
 
   useEffect(() => {
+    let isUnmounted = false;
+
     const connect = () => {
+      if (isUnmounted) return;
       console.log(`Attempting to connect to WebSocket: ${url}`);
       const ws = new WebSocket(url);
       wsRef.current = ws;
@@ -32,7 +38,12 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
         console.log("WebSocket connected successfully");
         setIsConnected(true);
         setConnectionAttempts(0);
-        toast.success("Real-time connection established");
+        connectionAttemptsRef.current = 0;
+        toast.dismiss("ws-error"); // Dismiss error toast on reconnect
+        toast.success("Real-time connection established", {
+          id: "ws-success",
+          duration: 2000,
+        });
 
         // Subscribe to events
         events.forEach((event) => {
@@ -127,30 +138,46 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
       ws.onclose = () => {
         console.log("WebSocket disconnected, reconnecting...");
         setIsConnected(false);
-        setConnectionAttempts((prev) => prev + 1);
+        connectionAttemptsRef.current += 1;
+        setConnectionAttempts(connectionAttemptsRef.current);
 
-        if (connectionAttempts < 5) {
-          setTimeout(connect, 3000); // Reconnect after 3 seconds
+        if (connectionAttemptsRef.current < MAX_ATTEMPTS) {
+          if (!isUnmounted) {
+            reconnectTimeoutRef.current = setTimeout(connect, 3000); // Reconnect after 3 seconds
+          }
         } else {
-          toast.error("Failed to connect to real-time service");
+          toast.error("Failed to connect to real-time service", {
+            id: "ws-error",
+            duration: 10000,
+          });
         }
       };
 
       ws.onerror = (error) => {
         console.error("WebSocket error:", error);
         setIsConnected(false);
-        toast.error("Real-time connection error");
+        // Only show one error toast at a time
+        toast.error("Real-time connection error", {
+          id: "ws-error",
+          duration: 5000,
+        });
       };
     };
 
     connect();
 
     return () => {
+      isUnmounted = true;
       if (wsRef.current) {
         wsRef.current.close();
       }
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+      }
     };
-  }, [url, events, queryClient, onMessage, connectionAttempts]);
+    // Only re-run if url or events change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [url, JSON.stringify(events), queryClient, onMessage]);
 
   return { ws: wsRef.current, isConnected, connectionAttempts };
 }
