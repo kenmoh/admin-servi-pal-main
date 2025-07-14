@@ -11,6 +11,8 @@ import { loginUser } from "@/actions/user";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader } from "lucide-react";
 import { toast } from "sonner"; // Optional: for better error handling
+import { IconEye, IconEyeOff } from "@tabler/icons-react";
+import { useState } from "react";
 
 const LoginSchema = z.object({
   username: z.string().email({ message: "Invalid email address" }),
@@ -60,7 +62,7 @@ export default function Login() {
   const onSubmit = async (data: LoginValues) => {
     // Clear any previous errors
     form.clearErrors();
- 
+
     // Convert object to FormData to match backend expectation
     const formData = new FormData();
     formData.append('username', data.username);
@@ -71,6 +73,9 @@ export default function Login() {
 
   // Handle general server errors
   const serverError = data?.message && !data?.success ? data.message : null;
+
+  // Password visibility state
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background p-4">
@@ -119,12 +124,23 @@ export default function Login() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter your password"
-                      autoComplete="current-password"
-                      {...field}
-                    />
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter your password"
+                        autoComplete="current-password"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        tabIndex={-1}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        onClick={() => setShowPassword((v) => !v)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

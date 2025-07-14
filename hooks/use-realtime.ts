@@ -8,11 +8,19 @@ interface RealtimeConfig {
   onMessage?: (data: any) => void;
 }
 
+// Debounce map type
+interface ToastRecord {
+  [key: string]: { id: string | number; time: number };
+}
+
 export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
   const queryClient = useQueryClient();
   const wsRef = useRef<WebSocket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
+  // Debounce ref for toasts
+  const lastToastRef = useRef<ToastRecord>({});
+  const TOAST_DEBOUNCE_MS = 3000;
 
   useEffect(() => {
     const connect = () => {
@@ -37,27 +45,74 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
           const data = JSON.parse(event.data);
           console.log("WebSocket message received:", data);
 
+          // Helper to debounce toasts
+          function showDebouncedToast(
+            type: string,
+            id: string | number,
+            message: string,
+            toastFn = toast.success
+          ) {
+            const now = Date.now();
+            const key = `${type}:${id}`;
+            const last = lastToastRef.current[key];
+            if (last && now - last.time < TOAST_DEBOUNCE_MS) {
+              return;
+            }
+            lastToastRef.current[key] = { id, time: now };
+            toastFn(message);
+          }
+
           // Handle different event types
           switch (data.type) {
             case "new_order":
               console.log("Invalidating orders query...");
               queryClient.invalidateQueries({ queryKey: ["orders"] });
               queryClient.refetchQueries({ queryKey: ["orders"] });
+              if (data.order_id) {
+                showDebouncedToast(
+                  "new_order",
+                  data.order_id,
+                  `New order received: #${data.order_id}`
+                );
+              }
               break;
             case "new_user":
               console.log("Invalidating users query...");
               queryClient.invalidateQueries({ queryKey: ["users"] });
               queryClient.refetchQueries({ queryKey: ["users"] });
+              if (data.email) {
+                showDebouncedToast(
+                  "new_user",
+                  data.email,
+                  `New user registered: ${data.email}`,
+                  toast.info
+                );
+              }
               break;
             case "new_team":
               console.log("Invalidating teams query...");
               queryClient.invalidateQueries({ queryKey: ["teams"] });
               queryClient.refetchQueries({ queryKey: ["teams"] });
+              if (data.team_id) {
+                showDebouncedToast(
+                  "new_team",
+                  data.team_id,
+                  `New team member added: #${data.team_id}`
+                );
+              }
               break;
             case "order_status_update":
               console.log("Invalidating orders query for status update...");
               queryClient.invalidateQueries({ queryKey: ["orders"] });
               queryClient.refetchQueries({ queryKey: ["orders"] });
+              if (data.order_id && data.status) {
+                showDebouncedToast(
+                  "order_status_update",
+                  data.order_id,
+                  `Order #${data.order_id} status updated to ${data.status}`,
+                  toast.info
+                );
+              }
               break;
             default:
               console.log("Unknown event type:", data.type);
