@@ -22,12 +22,12 @@ export function useRealtimeStatus() {
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     // Connect to WebSocket for real-time updates
     const { isConnected, connectionAttempts } = useRealtime({
-        url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
+        // url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
+        url: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws',
         events: ['new_order', 'delivery_order_status_update', 'new_user', 'new_team', 'order_status_update'],
     });
 
-    // Show connection status in console for debugging
-    console.log('WebSocket Status:', { isConnected, connectionAttempts });
+    
 
     return (
         <RealtimeContext.Provider value={{ isConnected, connectionAttempts }}>

@@ -10,6 +10,7 @@ const Page = () => {
   const { data: teams, isLoading, error } = useQuery({
     queryKey: ['teams'],
     queryFn: getTeams,
+    staleTime: 0,
   });
 
   if (isLoading) {
@@ -17,12 +18,12 @@ const Page = () => {
       <div className="flex flex-1 flex-col">
         <div className="@container/main flex flex-1 flex-col gap-2">
           <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-            <div className="space-y-4">
+            <div className="space-y-4 px-8">
               <Skeleton className="h-8 w-48" />
               <Skeleton className="h-10 w-full" />
               <div className="space-y-2">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="h-16 w-full" />
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <Skeleton key={i} className="h-12 w-full" />
                 ))}
               </div>
             </div>

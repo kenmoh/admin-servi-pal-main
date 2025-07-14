@@ -5,7 +5,6 @@ import { WalletDataTable } from "@/components/wallet-data-table";
 const Page = async () => {
   const wallets = await getWallets();
 
-  console.log(wallets)
   if ("error" in wallets) return <div>Error: {wallets.error}</div>;
 
   return (
