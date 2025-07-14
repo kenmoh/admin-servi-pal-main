@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     // Connect to WebSocket for real-time updates
     useRealtime({
-        url: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws/ws',
+        url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
         events: ['new_order', 'new_user', 'new_team', 'order_status_update'],
         onMessage: (data) => {
             // Show toast notifications for important events
