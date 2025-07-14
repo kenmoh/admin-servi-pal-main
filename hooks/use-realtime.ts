@@ -35,22 +35,32 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
+          console.log("WebSocket message received:", data);
 
           // Handle different event types
           switch (data.type) {
             case "new_order":
+              console.log("Invalidating orders query...");
               queryClient.invalidateQueries({ queryKey: ["orders"] });
+              queryClient.refetchQueries({ queryKey: ["orders"] });
               break;
             case "new_user":
+              console.log("Invalidating users query...");
               queryClient.invalidateQueries({ queryKey: ["users"] });
+              queryClient.refetchQueries({ queryKey: ["users"] });
               break;
             case "new_team":
+              console.log("Invalidating teams query...");
               queryClient.invalidateQueries({ queryKey: ["teams"] });
+              queryClient.refetchQueries({ queryKey: ["teams"] });
               break;
             case "order_status_update":
+              console.log("Invalidating orders query for status update...");
               queryClient.invalidateQueries({ queryKey: ["orders"] });
+              queryClient.refetchQueries({ queryKey: ["orders"] });
               break;
             default:
+              console.log("Unknown event type:", data.type);
               // Custom handler
               onMessage?.(data);
           }

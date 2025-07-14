@@ -1,13 +1,47 @@
+"use client";
 
 import { UserDataTable } from "@/components/user-data-table";
 import React from "react";
 import { getUsers } from "@/actions/user";
+import { useQuery } from "@tanstack/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const Page = async () => {
-  const users = await getUsers();
+const Page = () => {
+  const { data: users, isLoading, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  });
 
-  if ("error" in users) {
-    return <div>Error: {users.error}</div>;
+  if (isLoading) {
+    return (
+      <div className="flex flex-1 flex-col">
+        <div className="@container/main flex flex-1 flex-col gap-2">
+          <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+            <div className="space-y-4">
+              <Skeleton className="h-8 w-48" />
+              <Skeleton className="h-10 w-full" />
+              <div className="space-y-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-16 w-full" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div>Error: {String(error)}</div>;
+  }
+
+  if (!users || "error" in users) {
+    return <div>Error: {String(users?.error || "Failed to load users")}</div>;
+  }
+
+  if (!Array.isArray(users)) {
+    return <div>Error: Invalid data format</div>;
   }
 
   // Map users to expected shape for UserDataTable
