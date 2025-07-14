@@ -1,5 +1,6 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 interface RealtimeConfig {
   url: string;
@@ -10,14 +11,21 @@ interface RealtimeConfig {
 export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
   const queryClient = useQueryClient();
   const wsRef = useRef<WebSocket | null>(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [connectionAttempts, setConnectionAttempts] = useState(0);
 
   useEffect(() => {
     const connect = () => {
+      console.log(`Attempting to connect to WebSocket: ${url}`);
       const ws = new WebSocket(url);
       wsRef.current = ws;
 
       ws.onopen = () => {
-        console.log("WebSocket connected");
+        console.log("WebSocket connected successfully");
+        setIsConnected(true);
+        setConnectionAttempts(0);
+        toast.success("Real-time connection established");
+
         // Subscribe to events
         events.forEach((event) => {
           ws.send(JSON.stringify({ type: "subscribe", event }));
@@ -53,11 +61,20 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
 
       ws.onclose = () => {
         console.log("WebSocket disconnected, reconnecting...");
-        setTimeout(connect, 3000); // Reconnect after 3 seconds
+        setIsConnected(false);
+        setConnectionAttempts((prev) => prev + 1);
+
+        if (connectionAttempts < 5) {
+          setTimeout(connect, 3000); // Reconnect after 3 seconds
+        } else {
+          toast.error("Failed to connect to real-time service");
+        }
       };
 
       ws.onerror = (error) => {
         console.error("WebSocket error:", error);
+        setIsConnected(false);
+        toast.error("Real-time connection error");
       };
     };
 
@@ -68,7 +85,7 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
         wsRef.current.close();
       }
     };
-  }, [url, events, queryClient, onMessage]);
+  }, [url, events, queryClient, onMessage, connectionAttempts]);
 
-  return wsRef.current;
+  return { ws: wsRef.current, isConnected, connectionAttempts };
 }
