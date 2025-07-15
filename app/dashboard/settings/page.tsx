@@ -319,43 +319,43 @@ export default function PayoutSettingsPage() {
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Payout charge transaction upto 5000</span>
-              <span className="text-lg font-semibold">₦{data.payout_charge_transaction_upto_5000_naira}</span>
+              <span className="text-lg font-semibold">₦{data?.payout_charge_transaction_upto_5000_naira}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Payout charge transaction from 5001_to_50_000</span>
-              <span className="text-lg font-semibold">₦{data.payout_charge_transaction_from_5001_to_50_000_naira}</span>
+              <span className="text-lg font-semibold">₦{data?.payout_charge_transaction_from_5001_to_50_000_naira}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Payout charge transaction above 50_000</span>
-              <span className="text-lg font-semibold">₦{data.payout_charge_transaction_above_50_000_naira}</span>
+              <span className="text-lg font-semibold">₦{data?.payout_charge_transaction_above_50_000_naira}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Value added tax(VAT)</span>
-              <span className="text-lg font-semibold">{data.value_added_tax}%</span>
+              <span className="text-lg font-semibold">{data?.value_added_tax}%</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">stamp duty</span>
-              <span className="text-lg font-semibold">₦{data.stamp_duty}</span>
+              <span className="text-lg font-semibold">₦{data?.stamp_duty}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Base delivery fee</span>
-              <span className="text-lg font-semibold">₦{data.base_delivery_fee}</span>
+              <span className="text-lg font-semibold">₦{data?.base_delivery_fee}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Delivery fee per km</span>
-              <span className="text-lg font-semibold">₦{data.delivery_fee_per_km}</span>
+              <span className="text-lg font-semibold">₦{data?.delivery_fee_per_km}</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Delivery commission percentage</span>
-              <span className="text-lg font-semibold">{data.delivery_commission_percentage}%</span>
+              <span className="text-lg font-semibold">{data?.delivery_commission_percentage}%</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Food laundry commission percentage</span>
-              <span className="text-lg font-semibold">{data.food_laundry_commission_percentage}%</span>
+              <span className="text-lg font-semibold">{data?.food_laundry_commission_percentage}%</span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground">Product commission percentage</span>
-              <span className="text-lg font-semibold">{data.product_commission_percentage}%</span>
+              <span className="text-lg font-semibold">{data?.product_commission_percentage}%</span>
             </div>
           </CardContent>
         </Card>
