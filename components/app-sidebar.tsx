@@ -103,9 +103,14 @@ const data = {
       icon: Bike,
     },
     {
-      name: "Food",
+      name: "Food Menu",
       url: "/dashboard/food-items",
       icon: Utensils,
+    },
+     {
+      name: "Laundry Menu",
+      url: "/dashboard/laundry-items",
+      icon: WashingMachine,
     },
     
   ],

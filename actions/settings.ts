@@ -8,7 +8,7 @@ export const getChargeCommission = async (): Promise<
   SettingsType | { error: string }
 > => {
   try {
-    const result = await fetch(`${settingsUrl}/charge-commission`);
+    const result = await authenticatedFetch(`${settingsUrl}/charge-commission`);
 
     if (!result.ok) {
       return { error: `HTTP error! status: ${result.status}` };
