@@ -109,3 +109,8 @@ export interface CreateReview {
   rating: number;
   comment: string;
 }
+
+export interface PaginatedDeliveryDetailResponse {
+  data: DeliveryDetail[];
+  total: number;
+}

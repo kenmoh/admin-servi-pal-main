@@ -2,11 +2,10 @@
 
 import { settingsUrl, usersUrl } from "@/lib/constant";
 import { SettingsType } from "@/types/settings-types";
-import { TransactionResponseSchema } from "@/types/transaction-types";
 import { authenticatedFetch } from "./user";
 
-export const getOrders = async (): Promise<
-  TransactionResponseSchema | { error: string }
+export const getChargeCommission = async (): Promise<
+  SettingsType | { error: string }
 > => {
   try {
     const result = await fetch(`${settingsUrl}/charge-commission`);

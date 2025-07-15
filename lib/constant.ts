@@ -1,5 +1,5 @@
-// const baseUrl = "https://api.servi-pal.com/api";
-const baseUrl = "http://localhost:8000/api";
+const baseUrl = "https://api.servi-pal.com/api";
+// const baseUrl = "http://localhost:8000/api";
 
 
 export const usersUrl = `${baseUrl}/users`;
