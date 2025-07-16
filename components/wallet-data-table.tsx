@@ -166,11 +166,11 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                                 <TableCell>
                                     {/* Transaction Type Pill */}
                                     {tx.transaction_type === 'credit' ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-100 text-green-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-500/70 text-green-700">
                                             {tx.transaction_type}
                                         </span>
                                     ) : tx.transaction_type === 'debit' ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-100 text-red-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-500/70 text-red-700">
                                             {tx.transaction_type}
                                         </span>
                                     ) : (
@@ -180,7 +180,7 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                                     )}
                                 </TableCell>
                                 <TableCell>{tx.payment_by}</TableCell>
-                                <TableCell>{tx.payment_method}</TableCell>
+                                <TableCell>{tx.payment_method || 'N/A'}</TableCell>
                                 <TableCell>{new Date(tx.created_at).toLocaleString()}</TableCell>
                             </TableRow>
                         ))}
