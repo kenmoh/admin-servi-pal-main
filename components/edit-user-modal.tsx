@@ -45,7 +45,7 @@ export function EditUserModal({ user }: { user: any }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Edit</Button>
+        <Button className='w-1/2' variant="outline">Edit</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

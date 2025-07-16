@@ -16,6 +16,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
@@ -37,6 +38,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -287,30 +289,27 @@ export function PickupOrderDataTable({
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [filterText, setFilterText] = React.useState("");
+  const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFilterText(filterText);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [filterText]);
 
   const table = useReactTable({
-    data,
-    columns,
-    state: {
-      columnVisibility,
-      rowSelection,
-    },
-    getRowId: (row) => row.order.id,
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onColumnVisibilityChange: setColumnVisibility,
-    getCoreRowModel: getCoreRowModel(),
-  });
+    data: filteredData,
 
   const pageCount = Math.ceil(total / pageSize);
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center justify-between px-4  lg:px-6">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium">Pickup Orders</h1>
-        <div className="flex items-center gap-2">
-          {/* Optionally add a filter input here if you want client-side filtering */}
-        </div>
+        
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -347,6 +346,14 @@ export function PickupOrderDataTable({
           </DropdownMenu>
         </div>
       </div>
+      <div className="flex items-center gap-2">
+          <Input
+            placeholder="Search all columns..."
+            value={filterText}
+            onChange={(event) => setFilterText(event.target.value)}
+            className="max-w-sm"
+          />
+        </div>
       <div className="overflow-hidden rounded-lg border">
         <Table className='w-full'>
           <TableHeader className="bg-muted">

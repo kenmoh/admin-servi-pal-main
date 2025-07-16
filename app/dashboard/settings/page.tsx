@@ -99,27 +99,25 @@ export default function PayoutSettingsPage() {
   });
 
   function onPasswordSubmit(values: PasswordFormValues) {
-    console.log(values)
     passwordMutation.mutate(values);
   }
 
-  const { data: brandingData, isLoading: brandingLoading, isError: brandingError } = useQuery({
-    queryKey: ["branding"],
-    queryFn: getBranding,
-    refetchOnWindowFocus: false,
+  const [brandingData, setBrandingData] = React.useState({
+    logo: "/mainicon.png",
+    primary_color: "#000000",
+    company_name: "ServiPal",
   });
 
-  const { data: maintenanceData, isLoading: maintenanceLoading, isError: maintenanceError } = useQuery({
-    queryKey: ["maintenance"],
-    queryFn: getMaintenanceMode,
-    refetchOnWindowFocus: false,
+  const [maintenanceData, setMaintenanceData] = React.useState({
+    enabled: false,
   });
 
   const brandingMutation = useMutation({
     mutationFn: updateBranding,
     onSuccess: (newData) => {
       toast.success("Branding updated successfully!");
-      queryClient.setQueryData(["branding"], newData);
+      // queryClient.setQueryData(["branding"], newData);
+      setBrandingData(newData);
     },
     onError: (error) => {
       toast.error(error.message || "Failed to update branding");
@@ -130,7 +128,8 @@ export default function PayoutSettingsPage() {
     mutationFn: updateMaintenanceMode,
     onSuccess: (newData) => {
       toast.success("Maintenance mode updated successfully!");
-      queryClient.setQueryData(["maintenance"], newData);
+      // queryClient.setQueryData(["maintenance"], newData);
+      setMaintenanceData(newData);
     },
     onError: (error) => {
       toast.error(error.message || "Failed to update maintenance mode");
@@ -139,22 +138,20 @@ export default function PayoutSettingsPage() {
 
   const brandingForm = useForm<BrandingFormValues>({
     resolver: zodResolver(brandingSchema),
+    defaultValues: brandingData,
   });
 
   const maintenanceForm = useForm<MaintenanceFormValues>({
     resolver: zodResolver(maintenanceSchema),
+    defaultValues: maintenanceData,
   });
 
   React.useEffect(() => {
-    if (brandingData && !("error" in brandingData)) {
-      brandingForm.reset(brandingData);
-    }
+    brandingForm.reset(brandingData);
   }, [brandingData, brandingForm]);
 
   React.useEffect(() => {
-    if (maintenanceData && !("error" in maintenanceData)) {
-      maintenanceForm.reset(maintenanceData);
-    }
+    maintenanceForm.reset(maintenanceData);
   }, [maintenanceData, maintenanceForm]);
 
   function onBrandingSubmit(values: BrandingFormValues) {
@@ -479,7 +476,7 @@ export default function PayoutSettingsPage() {
             <CardTitle>Change Team Member Password</CardTitle>
           </CardHeader>
           <Form {...passwordForm}>
-        
+            <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
               <CardContent className="space-y-6">
                 <FormField
                   control={passwordForm.control}
@@ -507,20 +504,7 @@ export default function PayoutSettingsPage() {
                 />
                 <FormField
                   control={passwordForm.control}
-                  name="newPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>New Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                   <FormField
-                  control={passwordForm.control}
-                  name="confirmNewPassword"
+                  name="password"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>New Password</FormLabel>
@@ -533,11 +517,11 @@ export default function PayoutSettingsPage() {
                 />
               </CardContent>
               <CardFooter>
-                <Button onClick={passwordForm.handleSubmit(onPasswordSubmit)}  className='w-full cursor-pointer my-6' type="submit" disabled={passwordMutation.isPending}>
+                <Button className='w-full my-6' type="submit" disabled={passwordMutation.isPending}>
                   {passwordMutation.isPending ? "Saving..." : "Save Password"}
                 </Button>
               </CardFooter>
-            
+            </form>
           </Form>
         </Card>
 
@@ -590,7 +574,7 @@ export default function PayoutSettingsPage() {
                 />
               </CardContent>
               <CardFooter>
-                <Button type="submit" className='my-5 w-full cursor-pointer' disabled={brandingMutation.isPending}>
+                <Button type="submit" disabled={brandingMutation.isPending}>
                   {brandingMutation.isPending ? "Saving..." : "Save Branding"}
                 </Button>
               </CardFooter>
@@ -625,11 +609,11 @@ export default function PayoutSettingsPage() {
                   )}
                 />
               </CardContent>
-              {/*<CardFooter>
+              <CardFooter>
                 <Button type="submit" disabled={maintenanceMutation.isPending}>
                   {maintenanceMutation.isPending ? "Saving..." : "Save Settings"}
                 </Button>
-              </CardFooter>*/}
+              </CardFooter>
             </form>
           </Form>
         </Card>

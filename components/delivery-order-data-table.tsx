@@ -16,6 +16,7 @@ import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
@@ -37,6 +38,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -206,7 +208,7 @@ function TableCellViewer({ item }: { item: DeliveryDetail }) {
             </div>
           </div>
           <Separator />
-           <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1">
               <Label>Owner Phone Number</Label>
               <div className="text-sm font-medium">
@@ -301,30 +303,51 @@ export function DeliveryOrderDataTable({
 }) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [filterText, setFilterText] = React.useState("");
+  const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFilterText(filterText);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [filterText]);
+
+  // Filter data based on debouncedFilterText
+  const filteredData = React.useMemo(() => {
+    if (!debouncedFilterText) return data;
+    return data.filter((row) => {
+      // Combine all values from order and delivery for search
+      const values = [
+        ...Object.values(row.order),
+        ...(row.delivery ? Object.values(row.delivery) : [])
+      ];
+      return values.some((value) =>
+        String(value).toLowerCase().includes(debouncedFilterText.toLowerCase())
+      );
+    });
+  }, [data, debouncedFilterText]);
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
-      columnVisibility,
       rowSelection,
+      columnVisibility,
     },
-    getRowId: (row) => row.order.id,
-    enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
   });
 
   const pageCount = Math.ceil(total / pageSize);
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center justify-between px-4  lg:px-6">
+      <div className="flex items-center justify-between">
         <h1 className="text-2xl font-medium">Delivery Orders</h1>
-        <div className="flex items-center gap-2">
-          {/* Optionally add a filter input here if you want client-side filtering */}
-        </div>
         <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -360,6 +383,14 @@ export function DeliveryOrderDataTable({
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder="Search all columns..."
+          value={filterText}
+          onChange={(event) => setFilterText(event.target.value)}
+          className="max-w-sm"
+        />
       </div>
       <div className="overflow-hidden rounded-lg border">
         <Table className='w-full'>

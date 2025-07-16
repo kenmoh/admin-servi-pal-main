@@ -20,8 +20,8 @@ export interface TransactionSchema {
   payment_by?: string;
   transaction_type: TransactionType;
   payment_status: PaymentStatus;
-  payment_method?: PaymentMethod;
-  payment_link?: string;
+  payment_method: PaymentMethod;
+  payment_link: string;
   created_at: string;
   updated_at: string;
 }

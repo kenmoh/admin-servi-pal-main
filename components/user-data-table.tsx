@@ -98,6 +98,7 @@ import {
 import { toggleBlockUser } from "@/actions/user";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { EditUserModal } from "./edit-user-modal";
 
 export const schema = z.object({
   id: z.string(),
@@ -705,8 +706,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           </div>
         </div>
         <DrawerFooter>
-          <Button
-            className='cursor-pointer'
+          <div className='flex justify-between gap-2'>
+            <Button
+            className='cursor-pointer w-1/2'
             variant={isBlocked ? "default" : "destructive"}
             onClick={() => toggleBlock(item.id)}
             disabled={isPending}
@@ -722,10 +724,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
               "Block"
             )}
           </Button>
-          <DrawerClose asChild>
-            <Button variant="outline">Close</Button>
-          </DrawerClose>
+        
           <EditUserModal user={item} />
+          </div>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

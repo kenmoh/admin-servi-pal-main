@@ -33,13 +33,14 @@ type PaymentStatus =
   | "successful";
 
 type TransactionType = "credit" | "debit" | "fund wallet" | "paid with wallet";
-
+export type PaymentMethod = "card" | "bank_transfer" | "wallet";
 // Transaction interface
 export interface TransactionSchema {
   id: string;
   wallet_id: string;
   amount: number;
   payment_status: PaymentStatus;
+  payment_method: PaymentMethod;
   payment_by: string;
   payment_link?: string;
   transaction_type: TransactionType;
