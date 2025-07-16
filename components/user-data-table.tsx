@@ -99,6 +99,7 @@ import { toggleBlockUser } from "@/actions/user";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { EditUserModal } from "./edit-user-modal";
+import { useRealtime } from "@/hooks/use-realtime";
 
 export const schema = z.object({
   id: z.string(),
@@ -231,7 +232,7 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
 
 ]
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
+function DraggableRow({ row, className = "" }: { row: Row<z.infer<typeof schema>>; className?: string }) {
   const { transform, transition, setNodeRef, isDragging } = useSortable({
     id: row.original.id,
   })
@@ -241,7 +242,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof schema>> }) {
       data-state={row.getIsSelected() && "selected"}
       data-dragging={isDragging}
       ref={setNodeRef}
-      className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+      className={`relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 ${className}`}
       style={{
         transform: CSS.Transform.toString(transform),
         transition: transition,
@@ -273,7 +274,22 @@ export function UserDataTable({
   const [filterText, setFilterText] = React.useState("");
   const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
   const [isMounted, setIsMounted] = React.useState(false);
+  const [highlightedUserIds, setHighlightedUserIds] = React.useState<string[]>([]);
 
+  // Real-time: highlight new/updated users
+  useRealtime({
+    url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
+    events: ['new_user'],
+    onMessage: (msg) => {
+      if (msg.type === "new_user" && msg.id) {
+        setHighlightedUserIds((ids) => {
+          if (ids.includes(msg.id)) return ids;
+          setTimeout(() => setHighlightedUserIds((ids) => ids.filter(id => id !== msg.id)), 2000);
+          return [...ids, msg.id];
+        });
+      }
+    }
+  });
 
   // Fix hydration error by waiting for component to mount
   React.useEffect(() => {
@@ -422,7 +438,11 @@ export function UserDataTable({
                   strategy={verticalListSortingStrategy}
                 >
                   {table.getRowModel().rows.map((row) => (
-                    <DraggableRow key={row.id} row={row} />
+                    <DraggableRow
+                      key={row.id}
+                      row={row}
+                      className={highlightedUserIds.includes(row.original.id) ? "bg-green-100 transition-colors animate-pulse" : ""}
+                    />
                   ))}
                 </SortableContext>
               ) : (
@@ -708,24 +728,24 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
         <DrawerFooter>
           <div className='flex justify-between gap-2'>
             <Button
-            className='cursor-pointer w-1/2'
-            variant={isBlocked ? "default" : "destructive"}
-            onClick={() => toggleBlock(item.id)}
-            disabled={isPending}
-          >
-            {isPending ? (
-              <>
-                <Loader className="mr-2 h-4 w-4 animate-spin" />
-                {isBlocked ? "Unblocking..." : "Blocking..."}
-              </>
-            ) : isBlocked ? (
-              "Unblock"
-            ) : (
-              "Block"
-            )}
-          </Button>
-        
-          <EditUserModal user={item} />
+              className='cursor-pointer w-1/2'
+              variant={isBlocked ? "default" : "destructive"}
+              onClick={() => toggleBlock(item.id)}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  {isBlocked ? "Unblocking..." : "Blocking..."}
+                </>
+              ) : isBlocked ? (
+                "Unblock"
+              ) : (
+                "Block"
+              )}
+            </Button>
+
+            <EditUserModal user={item} />
           </div>
         </DrawerFooter>
       </DrawerContent>

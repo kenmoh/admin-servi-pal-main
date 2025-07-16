@@ -107,6 +107,7 @@ import { toggleBlockUser } from "@/actions/user";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { EditUserModal } from "./edit-user-modal";
+import { useRealtime } from "@/hooks/use-realtime";
 
 // Team schema - adapted from user schema
 export const teamSchema = z.object({
@@ -238,7 +239,7 @@ const columns: ColumnDef<z.infer<typeof teamSchema>>[] = [
     },
 ]
 
-function DraggableRow({ row }: { row: Row<z.infer<typeof teamSchema>> }) {
+function DraggableRow({ row, className = "" }: { row: Row<z.infer<typeof teamSchema>>; className?: string }) {
     const { transform, transition, setNodeRef, isDragging } = useSortable({
         id: row.original.id,
     })
@@ -248,7 +249,7 @@ function DraggableRow({ row }: { row: Row<z.infer<typeof teamSchema>> }) {
             data-state={row.getIsSelected() && "selected"}
             data-dragging={isDragging}
             ref={setNodeRef}
-            className="relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80"
+            className={`relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 ${className}`}
             style={{
                 transform: CSS.Transform.toString(transform),
                 transition: transition,
@@ -280,6 +281,22 @@ export function TeamDataTable({
     const [filterText, setFilterText] = React.useState("");
     const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
     const [isMounted, setIsMounted] = React.useState(false);
+    const [highlightedTeamIds, setHighlightedTeamIds] = React.useState<string[]>([]);
+
+    // Real-time: highlight new/updated team members
+    useRealtime({
+        url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
+        events: ['new_team'],
+        onMessage: (msg) => {
+            if (msg.type === "new_team" && msg.id) {
+                setHighlightedTeamIds((ids) => {
+                    if (ids.includes(msg.id)) return ids;
+                    setTimeout(() => setHighlightedTeamIds((ids) => ids.filter(id => id !== msg.id)), 2000);
+                    return [...ids, msg.id];
+                });
+            }
+        }
+    });
 
     // Fix hydration error by waiting for component to mount
     React.useEffect(() => {
@@ -431,7 +448,11 @@ export function TeamDataTable({
                                     strategy={verticalListSortingStrategy}
                                 >
                                     {table.getRowModel().rows.map((row) => (
-                                        <DraggableRow key={row.id} row={row} />
+                                        <DraggableRow
+                                            key={row.id}
+                                            row={row}
+                                            className={highlightedTeamIds.includes(row.original.id) ? "bg-green-100 transition-colors animate-pulse" : ""}
+                                        />
                                     ))}
                                 </SortableContext>
                             ) : (
@@ -730,29 +751,29 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                             'Confirm'
                         )}
                     </Button>
-                   <div className='flex justify-between gap-2'>
+                    <div className='flex justify-between gap-2'>
                         <Button
-                        className='cursor-pointer w-1/2'
-                        variant={isBlocked ? "default" : "destructive"}
-                        onClick={() => toggleBlock(item.id)}
-                        disabled={isPending}
-                    >
-                        {isPending ? (
-                            <>
-                                <Loader className="mr-2 h-4 w-4 animate-spin" />
-                                {isBlocked ? "Unblocking..." : "Blocking..."}
-                            </>
-                        ) : isBlocked ? (
-                            "Unblock"
-                        ) : (
-                            "Block"
-                        )}
-                    </Button>
-                    
-           
-         
-                <EditUserModal user={item} />
-                   </div>
+                            className='cursor-pointer w-1/2'
+                            variant={isBlocked ? "default" : "destructive"}
+                            onClick={() => toggleBlock(item.id)}
+                            disabled={isPending}
+                        >
+                            {isPending ? (
+                                <>
+                                    <Loader className="mr-2 h-4 w-4 animate-spin" />
+                                    {isBlocked ? "Unblocking..." : "Blocking..."}
+                                </>
+                            ) : isBlocked ? (
+                                "Unblock"
+                            ) : (
+                                "Block"
+                            )}
+                        </Button>
+
+
+
+                        <EditUserModal user={item} />
+                    </div>
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>
