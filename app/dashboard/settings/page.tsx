@@ -481,7 +481,7 @@ export default function PayoutSettingsPage() {
                 <FormField
                   control={passwordForm.control}
                   name="userId"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<PasswordFormValues, "userId"> }) => (
                     <FormItem>
                       <FormLabel>Team Member</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -505,7 +505,7 @@ export default function PayoutSettingsPage() {
                 <FormField
                   control={passwordForm.control}
                   name="password"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<PasswordFormValues, "password"> }) => (
                     <FormItem>
                       <FormLabel>New Password</FormLabel>
                       <FormControl>
@@ -536,7 +536,7 @@ export default function PayoutSettingsPage() {
                 <FormField
                   control={brandingForm.control}
                   name="company_name"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<BrandingFormValues, "company_name"> }) => (
                     <FormItem>
                       <FormLabel>Company Name</FormLabel>
                       <FormControl>
@@ -549,7 +549,7 @@ export default function PayoutSettingsPage() {
                 <FormField
                   control={brandingForm.control}
                   name="primary_color"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<BrandingFormValues, "primary_color"> }) => (
                     <FormItem>
                       <FormLabel>Primary Color</FormLabel>
                       <FormControl>
@@ -562,7 +562,7 @@ export default function PayoutSettingsPage() {
                 <FormField
                   control={brandingForm.control}
                   name="logo"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<BrandingFormValues, "logo"> }) => (
                     <FormItem>
                       <FormLabel>Logo URL</FormLabel>
                       <FormControl>
@@ -593,7 +593,7 @@ export default function PayoutSettingsPage() {
                 <FormField
                   control={maintenanceForm.control}
                   name="enabled"
-                  render={({ field }) => (
+                  render={({ field }: { field: ControllerRenderProps<MaintenanceFormValues, "enabled"> }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">Enable Maintenance Mode</FormLabel>
