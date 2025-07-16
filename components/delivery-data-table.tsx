@@ -59,7 +59,7 @@ import {
 import { DeliveryDetail, PaginatedDeliveryDetailResponse } from "@/types/order-types";
 import { RiderProfileModal } from "./rider-profile";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { useRealtime } from "@/hooks/use-realtime";
+
 
 const columns: ColumnDef<DeliveryDetail>[] = [
   {
@@ -292,22 +292,7 @@ export function PickupOrderDataTable({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [filterText, setFilterText] = React.useState("");
   const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
-  const [highlightedOrderIds, setHighlightedOrderIds] = React.useState<string[]>([]);
 
-  // Real-time: highlight new/updated orders
-  useRealtime({
-    url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
-    events: ['new_order', 'order_status_update', 'delivery_order_status_update'],
-    onMessage: (msg) => {
-      if ((msg.type === "new_order" || msg.type === "order_status_update" || msg.type === "delivery_order_status_update") && msg.order_id) {
-        setHighlightedOrderIds((ids) => {
-          if (ids.includes(msg.order_id)) return ids;
-          setTimeout(() => setHighlightedOrderIds((ids) => ids.filter(id => id !== msg.order_id)), 2000);
-          return [...ids, msg.order_id];
-        });
-      }
-    }
-  });
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -433,7 +418,7 @@ export function PickupOrderDataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className={highlightedOrderIds.includes(row.original.order.id) ? "bg-green-100 transition-colors animate-pulse" : ""}
+
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

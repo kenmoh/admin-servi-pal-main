@@ -96,10 +96,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { toggleBlockUser } from "@/actions/user";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { EditUserModal } from "./edit-user-modal";
-import { useRealtime } from "@/hooks/use-realtime";
 
 export const schema = z.object({
   id: z.string(),
@@ -274,22 +271,7 @@ export function UserDataTable({
   const [filterText, setFilterText] = React.useState("");
   const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
   const [isMounted, setIsMounted] = React.useState(false);
-  const [highlightedUserIds, setHighlightedUserIds] = React.useState<string[]>([]);
 
-  // Real-time: highlight new/updated users
-  useRealtime({
-    url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
-    events: ['new_user'],
-    onMessage: (msg) => {
-      if (msg.type === "new_user" && msg.id) {
-        setHighlightedUserIds((ids) => {
-          if (ids.includes(msg.id)) return ids;
-          setTimeout(() => setHighlightedUserIds((ids) => ids.filter(id => id !== msg.id)), 2000);
-          return [...ids, msg.id];
-        });
-      }
-    }
-  });
 
   // Fix hydration error by waiting for component to mount
   React.useEffect(() => {
@@ -441,7 +423,6 @@ export function UserDataTable({
                     <DraggableRow
                       key={row.id}
                       row={row}
-                      className={highlightedUserIds.includes(row.original.id) ? "bg-green-100 transition-colors animate-pulse" : ""}
                     />
                   ))}
                 </SortableContext>

@@ -281,22 +281,6 @@ export function TeamDataTable({
     const [filterText, setFilterText] = React.useState("");
     const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
     const [isMounted, setIsMounted] = React.useState(false);
-    const [highlightedTeamIds, setHighlightedTeamIds] = React.useState<string[]>([]);
-
-    // Real-time: highlight new/updated team members
-    useRealtime({
-        url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
-        events: ['new_team'],
-        onMessage: (msg) => {
-            if (msg.type === "new_team" && msg.id) {
-                setHighlightedTeamIds((ids) => {
-                    if (ids.includes(msg.id)) return ids;
-                    setTimeout(() => setHighlightedTeamIds((ids) => ids.filter(id => id !== msg.id)), 2000);
-                    return [...ids, msg.id];
-                });
-            }
-        }
-    });
 
     // Fix hydration error by waiting for component to mount
     React.useEffect(() => {
@@ -312,12 +296,6 @@ export function TeamDataTable({
         return () => clearTimeout(timer);
     }, [filterText]);
 
-    const sortableId = React.useId()
-    const sensors = useSensors(
-        useSensor(MouseSensor, {}),
-        useSensor(TouchSensor, {}),
-        useSensor(KeyboardSensor, {})
-    )
 
     // Memoized filtered data with phone_number added to search
     const filteredData = React.useMemo(() => {
@@ -451,7 +429,7 @@ export function TeamDataTable({
                                         <DraggableRow
                                             key={row.id}
                                             row={row}
-                                            className={highlightedTeamIds.includes(row.original.id) ? "bg-green-100 transition-colors animate-pulse" : ""}
+
                                         />
                                     ))}
                                 </SortableContext>
