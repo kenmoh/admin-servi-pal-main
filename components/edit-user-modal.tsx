@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, ControllerRenderProps } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -57,7 +57,7 @@ export function EditUserModal({ user }: { user: any }) {
             <FormField
               control={form.control}
               name="full_name"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof editUserSchema>, "full_name"> }) => (
                 <FormItem>
                   <FormLabel>Full Name</FormLabel>
                   <FormControl>
@@ -70,7 +70,7 @@ export function EditUserModal({ user }: { user: any }) {
             <FormField
               control={form.control}
               name="business_name"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof editUserSchema>, "business_name"> }) => (
                 <FormItem>
                   <FormLabel>Business Name</FormLabel>
                   <FormControl>
@@ -83,7 +83,7 @@ export function EditUserModal({ user }: { user: any }) {
             <FormField
               control={form.control}
               name="email"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof editUserSchema>, "email"> }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
@@ -96,7 +96,7 @@ export function EditUserModal({ user }: { user: any }) {
             <FormField
               control={form.control}
               name="user_type"
-              render={({ field }) => (
+              render={({ field }: { field: ControllerRenderProps<z.infer<typeof editUserSchema>, "user_type"> }) => (
                 <FormItem>
                   <FormLabel>User Type</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
