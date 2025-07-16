@@ -40,3 +40,29 @@ export const updateChargeCommission = async (
     return { error: error as string };
   }
 };
+
+export const getBranding = async () => {
+  const result = await authenticatedFetch(`${settingsUrl}/branding`);
+  return result.json();
+};
+
+export const updateBranding = async (brandingData: any) => {
+  const result = await authenticatedFetch(`${settingsUrl}/branding`, {
+    method: "PUT",
+    body: brandingData,
+  });
+  return result.json();
+};
+
+export const getMaintenanceMode = async () => {
+  const result = await authenticatedFetch(`${settingsUrl}/maintenance`);
+  return result.json();
+};
+
+export const updateMaintenanceMode = async (maintenanceData: any) => {
+  const result = await authenticatedFetch(`${settingsUrl}/maintenance`, {
+    method: "PUT",
+    body: maintenanceData,
+  });
+  return result.json();
+};

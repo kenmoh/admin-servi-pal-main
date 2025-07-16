@@ -725,6 +725,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof schema> }) {
           <DrawerClose asChild>
             <Button variant="outline">Close</Button>
           </DrawerClose>
+          <EditUserModal user={item} />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

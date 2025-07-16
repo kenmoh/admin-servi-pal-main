@@ -339,3 +339,23 @@ export async function logoutUser() {
     redirect("/login");
   }
 }
+
+export const updateUser = async (userId: string, userData: any) => {
+  const result = await authenticatedFetch(`${usersUrl}/${userId}`,
+    {
+      method: "PUT",
+      body: userData,
+    }
+  );
+  return result.json();
+};
+
+export const updatePassword = async (userId: string, password: any) => {
+  const result = await authenticatedFetch(`${authsUrl}/change-password`,
+    {
+      method: "PUT",
+      body: {user_id: userId, new_password: password},
+    }
+  );
+  return result.json();
+};

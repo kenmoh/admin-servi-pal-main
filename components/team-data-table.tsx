@@ -747,8 +747,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                         )}
                     </Button>
                     <DrawerClose asChild>
-                        <Button variant="outline">Close</Button>
-                    </DrawerClose>
+            <Button variant="outline">Close</Button>
+          </DrawerClose>
+          <EditUserModal user={item} />
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>
