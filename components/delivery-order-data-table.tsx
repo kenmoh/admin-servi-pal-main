@@ -94,6 +94,15 @@ const columns: ColumnDef<DeliveryDetail>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "order.order_number",
+    header: "Order #",
+    cell: ({ row }) => (
+      <div className="max-w-48 truncate">
+        {row.original.order.order_number || "N/A"}
+      </div>
+    ),
+  },
+  {
     accessorKey: "delivery.delivery_type",
     header: "Delivery Type",
     cell: ({ row }) => (
@@ -193,6 +202,21 @@ function TableCellViewer({ item }: { item: DeliveryDetail }) {
                 <Badge variant="outline">
                   {item.order.require_delivery}
                 </Badge>
+              </div>
+            </div>
+          </div>
+          <Separator />
+           <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <Label>Owner Phone Number</Label>
+              <div className="text-sm font-medium">
+                {item.delivery?.sender_phone_number || "N/A"}
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <Label>Rider Phone Number</Label>
+              <div className="text-sm font-medium">
+                {item.delivery?.rider_phone_number || "N/A"}
               </div>
             </div>
           </div>

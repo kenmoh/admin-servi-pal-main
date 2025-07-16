@@ -94,6 +94,15 @@ const columns: ColumnDef<DeliveryDetail>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "order.order_number",
+    header: "Order #",
+    cell: ({ row }) => (
+      <div className="max-w-48 truncate">
+        {row.original.order.order_number || "N/A"}
+      </div>
+    ),
+  },
+  {
     accessorKey: "delivery.delivery_type",
     header: "Delivery Type",
     cell: ({ row }) => (
@@ -229,6 +238,7 @@ function TableCellViewer({ item }: { item: DeliveryDetail }) {
                 {item.delivery?.distance || "N/A"}
               </div>
             </div>
+            
             <div className="flex flex-col gap-1">
               <Label>Duration</Label>
               <div className="text-sm font-medium">

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { ModeToggle } from "./theme-toggle"
+import { logoutUser } from "@/actions/user";
 
 export function SiteHeader() {
   return (
@@ -15,12 +16,11 @@ export function SiteHeader() {
         <h1 className="text-2xl font-bold">ADMINISTRATOR</h1>
         <div className="ml-auto flex items-center gap-2">
           <ModeToggle />
-          <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-            <a
-            >
-              Logout
-            </a>
-          </Button>
+          <form action={logoutUser}>
+            <Button variant="ghost" asChild size="sm" className="hidden sm:flex cursor-pointer">
+              <button type="submit">Logout</button>
+            </Button>
+          </form>
         </div>
       </div>
     </header>

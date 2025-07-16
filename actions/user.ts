@@ -4,6 +4,7 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
+import * as jwt from 'jsonwebtoken';
 import { usersUrl, authsUrl } from "@/lib/constant";
 import {
   User,
@@ -61,11 +62,17 @@ export const getUserIdFromToken = async (): Promise<string | null> => {
       return null;
     }
 
-    // Decode without verification (since we're only extracting the sub)
-    // Note: For production, you should verify the token with your secret
-    const decodedToken = jwtDecode(token.value);
+    try {
+      const decodedToken = jwt.verify(token.value, process.env.JWT_SECRET || '');
+      if (typeof decodedToken === 'string') {
+        return null;
+      }
 
-    return decodedToken?.sub || null;
+      return decodedToken?.sub || null;
+    } catch (error) {
+      console.error("Invalid token:", error);
+      return null;
+    }
   } catch (error) {
     console.error("Error decoding token:", error);
     return null;
@@ -317,3 +324,18 @@ export const createStaff = async (
     };
   }
 };
+
+export async function logoutUser() {
+  try {
+    await authenticatedFetch(`${authsUrl}/logout`, { method: "POST" });
+  } catch (error) {
+    console.error("Logout failed", error);
+    // Even if logout fails on the server, we still want to clear the cookies
+    // and redirect the user to the login page.
+  } finally {
+    const cookieStore = await cookies();
+    cookieStore.delete("access_token");
+    cookieStore.delete("refresh_token");
+    redirect("/login");
+  }
+}

@@ -1,6 +1,6 @@
 "use server";
 
-import { settingsUrl, usersUrl } from "@/lib/constant";
+import { settingsUrl } from "@/lib/constant";
 import { SettingsType } from "@/types/settings-types";
 import { authenticatedFetch } from "./user";
 
@@ -25,9 +25,9 @@ export const updateChargeCommission = async (
   settingsData: SettingsType
 ): Promise<SettingsType | { error: string }> => {
   try {
-    const result = await authenticatedFetch(`${usersUrl}/charge-commission`, {
+    const result = await authenticatedFetch(`${settingsUrl}/charge-commission`, {
       method: "PUT",
-      body: JSON.stringify(settingsData),
+      body: settingsData,
     });
 
     if (!result.ok) {

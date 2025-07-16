@@ -102,7 +102,6 @@ export default function PayoutSettingsPage() {
   }, [data]);
 
   function onSubmit(values: PayoutFormValues) {
-    console.log(values)
     mutation.mutate(values as SettingsType);
   }
 
@@ -124,7 +123,7 @@ export default function PayoutSettingsPage() {
             <CardTitle>Payout Charges</CardTitle>
           </CardHeader>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
+          
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Column 1 */}
                 <div className="space-y-6">
@@ -303,11 +302,11 @@ export default function PayoutSettingsPage() {
                 </div>
               </CardContent>
               <CardFooter className="flex gap-4 justify-end">
-                <Button className='w-full my-6' type="submit" disabled={mutation.isPending}>
+                <Button  onClick={form.handleSubmit(onSubmit)} className='w-full my-6 cursor-pointer' type="submit" disabled={mutation.isPending}>
                   {mutation.isPending ? "Saving..." : "Save Settings"}
                 </Button>
               </CardFooter>
-            </form>
+
           </Form>
         </Card>
 
