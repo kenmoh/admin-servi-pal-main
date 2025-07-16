@@ -149,16 +149,16 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                                 <TableCell>{tx.amount}</TableCell>
                                 <TableCell>
                                     {/* Payment Status Pill */}
-                                    {['successful', 'completed'].includes(tx.payment_status) ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-100 text-green-700">
+                                    {['successful', 'completed', 'paid'].includes(tx.payment_status) ? (
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-500/70 text-green-700">
                                             {tx.payment_status}
                                         </span>
                                     ) : ['failed', 'cancelled'].includes(tx.payment_status) ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-100 text-red-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-500/70 text-red-700">
                                             {tx.payment_status}
                                         </span>
                                     ) : (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-yellow-100 text-yellow-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-yellow-500/70 text-yellow-700">
                                             {tx.payment_status}
                                         </span>
                                     )}
