@@ -91,6 +91,13 @@ const data = {
       icon: SettingsIcon,
     },
   ],
+  audit: [
+    {
+      name: "Audit Logs",
+      url: "/dashboard/audit-logs",
+      icon: SettingsIcon,
+    },
+  ],
   services: [
     {
       name: "Pickup Orders",
@@ -107,12 +114,12 @@ const data = {
       url: "/dashboard/food-items",
       icon: Utensils,
     },
-     {
+    {
       name: "Laundry Menu",
       url: "/dashboard/laundry-items",
       icon: WashingMachine,
     },
-    
+
   ],
 };
 

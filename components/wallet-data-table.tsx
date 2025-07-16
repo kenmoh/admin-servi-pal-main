@@ -150,15 +150,15 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                                 <TableCell>
                                     {/* Payment Status Pill */}
                                     {['successful', 'completed', 'paid'].includes(tx.payment_status) ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-200/90 text-green-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-500/90 text-green-900">
                                             {tx.payment_status}
                                         </span>
                                     ) : ['failed', 'cancelled'].includes(tx.payment_status) ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-200/90 text-red-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-500/90 text-red-900">
                                             {tx.payment_status}
                                         </span>
                                     ) : (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-yellow-200/90 text-yellow-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-yellow-500/90 text-yellow-900">
                                             {tx.payment_status}
                                         </span>
                                     )}
@@ -166,15 +166,15 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                                 <TableCell>
                                     {/* Transaction Type Pill */}
                                     {tx.transaction_type === 'credit' ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-200/90 text-green-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-500/90 text-green-900">
                                             {tx.transaction_type}
                                         </span>
                                     ) : tx.transaction_type === 'debit' ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-200/90 text-red-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-500/90 text-red-900">
                                             {tx.transaction_type}
                                         </span>
                                     ) : (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-gray-200/90  text-gray-700">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-gray-500/90  text-gray-900">
                                             {tx.transaction_type}
                                         </span>
                                     )}
