@@ -49,7 +49,6 @@ export interface TransactionSchema {
   payment_link?: string;
   from_user: string;
   to_user: string;
-  transaction_direction: string
   transaction_type: TransactionType;
   transaction_direction: TransactionDirection
   created_at: Date;

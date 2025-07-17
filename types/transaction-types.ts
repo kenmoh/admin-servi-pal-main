@@ -1,8 +1,4 @@
-export type TransactionType =
-  | "credit"
-  | "debit"
-  | "fund wallet"
-  | "paid with wallet";
+export type TransactionType = "fund-wallet" | "paid-with-wallet" | "user-to-user" | "withdrawal" | "refund";
 export type PaymentStatus =
   | "failed"
   | "paid"
