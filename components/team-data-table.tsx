@@ -108,6 +108,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogC
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { EditUserModal } from "./edit-user-modal";
 import { useRealtime } from "@/hooks/use-realtime";
+import { useDataFlash } from '@/hooks/use-flash';
+import { cn } from "@/lib/utils"
 
 // Team schema - adapted from user schema
 export const teamSchema = z.object({
@@ -282,6 +284,10 @@ export function TeamDataTable({
     const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
     const [isMounted, setIsMounted] = React.useState(false);
 
+    const { getFlashClass, isFlashing } = useDataFlash(data, 'id', 2000, 'default');
+
+
+
     // Fix hydration error by waiting for component to mount
     React.useEffect(() => {
         setIsMounted(true);
@@ -426,11 +432,20 @@ export function TeamDataTable({
                                     strategy={verticalListSortingStrategy}
                                 >
                                     {table.getRowModel().rows.map((row) => (
-                                        <DraggableRow
-                                            key={row.id}
-                                            row={row}
+                                        <div key={row.id} className={getFlashClass(row.original.id)}>
+                                            <DraggableRow
+                                                key={row.id}
+                                                row={row}
 
-                                        />
+                                                className={cn(
+                                                    isFlashing(row.original.id) && "transform scale-[1.01]"
+                                                )}
+
+                                            // getFlashClass={getFlashClass}
+                                            // isFlashing={isFlashing}
+
+                                            />
+                                        </div>
                                     ))}
                                 </SortableContext>
                             ) : (

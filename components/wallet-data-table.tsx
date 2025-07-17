@@ -137,7 +137,8 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                             <TableHead>Amount</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Type</TableHead>
-                            <TableHead>Payment By</TableHead>
+                            <TableHead>Sender</TableHead>
+                            <TableHead>Receiver</TableHead>
                             <TableHead>Payment Method</TableHead>
                             <TableHead>Date</TableHead>
                         </TableRow>
@@ -150,36 +151,38 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                                 <TableCell>
                                     {/* Payment Status Pill */}
                                     {['successful', 'completed', 'paid'].includes(tx.payment_status) ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-200/5 text-green-900">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-500/10 text-green-900">
                                             {tx.payment_status}
                                         </span>
                                     ) : ['failed', 'cancelled'].includes(tx.payment_status) ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-200/5 text-red-900">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-500/10 text-red-900">
                                             {tx.payment_status}
                                         </span>
                                     ) : (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-yellow-200/5 text-yellow-900">
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-yellow-500/10 text-yellow-900">
                                             {tx.payment_status}
                                         </span>
                                     )}
                                 </TableCell>
                                 <TableCell>
                                     {/* Transaction Type Pill */}
-                                    {tx.transaction_type === 'credit' ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-200/5 text-green-900">
+                                    {tx.transaction_direction === 'credit' ? (
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-500/10 text-green-900">
                                             {tx.transaction_type}
                                         </span>
                                     ) : tx.transaction_type === 'debit' ? (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-200/5 text-red-900">
-                                            {tx.transaction_type}
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-500/10 text-red-900">
+                                            {tx.transaction_direction}
                                         </span>
                                     ) : (
-                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-gray-200/5  text-gray-900">
-                                            {tx.transaction_type}
+                                        <span className="rounded-full px-3 py-1 text-sm font-medium bg-gray-500/10  text-gray-900">
+                                            {tx.transaction_direction}
                                         </span>
                                     )}
                                 </TableCell>
-                                <TableCell>{tx.payment_by}</TableCell>
+                                {/*<TableCell>{tx.payment_by}</TableCell>*/}
+                                <TableCell>{tx.from_user || 'N/A'}</TableCell>
+                                <TableCell>{tx.to_user || 'N/A'}</TableCell>
                                 <TableCell>{tx.payment_method || 'N/A'}</TableCell>
                                 <TableCell>{new Date(tx.created_at).toLocaleString()}</TableCell>
                             </TableRow>

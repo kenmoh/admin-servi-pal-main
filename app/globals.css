@@ -124,3 +124,123 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* Add this to your global.css or component styles */
+.flash-new {
+  animation: flashNew 2s ease-out;
+}
+
+.flash-updated {
+  animation: flashUpdated 2s ease-out;
+}
+
+@keyframes flashNew {
+  0% {
+    background-color: #dcfce7;
+    box-shadow: 0 0 0 2px #22c55e;
+  }
+  25% {
+    background-color: #bbf7d0;
+    box-shadow: 0 0 0 3px #22c55e;
+  }
+  50% {
+    background-color: #86efac;
+    box-shadow: 0 0 0 2px #22c55e;
+  }
+  75% {
+    background-color: #dcfce7;
+    box-shadow: 0 0 0 1px #22c55e;
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+@keyframes flashUpdated {
+  0% {
+    background-color: #dbeafe;
+    box-shadow: 0 0 0 2px #3b82f6;
+  }
+  25% {
+    background-color: #bfdbfe;
+    box-shadow: 0 0 0 3px #3b82f6;
+  }
+  50% {
+    background-color: #93c5fd;
+    box-shadow: 0 0 0 2px #3b82f6;
+  }
+  75% {
+    background-color: #dbeafe;
+    box-shadow: 0 0 0 1px #3b82f6;
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+/* Pulse animations */
+.flash-new-pulse {
+  animation: pulseNew 1.5s ease-in-out;
+}
+
+.flash-updated-pulse {
+  animation: pulseUpdated 1.5s ease-in-out;
+}
+
+@keyframes pulseNew {
+  0%, 100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+  50% {
+    background-color: rgba(34, 197, 94, 0.2);
+    transform: scale(1.02);
+  }
+}
+
+@keyframes pulseUpdated {
+  0%, 100% {
+    background-color: transparent;
+    transform: scale(1);
+  }
+  50% {
+    background-color: rgba(59, 130, 246, 0.2);
+    transform: scale(1.02);
+  }
+}
+
+/* Glow animations */
+.flash-new-glow {
+  animation: glowNew 2s ease-out;
+}
+
+.flash-updated-glow {
+  animation: glowUpdated 2s ease-out;
+}
+
+@keyframes glowNew {
+  0% {
+    box-shadow: 0 0 5px #22c55e, inset 0 0 10px rgba(34, 197, 94, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px #22c55e, inset 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+  100% {
+    box-shadow: none;
+  }
+}
+
+@keyframes glowUpdated {
+  0% {
+    box-shadow: 0 0 5px #3b82f6, inset 0 0 10px rgba(59, 130, 246, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px #3b82f6, inset 0 0 20px rgba(59, 130, 246, 0.3);
+  }
+  100% {
+    box-shadow: none;
+  }
+}

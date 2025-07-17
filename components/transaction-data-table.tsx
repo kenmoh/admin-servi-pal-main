@@ -101,8 +101,11 @@ export const schema = z.object({
     id: z.string(),
     wallet_id: z.string(),
     amount: z.number(),
-    payment_by: z.string().optional(),
-    transaction_type: z.enum(["credit", "debit", "fund wallet", "paid with wallet"]),
+    // payment_by: z.string().optional(),
+    from_user: z.string().optional(),
+    to_user: z.string().optional(),
+    transaction_type: z.enum(["refund", "user-to-user", "fund-wallet", "withdrawal", "paid-with-wallet"]),
+    transaction_direction: z.enum(["credit", "debit"]),
     payment_status: z.enum(["failed", "paid", "cancelled", "pending", "completed", "successful"]),
     payment_method: z.enum(["card", "bank_transfer", "wallet"]).optional(),
     payment_link: z.string().optional(),
@@ -228,12 +231,31 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </div>
         ),
     },
-    {
-        accessorKey: "payment_by",
-        header: "Payment By",
+ 
+      {
+        accessorKey: "from_user",
+        header: "Sender",
         cell: ({ row }) => (
             <div className="max-w-32 truncate">
-                {row.original.payment_by || "N/A"}
+                {row.original.from_user || "N/A"}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "to_user",
+        header: "Receiver",
+        cell: ({ row }) => (
+            <div className="max-w-32 truncate">
+                {row.original.to_user || "N/A"}
+            </div>
+        ),
+    },
+      {
+        accessorKey: "transaction_direction",
+        header: "Direction",
+        cell: ({ row }) => (
+            <div className="max-w-32 truncate">
+                {row.original.transaction_direction || "N/A"}
             </div>
         ),
     },

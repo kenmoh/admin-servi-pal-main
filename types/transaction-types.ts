@@ -18,7 +18,10 @@ export interface TransactionSchema {
   wallet_id: string;
   amount: number;
   payment_by?: string;
+  from_user: string
+  to_user: string
   transaction_type: TransactionType;
+  transaction_direction: 'credit' | 'debit'
   payment_status: PaymentStatus;
   payment_method: PaymentMethod;
   payment_link: string;

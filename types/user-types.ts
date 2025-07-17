@@ -32,9 +32,13 @@ type PaymentStatus =
   | "completed"
   | "successful";
 
-type TransactionType = "credit" | "debit" | "fund wallet" | "paid with wallet";
+
+
+type TransactionType = "fund-wallet" | "paid-with-wallet" | "user-to-user" | "withdrawal" | "refund";
+type TransactionDirection = "credit" | "debit" 
+
 export type PaymentMethod = "card" | "bank_transfer" | "wallet";
-// Transaction interface
+
 export interface TransactionSchema {
   id: string;
   wallet_id: string;
@@ -43,7 +47,11 @@ export interface TransactionSchema {
   payment_method: PaymentMethod;
   payment_by: string;
   payment_link?: string;
+  from_user: string;
+  to_user: string;
+  transaction_direction: string
   transaction_type: TransactionType;
+  transaction_direction: TransactionDirection
   created_at: Date;
 }
 
