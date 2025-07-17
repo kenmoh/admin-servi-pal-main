@@ -241,17 +241,26 @@ const columns: ColumnDef<z.infer<typeof teamSchema>>[] = [
     },
 ]
 
-function DraggableRow({ row, className = "" }: { row: Row<z.infer<typeof teamSchema>>; className?: string }) {
+function DraggableRow({
+    row,
+    className = "",
+}: {
+    row: Row<z.infer<typeof teamSchema>>;
+    className?: string;
+}) {
     const { transform, transition, setNodeRef, isDragging } = useSortable({
         id: row.original.id,
-    })
+    });
 
     return (
         <TableRow
             data-state={row.getIsSelected() && "selected"}
             data-dragging={isDragging}
             ref={setNodeRef}
-            className={`relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80 ${className}`}
+            className={cn(
+                "relative z-0 data-[dragging=true]:z-10 data-[dragging=true]:opacity-80",
+                className
+            )}
             style={{
                 transform: CSS.Transform.toString(transform),
                 transition: transition,
@@ -263,7 +272,7 @@ function DraggableRow({ row, className = "" }: { row: Row<z.infer<typeof teamSch
                 </TableCell>
             ))}
         </TableRow>
-    )
+    );
 }
 
 export function TeamDataTable({
@@ -283,8 +292,9 @@ export function TeamDataTable({
     const [filterText, setFilterText] = React.useState("");
     const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
     const [isMounted, setIsMounted] = React.useState(false);
+    const [flashStyle, setFlashStyle] = React.useState<"default" | "pulse" | "glow">("default");
 
-    const { getFlashClass, isFlashing } = useDataFlash(data, 'id', 2000, 'default');
+    const { getFlashClass, isFlashing } = useDataFlash(data, 'id', 2000, flashStyle);
 
 
 
@@ -355,7 +365,7 @@ export function TeamDataTable({
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
-    const [open, setOpen] = React.useState(false);
+
 
     if (!isMounted) {
         return null;
@@ -391,6 +401,16 @@ export function TeamDataTable({
                                 })}
                             </DropdownMenuContent>
                         </DropdownMenu>
+                        <Select value={flashStyle} onValueChange={v => setFlashStyle(v as "default" | "pulse" | "glow")}>
+                            <SelectTrigger className="w-28" aria-label="Flash Style">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="default">Default</SelectItem>
+                                <SelectItem value="pulse">Pulse</SelectItem>
+                                <SelectItem value="glow">Glow</SelectItem>
+                            </SelectContent>
+                        </Select>
                         <AddUserDialog />
                     </div>
                 </div>
@@ -432,20 +452,14 @@ export function TeamDataTable({
                                     strategy={verticalListSortingStrategy}
                                 >
                                     {table.getRowModel().rows.map((row) => (
-                                        <div key={row.id} className={getFlashClass(row.original.id)}>
-                                            <DraggableRow
-                                                key={row.id}
-                                                row={row}
-
-                                                className={cn(
-                                                    isFlashing(row.original.id) && "transform scale-[1.01]"
-                                                )}
-
-                                            // getFlashClass={getFlashClass}
-                                            // isFlashing={isFlashing}
-
-                                            />
-                                        </div>
+                                        <DraggableRow
+                                            key={row.id}
+                                            row={row}
+                                            className={cn(
+                                                getFlashClass(row.original.id),
+                                                isFlashing(row.original.id) && "transform scale-[1.01]"
+                                            )}
+                                        />
                                     ))}
                                 </SortableContext>
                             ) : (

@@ -170,7 +170,7 @@ function WalletDrawer({ wallet }: { wallet: WalletSchema }) {
                                         <span className="rounded-full px-3 py-1 text-sm font-medium bg-green-500/10 text-green-900">
                                             {tx.transaction_type}
                                         </span>
-                                    ) : tx.transaction_type === 'debit' ? (
+                                    ) : tx.transaction_direction === 'debit' ? (
                                         <span className="rounded-full px-3 py-1 text-sm font-medium bg-red-500/10 text-red-900">
                                             {tx.transaction_direction}
                                         </span>

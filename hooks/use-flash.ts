@@ -9,9 +9,19 @@ export const useDataFlash = (
   const previousData = useRef(new Map());
   const [flashingItems, setFlashingItems] = useState(new Map());
   const timeoutRef = useRef(new Map());
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     if (!data || !Array.isArray(data)) return;
+
+    if (isFirstRender.current) {
+      // On first render, just set previousData and skip flashing
+      previousData.current = new Map(
+        data.map((item) => [item[keyField], item])
+      );
+      isFirstRender.current = false;
+      return;
+    }
 
     const newFlashingItems = new Map();
     const currentDataMap = new Map(data.map((item) => [item[keyField], item]));

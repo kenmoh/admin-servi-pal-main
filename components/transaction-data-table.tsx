@@ -193,14 +193,14 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
         ),
     },
     {
-        accessorKey: "transaction_type",
+        accessorKey: "transaction_direction",
         header: "Type",
         cell: ({ row }) => (
             <Badge
-                variant={row.original.transaction_type === "credit" || row.original.transaction_type === "fund wallet" ? "default" : "secondary"}
+                variant={row.original.transaction_direction === "credit" || row.original.transaction_direction === "debit" ? "default" : "secondary"}
                 className="capitalize"
             >
-                {row.original.transaction_type}
+                {row.original.transaction_direction}
             </Badge>
         ),
     },
@@ -231,8 +231,8 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </div>
         ),
     },
- 
-      {
+
+    {
         accessorKey: "from_user",
         header: "Sender",
         cell: ({ row }) => (
@@ -250,12 +250,21 @@ const columns: ColumnDef<z.infer<typeof schema>>[] = [
             </div>
         ),
     },
-      {
+    {
         accessorKey: "transaction_direction",
         header: "Direction",
         cell: ({ row }) => (
             <div className="max-w-32 truncate">
                 {row.original.transaction_direction || "N/A"}
+            </div>
+        ),
+    },
+    {
+        accessorKey: "transaction_type",
+        header: "Wallet ID",
+        cell: ({ row }) => (
+            <div className="max-w-32 truncate font-mono text-sm">
+                {row.original.transaction_type || 'N/A'}
             </div>
         ),
     },
