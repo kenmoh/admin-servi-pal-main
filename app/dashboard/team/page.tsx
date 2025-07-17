@@ -11,7 +11,7 @@ const Page = () => {
     queryKey: ['teams'],
     queryFn: getTeams,
     // staleTime: 0,
-    refetchInterval: 5000,
+    refetchInterval: 2000,
     refetchIntervalInBackground: true,
   });
 

@@ -80,8 +80,6 @@ import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
@@ -104,8 +102,6 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { toggleBlockUser } from "@/actions/user";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { EditUserModal } from "./edit-user-modal";
 import { useRealtime } from "@/hooks/use-realtime";
 import { useDataFlash } from '@/hooks/use-flash';
@@ -276,27 +272,27 @@ function DraggableRow({
 }
 
 export function TeamDataTable({
-    data: initialData,
+    data,
 }: {
     data: z.infer<typeof teamSchema>[];
 }) {
-    const [data, setData] = React.useState(() => initialData);
+    // Remove local data state, use data prop directly
+    // const [data, setData] = React.useState(() => initialData);
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
-        pageSize: 10,
+        pageSize: 20,
     })
     const [filterText, setFilterText] = React.useState("");
     const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
     const [isMounted, setIsMounted] = React.useState(false);
     const [flashStyle, setFlashStyle] = React.useState<"default" | "pulse" | "glow">("default");
 
+    // Use data prop directly for flash logic
     const { getFlashClass, isFlashing } = useDataFlash(data, 'id', 2000, flashStyle);
-
-
 
     // Fix hydration error by waiting for component to mount
     React.useEffect(() => {
@@ -311,7 +307,6 @@ export function TeamDataTable({
 
         return () => clearTimeout(timer);
     }, [filterText]);
-
 
     // Memoized filtered data with phone_number added to search
     const filteredData = React.useMemo(() => {
@@ -364,8 +359,6 @@ export function TeamDataTable({
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
-
-
 
     if (!isMounted) {
         return null;
