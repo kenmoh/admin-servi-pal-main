@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Users, Target, Zap, Globe } from 'lucide-react';
 
+interface MousePosition {
+  x: number;
+  y: number;
+}
+
 const ServiPal = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
 
@@ -14,10 +19,10 @@ const ServiPal = () => {
   }, []);
 
   const profileData = [
-    { number: 1, label: 'Designers' },
-    { number: 2, label: 'Developers' },
-    { number: 3, label: 'Marketers' },
-    { number: 4, label: 'Writers' },
+    { number: 1, label: 'Delivery Orders' },
+    { number: 2, label: 'Food Orders' },
+    { number: 3, label: 'Laundry Orders' },
+    { number: 4, label: 'Total User' },
     { number: 5, label: 'Analysts' },
     { number: 6, label: 'Strategists' },
     { number: 7, label: 'Managers' },
