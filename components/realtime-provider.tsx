@@ -30,7 +30,7 @@ function getCookie(name: string): string | null {
 export function RealtimeProvider({ children }: { children: React.ReactNode }) {
     // Get token from cookies (client-side)
     const token = typeof window !== 'undefined' ? getCookie('access_token') : '';
-    const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws'}?token=${token}`;
+    const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws'}`;
 
     const { isConnected, connectionAttempts } = useRealtime({
         url: wsUrl,

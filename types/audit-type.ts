@@ -1,4 +1,4 @@
-type AuditLog = {
+export type AuditLog = {
   id: string;
   timestamp: string; // ISO date string
   actor_id: string;
@@ -17,4 +17,4 @@ type AuditLog = {
   };
 };
 
-type AuditLogList = AuditLog[];
+
