@@ -183,7 +183,6 @@
 //   return { ws: wsRef.current, isConnected, connectionAttempts };
 // }
 
-
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -243,7 +242,10 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
           const data = JSON.parse(event.data);
           console.log("🔴 RAW WebSocket message received:", data);
           console.log("🔴 Message type:", data.type);
-          console.log("🔴 Full message payload:", JSON.stringify(data, null, 2));
+          console.log(
+            "🔴 Full message payload:",
+            JSON.stringify(data, null, 2)
+          );
 
           // Helper to debounce toasts
           function showDebouncedToast(
@@ -279,7 +281,7 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
                 );
               }
               break;
-              
+
             case "new_user":
               console.log("🔴 Processing new_user event");
               console.log("🔴 Invalidating users query...");
@@ -294,7 +296,7 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
                 );
               }
               break;
-              
+
             case "new_team":
               console.log("🔴 Processing new_team event");
               console.log("🔴 Invalidating teams query...");
@@ -309,7 +311,7 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
                 );
               }
               break;
-              
+
             case "order_status_update":
               console.log("🔴 Processing order_status_update event");
               console.log("🔴 Invalidating orders query for status update...");
@@ -324,10 +326,12 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
                 );
               }
               break;
-              
+
             case "delivery_order_status_update":
               console.log("🔴 Processing delivery_order_status_update event");
-              console.log("🔴 Invalidating orders query for delivery status update...");
+              console.log(
+                "🔴 Invalidating orders query for delivery status update..."
+              );
               queryClient.invalidateQueries({ queryKey: ["orders"] });
               queryClient.refetchQueries({ queryKey: ["orders"] });
               if (data.delivery_id && data.delivery_status) {
@@ -339,10 +343,28 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
                 );
               }
               break;
-              
+            case "new_report_message":
+              console.log("🔴 Processing new_report_message event");
+              if (data.report_id && data.message) {
+                queryClient.setQueryData(["issues"], (old: any) =>
+                  old
+                    ? old.map((report: any) =>
+                        report.id === data.report_id
+                          ? {
+                              ...report,
+                              thread: [...report.thread, data.message],
+                            }
+                          : report
+                      )
+                    : []
+                );
+              }
+              break;
             default:
               console.log("🔴 Unknown event type:", data.type);
-              console.log("🔴 Available event types: new_order, new_user, new_team, order_status_update, delivery_order_status_update");
+              console.log(
+                "🔴 Available event types: new_order, new_user, new_team, order_status_update, delivery_order_status_update"
+              );
               // Custom handler
               onMessage?.(data);
           }
@@ -357,7 +379,10 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
         setIsConnected(false);
         connectionAttemptsRef.current += 1;
         setConnectionAttempts(connectionAttemptsRef.current);
-        console.log('WebSocket Status:', { isConnected: false, connectionAttempts: connectionAttemptsRef.current });
+        console.log("WebSocket Status:", {
+          isConnected: false,
+          connectionAttempts: connectionAttemptsRef.current,
+        });
 
         if (connectionAttemptsRef.current < MAX_ATTEMPTS) {
           if (!isUnmounted) {

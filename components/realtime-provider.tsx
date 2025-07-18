@@ -1,7 +1,6 @@
 "use client";
 
 import { useRealtime } from '@/hooks/use-realtime';
-import { toast } from 'sonner';
 import { createContext, useContext } from 'react';
 
 interface RealtimeContextType {
@@ -19,15 +18,24 @@ export function useRealtimeStatus() {
     return context;
 }
 
-export function RealtimeProvider({ children }: { children: React.ReactNode }) {
-    // Connect to WebSocket for real-time updates
-    const { isConnected, connectionAttempts } = useRealtime({
-        url: process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws',
-        // url: process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000/ws',
-        events: ['new_order', 'delivery_order_status_update', 'new_user', 'new_team', 'order_status_update'],
-    });
+// Utility to get a cookie value by name (client-side)
+function getCookie(name: string): string | null {
+    if (typeof document === 'undefined') return null;
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+    return null;
+}
 
-    
+export function RealtimeProvider({ children }: { children: React.ReactNode }) {
+    // Get token from cookies (client-side)
+    const token = typeof window !== 'undefined' ? getCookie('access_token') : '';
+    const wsUrl = `${process.env.NEXT_PUBLIC_WS_URL || 'wss://api.servi-pal.com/ws'}?token=${token}`;
+
+    const { isConnected, connectionAttempts } = useRealtime({
+        url: wsUrl,
+        events: ['new_order', 'new_report_message', 'delivery_order_status_update', 'wallet_update', 'new_transaction', 'transaction_update', 'new_user', 'new_team', 'order_status_update'],
+    });
 
     return (
         <RealtimeContext.Provider value={{ isConnected, connectionAttempts }}>

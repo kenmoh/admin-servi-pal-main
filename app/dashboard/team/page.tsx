@@ -10,7 +10,6 @@ const Page = () => {
   const { data: teams, isLoading, error } = useQuery({
     queryKey: ['teams'],
     queryFn: getTeams,
-    // staleTime: 0,
     refetchInterval: 2000,
     refetchIntervalInBackground: true,
   });

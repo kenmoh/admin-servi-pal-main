@@ -28,7 +28,8 @@ import {
   BarChart3,
   Activity,
   BugIcon,
-  Bike
+  Bike,
+  Logs
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query"
 import { getUserProfileDetails } from "@/actions/user";
@@ -90,14 +91,13 @@ const data = {
       url: "/dashboard/settings",
       icon: SettingsIcon,
     },
-  ],
-  audit: [
-    {
+     {
       name: "Audit Logs",
       url: "/dashboard/audit-logs",
-      icon: SettingsIcon,
+      icon: Logs,
     },
   ],
+  
   services: [
     {
       name: "Pickup Orders",

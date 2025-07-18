@@ -3,13 +3,14 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import ServiPal from '@/components/landingpage'
 import {
   Check,
   Package,
   Utensils,
   WashingMachine,
   Handshake,
-
+Bike,
   LogIn,
 
 } from 'lucide-react';
@@ -30,24 +31,24 @@ const Home = () => {
 
   const services = [
     {
-      icon: <Package className="h-8 w-8 text-primary" />,
-      title: "Item Delivery",
-      description: "Fast and reliable package delivery services with real-time tracking and secure handling."
+      icon: <Bike className="h-8 w-8 text-primary" />,
+      title: "Swift Delivery",
+      description: "From documents to gifts, our registered dispatch riders deliver it all with lightning speed. Your items, our priority."
     },
     {
       icon: <Utensils className="h-8 w-8 text-primary" />,
-      title: "Food Ordering",
-      description: "Order delicious meals from local restaurants with quick delivery and special offers."
+      title: "Food on Demand",
+      description: "Craving Jollof rice or Pizza? Your favourite restaurants are just a tap away. Bon appétit!"
     },
     {
       icon: <WashingMachine className="h-8 w-8 text-primary" />,
-      title: "Laundry Service",
-      description: "Convenient laundry pickup and delivery with professional cleaning and care for all fabrics."
+      title: "Pristine Laundry",
+      description: "Say goodbye to laundry day stress. Our laundry services providers will keep your wardrobe fresh and fabulous."
     },
     {
       icon: <Handshake className="h-8 w-8 text-primary" />,
-      title: "P2P Marketplace",
-      description: "Connect directly with local service providers and buyers in a secure peer-to-peer environment."
+      title: "Secure Shopping",
+      description: "Shop with peace of mind. Our escrow service ensures your money is safe until you're satisfied. Goodbye to What I Ordered VS What I Get! 😊"
     }
   ];
 
@@ -100,157 +101,15 @@ const Home = () => {
       </header>
 
       {/* Hero Section  HERE*/}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background Effects */}
-        <div className="absolute inset-0 bg-gradient-to-br from-brand-orange/10 via-background to-brand-blue/10"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-brand-orange/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-brand-blue/20 rounded-full blur-3xl"></div>
-
-        <div className="container mx-auto px-8 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Tagline and Download Buttons */}
-            <div className="space-y-8">
-              <div className="space-y-6">
-                <h1 className="text-5xl lg:text-6xl font-bold leading-tight">
-                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">
-                    All Your Services
-                  </span>
-                  <br />
-                  <span className="text-foreground">In One App</span>
-                </h1>
-                <p className="text-xl text-muted-foreground max-w-lg">
-                  From food delivery to laundry services, we bring everything you need right to your doorstep.
-                  Fast, reliable, and convenient.
-                </p>
-              </div>
-
-              {/* Download Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a
-                  href="https://play.google.com/store"
-                  className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
-                >
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-10" />
-                </a>
-                <a
-                  href="https://www.apple.com/app-store/"
-                  className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
-                >
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-10" />
-                </a>
-              </div>
-            </div>
-
-            {/* Right Column - Mini Browser Dashboard */}
-            <div className="relative">
-              <div className="relative bg-background/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-border/30 p-6">
-                {/* Browser Header */}
-                <div className="flex items-center gap-2 mb-6">
-                  <div className="flex gap-1">
-                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                  </div>
-                  <div className="flex-1 bg-muted rounded-md px-3 py-1 text-sm text-muted-foreground">
-                    ServiPal Dashboard
-                  </div>
-                </div>
-
-                {/* Dashboard Content */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-lg">Services Overview</h3>
-
-                  </div>
-
-                  {/* Service Cards */}
-                  <div className="grid grid-cols-1 gap-4">
-                    {/* Delivery Service */}
-                    <div className="bg-gradient-to-r from-blue-500/10 to-blue-600/10 rounded-lg p-4 border border-blue-500/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-blue-500/20 p-2 rounded-lg">
-                            <Package className="h-5 w-5 text-blue-500" />
-                          </div>
-                          <div>
-                            <div className="font-medium">Item Delivery</div>
-                            <div className="text-sm text-muted-foreground">Active orders</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-blue-500">1,247</div>
-                          <div className="text-xs text-green-500">+12%</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Food Ordering */}
-                    <div className="bg-gradient-to-r from-orange-500/10 to-orange-600/10 rounded-lg p-4 border border-orange-500/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-orange-500/20 p-2 rounded-lg">
-                            <Utensils className="h-5 w-5 text-orange-500" />
-                          </div>
-                          <div>
-                            <div className="font-medium">Food Ordering</div>
-                            <div className="text-sm text-muted-foreground">Active orders</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-orange-500">892</div>
-                          <div className="text-xs text-green-500">+8%</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Laundry Service */}
-                    <div className="bg-gradient-to-r from-purple-500/10 to-purple-600/10 rounded-lg p-4 border border-purple-500/20">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-purple-500/20 p-2 rounded-lg">
-                            <WashingMachine className="h-5 w-5 text-purple-500" />
-                          </div>
-                          <div>
-                            <div className="font-medium">Laundry Service</div>
-                            <div className="text-sm text-muted-foreground">Active orders</div>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl font-bold text-purple-500">456</div>
-                          <div className="text-xs text-green-500">+15%</div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Quick Stats */}
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border/30">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-primary">2,595</div>
-                      <div className="text-xs text-muted-foreground">Total Orders</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-500">98.5%</div>
-                      <div className="text-xs text-muted-foreground">Success Rate</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating Elements for Blur Effect */}
-              <div className="absolute -top-4 -right-4 w-32 h-32 bg-brand-orange/10 rounded-full blur-xl"></div>
-              <div className="absolute -bottom-4 -left-4 w-24 h-24 bg-brand-blue/10 rounded-full blur-xl"></div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ServiPal/>
+ 
 
       {/* Services Section */}
-      < section id="services" className="py-20 bg-gradient-to-br from-brand-orange/5 to-brand-blue/5" >
+      < section id="services" className="bg-gradient-to-br from-brand-orange/5 to-brand-blue/5" >
         <div className="max-w-[75vw] mx-auto px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">Our Services</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-2xl max-w-4xl mx-auto">
               We bring together essential services on one powerful platform
             </p>
           </div>
@@ -273,11 +132,11 @@ const Home = () => {
       </section >
 
       {/* How It Works */}
-      < section id="how-it-works" className="py-20" >
+      < section id="how-it-works" className="" >
         <div className="max-w-[75vw] mx-auto px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-orange to-brand-blue">How It Works</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-4xl text-2xl mx-auto">
               Simple, fast and efficient - here's how our platform brings services to your doorstep
             </p>
           </div>

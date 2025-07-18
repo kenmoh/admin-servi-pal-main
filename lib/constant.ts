@@ -8,3 +8,5 @@ export const authsUrl = `${baseUrl}/auth`;
 export const statsUrl = `${baseUrl}/stats`;
 export const settingsUrl = `${baseUrl}/settings`;
 export const paymentUrl = `${baseUrl}/payment`;
+export const auditUrl = `${baseUrl}/audit-logs`;
+export const reportUrl = `${baseUrl}/reports`;
