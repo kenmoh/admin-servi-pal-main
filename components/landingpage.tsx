@@ -29,7 +29,7 @@ const ServiPal = () => {
     { number: 8, label: 'Consultants' }
   ];
 
-  const ProfileCircle = ({ number, label, delay, radius, angle, size = 'w-12 h-12' }) => {
+  const ProfileCircle = ({ number: number, label: string, delay: number, radius: number, angle: number, size = 'w-12 h-12' }) => {
     const [rotation, setRotation] = useState(0);
 
     useEffect(() => {
