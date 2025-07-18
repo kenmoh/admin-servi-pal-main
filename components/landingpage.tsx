@@ -12,7 +12,7 @@ interface Radius {
    delay: number 
    radius: number 
    angle: number
-   size: number
+   size: string
 }
 
 const ServiPal = () => {
