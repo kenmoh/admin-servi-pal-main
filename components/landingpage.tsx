@@ -6,6 +6,15 @@ interface MousePosition {
   y: number;
 }
 
+interface Radius {
+  number: number
+   label: string 
+   delay: number 
+   radius: number 
+   angle: number
+   size: number
+}
+
 const ServiPal = () => {
   const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
 
@@ -29,7 +38,7 @@ const ServiPal = () => {
     { number: 8, label: 'Consultants' }
   ];
 
-  const ProfileCircle = ({ number: number, label: string, delay: number, radius: number, angle: number, size = 'w-12 h-12' }) => {
+  const ProfileCircle = ({ number, label, delay, radius, angle, size = 'w-12 h-12' }: Radius) => {
     const [rotation, setRotation] = useState(0);
 
     useEffect(() => {
