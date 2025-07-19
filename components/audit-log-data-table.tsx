@@ -143,7 +143,7 @@ export function AuditLogDataTable() {
         </DrawerContent>
       </Drawer>
       <Dialog open={userAuditsOpen} onOpenChange={setUserAuditsOpen}>
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="max-w-3/4">
           <DialogHeader>
             <DialogTitle>User Audits</DialogTitle>
           </DialogHeader>

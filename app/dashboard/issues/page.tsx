@@ -118,14 +118,14 @@ export default function IssuesPage() {
                                 >
                                     <div className='flex space-x-2 items-center'>
                                         <span className={cn(
-                                            "truncate text-sm font-bold rounded-full px-3 py-1 align-center justify-center",
-                                            reportTypeColors[report.report_type] || "bg-gray-200 text-gray-700"
+                                            "truncate text-sm capitalize font-bold rounded-full px-3 py-1 align-center justify-center",
+                                            reportTypeColors[report.report_type] || "bg-purple-500/25 text-white"
                                         )}>
                                             {report.report_type.replace('_', ' ')}
                                         </span>
                                         <span className={cn(
                                             "truncate text-xs font-semibold rounded-full px-2 py-0.5 align-center justify-center border",
-                                            reportStatusColors[report.report_status] || "bg-gray-100 text-gray-700 border-gray-200"
+                                            reportStatusColors[report.report_status] || "bg-blue-500/25  text-white"
                                         )}>
                                             {report.report_status.charAt(0).toUpperCase() + report.report_status.slice(1)}
                                         </span>
@@ -158,9 +158,9 @@ export default function IssuesPage() {
                                             <AvatarFallback>{msg.sender.name.charAt(0)}</AvatarFallback>
                                         </Avatar>
                                     )}
-                                    <div className={cn("p-3 rounded-lg max-w-xs shadow-sm", msg.role === "admin" ? "bg-primary text-primary-foreground" : "bg-card")}>
+                                    <div className={cn("p-3 rounded-lg max-w-xs shadow-none", msg.role === "admin" ? "bg-primary text-primary-foreground" : "bg-teal-700 text-primary-foreground")}>
                                         <p className="text-sm">{msg.content}</p>
-                                        <p className="text-xs text-muted-foreground text-right mt-1">{new Date(msg.date).toLocaleTimeString()}</p>
+                                        <p className="text-xs text-gray-300 text-right mt-1">{new Date(msg.date).toLocaleTimeString()}</p>
                                     </div>
                                     {msg.role === "admin" && (
                                         <Avatar className="h-8 w-8">
