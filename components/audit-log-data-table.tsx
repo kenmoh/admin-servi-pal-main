@@ -17,26 +17,24 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from "@/components/ui/drawer";
-import { getAllAudits, getAuditById } from "@/actions/audit";
+import { getAllAudits, getAuditById, getUserAudits } from "@/actions/audit";
 import { AuditLog } from "@/types/audit-type";
 import { Input } from "./ui/input";
+import { useQuery } from '@tanstack/react-query';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export function AuditLogDataTable() {
-  const [audits, setAudits] = React.useState<AuditLog[]>([]);
+  const { data: audits = [], isLoading } = useQuery({
+    queryKey: ['audits'],
+    queryFn: getAllAudits
+  });
   const [selectedAudit, setSelectedAudit] = React.useState<AuditLog | null>(
     null
   );
   const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
   const [searchTerm, setSearchTerm] = React.useState("");
-
-  React.useEffect(() => {
-    const fetchAudits = async () => {
-      const allAudits = await getAllAudits();
-      setAudits(allAudits);
-    };
-    fetchAudits();
-  }, []);
-
+  const [userAuditsOpen, setUserAuditsOpen] = React.useState(false);
+  const [userIdForAudits, setUserIdForAudits] = React.useState<string | null>(null);
 
   const handleRowClick = async (id: string) => {
     const audit = await getAuditById(id);
@@ -48,6 +46,11 @@ export function AuditLogDataTable() {
     setSearchTerm(e.target.value);
   };
 
+  const handleShowUserAudits = (actorId: string) => {
+    setUserIdForAudits(actorId);
+    setUserAuditsOpen(true);
+  };
+
   const filteredAudits = audits.filter((audit) => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     return (
@@ -55,6 +58,12 @@ export function AuditLogDataTable() {
       audit.action.toLowerCase().includes(lowerCaseSearchTerm) ||
       audit.resource_type.toLowerCase().includes(lowerCaseSearchTerm)
     );
+  });
+
+  const { data: userAudits = [], isLoading: isUserAuditsLoading } = useQuery({
+    queryKey: ["user-audits", userIdForAudits],
+    queryFn: () => userIdForAudits ? getUserAudits(userIdForAudits) : Promise.resolve([]),
+    enabled: !!userIdForAudits && userAuditsOpen,
   });
 
   return (
@@ -68,6 +77,9 @@ export function AuditLogDataTable() {
         />
       </div>
       <div className="overflow-x-auto rounded-lg border bg-background">
+        {isLoading && (
+          <div className="mb-2 text-center text-muted-foreground">Loading audits...</div>
+        )}
         <Table className="min-w-[800px]">
           <TableHeader className="bg-muted">
             <TableRow>
@@ -76,11 +88,18 @@ export function AuditLogDataTable() {
               <TableHead>Role</TableHead>
               <TableHead>Action</TableHead>
               <TableHead>Resource</TableHead>
-              <TableHead>IP Address</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredAudits.map((log) => (
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell colSpan={5}>
+                    <div className="animate-pulse h-4 bg-muted rounded w-full" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : filteredAudits.map((log) => (
               <TableRow className='cursor-pointer' key={log.id} onClick={() => handleRowClick(log.id)}>
                 <TableCell>
                   {new Date(log.timestamp).toLocaleString()}
@@ -96,7 +115,7 @@ export function AuditLogDataTable() {
                     {log.resource_summary}
                   </div>
                 </TableCell>
-                <TableCell>{log.ip_address || "—"}</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
@@ -113,10 +132,54 @@ export function AuditLogDataTable() {
           {selectedAudit && (
             <div className="p-4">
               <pre className='text-green-600'>{JSON.stringify(selectedAudit, null, 2)}</pre>
+              <button
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={() => handleShowUserAudits(selectedAudit.actor_id)}
+              >
+                View all audits by this user
+              </button>
             </div>
           )}
         </DrawerContent>
       </Drawer>
+      <Dialog open={userAuditsOpen} onOpenChange={setUserAuditsOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>User Audits</DialogTitle>
+          </DialogHeader>
+          {isUserAuditsLoading ? (
+            <div>Loading...</div>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border bg-background mt-4">
+              <Table className="min-w-[800px]">
+                <TableHeader className="bg-muted">
+                  <TableRow>
+                    <TableHead>Date/Time</TableHead>
+                    <TableHead>Actor</TableHead>
+                    <TableHead>Role</TableHead>
+                    <TableHead>Action</TableHead>
+                    <TableHead>Resource</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {userAudits.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell>{new Date(log.timestamp).toLocaleString()}</TableCell>
+                      <TableCell>{log.actor_name}</TableCell>
+                      <TableCell><Badge variant="outline">{log.actor_role}</Badge></TableCell>
+                      <TableCell>{log.action}</TableCell>
+                      <TableCell>
+                        <div className="font-medium">{log.resource_type}</div>
+                        <div className="text-xs text-muted-foreground">{log.resource_summary}</div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
