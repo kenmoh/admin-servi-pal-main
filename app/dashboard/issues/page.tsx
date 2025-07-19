@@ -55,8 +55,8 @@ export default function IssuesPage() {
 
     const queryClient = useQueryClient();
     const sendMessageMutation = useMutation({
-        mutationFn: async ({ reportId, message }: { reportId: string, message: string }) => {
-            return sendReportMessage(reportId, message);
+        mutationFn: async ({ reportId, content }: { reportId: string, content: string }) => {
+            return sendReportMessage(reportId, content);
         },
         onMutate: async ({ reportId, message }) => {
             await queryClient.cancelQueries({ queryKey: ["issues"] });
@@ -176,7 +176,7 @@ export default function IssuesPage() {
                             onSubmit={e => {
                                 e.preventDefault();
                                 if (!input.trim() || !selectedReportId) return;
-                                sendMessageMutation.mutate({ reportId: selectedReportId, message: input });
+                                sendMessageMutation.mutate({ reportId: selectedReportId, content: input });
                                 setInput("");
                             }}
                         >

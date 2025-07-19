@@ -186,7 +186,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-
+import {getToken} from '@/actions/user'
 interface RealtimeConfig {
   url: string;
   events: string[];
@@ -209,6 +209,8 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
   const MAX_ATTEMPTS = 5;
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const connectionAttemptsRef = useRef(0);
+
+  
 
   useEffect(() => {
     let isUnmounted = false;

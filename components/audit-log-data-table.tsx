@@ -37,6 +37,7 @@ export function AuditLogDataTable() {
     fetchAudits();
   }, []);
 
+
   const handleRowClick = async (id: string) => {
     const audit = await getAuditById(id);
     setSelectedAudit(audit);
@@ -80,7 +81,7 @@ export function AuditLogDataTable() {
           </TableHeader>
           <TableBody>
             {filteredAudits.map((log) => (
-              <TableRow key={log.id} onClick={() => handleRowClick(log.id)}>
+              <TableRow className='cursor-pointer' key={log.id} onClick={() => handleRowClick(log.id)}>
                 <TableCell>
                   {new Date(log.timestamp).toLocaleString()}
                 </TableCell>
@@ -101,7 +102,7 @@ export function AuditLogDataTable() {
           </TableBody>
         </Table>
       </div>
-      <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+      <Drawer direction='right' open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Audit Log Details</DrawerTitle>
@@ -111,7 +112,7 @@ export function AuditLogDataTable() {
           </DrawerHeader>
           {selectedAudit && (
             <div className="p-4">
-              <pre>{JSON.stringify(selectedAudit, null, 2)}</pre>
+              <pre className='text-green-600'>{JSON.stringify(selectedAudit, null, 2)}</pre>
             </div>
           )}
         </DrawerContent>

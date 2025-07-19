@@ -1,8 +1,22 @@
 "use server";
 
 import { reportUrl } from "@/lib/constant";
-import { Report } from "@/types/report";
+import { z } from "zod";
+import { Report, ReportThread } from "@/types/report";
 import { authenticatedFetch } from "./user";
+
+
+const createMessageSchema = z.object({
+  content: z.string().trim().min(1, "Content is required"),
+
+});
+
+export type FormState = {
+  message: string;
+  success: boolean;
+  user_type?: string;
+  errors?: string;
+};
 
 export async function getAllReports(): Promise<Report[]> {
   try {
@@ -33,16 +47,40 @@ export async function getReportById(id: string): Promise<Report | null> {
   }
 }
 
-export async function sendReportMessage(reportId: string, message: string) {
-  const res = await authenticatedFetch(`${reportUrl}/${reportId}/message`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ message }),
-  });
-  if (!res.ok) {
-    throw new Error("Failed to send message");
+// export async function sendReportMessage(reportId: string, message: string) {
+//   const res = await authenticatedFetch(`${reportUrl}/${reportId}/message`, {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify({ message }),
+//   });
+//   if (!res.ok) {
+//     throw new Error("Failed to send message");
+//   }
+//   return res.json();
+// }
+
+export const sendReportMessage = async (
+  reportId: string,
+  messageData: z.infer<typeof createMessageSchema>
+): Promise<ReportThread | { error: string }> => {
+  try {
+    const result = await authenticatedFetch(`${reportUrl}/${reportId}/message`, {
+      method: "POST",
+      body: messageData,
+    });
+
+    const data = await result.json();
+    return {
+      success: true,
+      message: "message sent",
+      ...data,
+    };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
   }
-  return res.json();
-}
+};
