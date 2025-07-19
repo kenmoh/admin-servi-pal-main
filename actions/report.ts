@@ -50,11 +50,12 @@ export const sendReportMessage = async (
   content: z.infer<typeof createMessageSchema>
 ): Promise<ReportThread | { error: string }> => {
   try {
+    console.log("sendReportMessage body:", content);
     const result = await authenticatedFetch(
       `${reportUrl}/${reportId}/message`,
       {
         method: "POST",
-        body: JSON.stringify(content),
+        body: content,
       }
     );
 
@@ -64,6 +65,28 @@ export const sendReportMessage = async (
       message: "message sent",
       ...data,
     };
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
+  }
+};
+
+export const updateReportStatus = async (
+  reportId: string,
+  status: string
+): Promise<any> => {
+  try {
+    const result = await authenticatedFetch(`${reportUrl}/${reportId}/status`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ iisue_status: status }),
+    });
+    if (!result.ok) {
+      throw new Error("Failed to update report status");
+    }
+    return await result.json();
   } catch (error) {
     return {
       error:

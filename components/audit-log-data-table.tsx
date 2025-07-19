@@ -87,7 +87,7 @@ export function AuditLogDataTable() {
               <TableHead>Actor</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Action</TableHead>
-              <TableHead>Resource</TableHead>
+              <TableHead>Resource Type</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -158,7 +158,7 @@ export function AuditLogDataTable() {
                     <TableHead>Actor</TableHead>
                     <TableHead>Role</TableHead>
                     <TableHead>Action</TableHead>
-                    <TableHead>Resource</TableHead>
+                    <TableHead>Resource Type</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>

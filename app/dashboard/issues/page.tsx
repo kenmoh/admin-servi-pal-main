@@ -10,6 +10,7 @@ import { getAllReports } from "@/actions/report";
 import { cn } from "@/lib/utils"
 
 import { sendReportMessage } from "@/actions/report";
+import { updateReportStatus } from "@/actions/report";
 import { Report, ReportThread } from "@/types/report";
 import { AvatarImage } from "@/components/ui/avatar";
 
@@ -35,6 +36,9 @@ const reportStatusColors: Record<string, string> = {
 export default function IssuesPage() {
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [input, setInput] = useState("");
+    const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+    const [statusLoading, setStatusLoading] = useState(false);
+    const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
     // Fetch paginated data
     const {
@@ -52,6 +56,21 @@ export default function IssuesPage() {
             setSelectedReportId(reports[0].id);
         }
     }, [reports, selectedReportId]);
+
+    // Auto-scroll to bottom when messages change
+    React.useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [selectedReport?.thread?.length]);
+
+    // Status update handler
+    const handleStatusUpdate = async (status: string) => {
+        if (!selectedReportId) return;
+        setStatusLoading(true);
+        await updateReportStatus(selectedReportId, status);
+        setStatusLoading(false);
+    };
 
     const queryClient = useQueryClient();
     const sendMessageMutation = useMutation({
@@ -71,7 +90,7 @@ export default function IssuesPage() {
                                     ...report.thread,
                                     {
                                         id: "optimistic-" + Date.now(),
-                                        sender: { name: "You", avatar: "" },
+                                        sender: { name: "Admin", avatar: "" },
                                         message_type: "text",
                                         role: "admin",
                                         date: new Date().toISOString(),
@@ -144,32 +163,66 @@ export default function IssuesPage() {
             <main className="flex-1 flex flex-col">
                 {selectedReport ? (
                     <>
-                        <div className="p-4 border-b bg-background">
+                        <div className="p-4 border-b bg-background flex items-center justify-between">
                             <span className="font-semibold text-lg">
                                 {selectedReport.report_type}
                             </span>
+                            <div className="relative">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setStatusDropdownOpen((v) => !v)}
+                                    disabled={statusLoading}
+                                >
+                                    Update Status
+                                </Button>
+                                {statusDropdownOpen && (
+                                    <div className="absolute right-0 mt-2 w-40 bg-popover text-popover-foreground border rounded shadow z-10">
+                                        {["resolved", "investigating", "dismissed"].map((status) => (
+                                            <button
+                                                key={status}
+                                                className="block w-full text-left px-4 py-2 hover:bg-muted"
+                                                onClick={async () => {
+                                                    setStatusDropdownOpen(false);
+                                                    await handleStatusUpdate(status);
+                                                }}
+                                                disabled={statusLoading}
+                                            >
+                                                {status.charAt(0).toUpperCase() + status.slice(1)}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                         <div className="flex-1 p-6 space-y-4 overflow-y-auto bg-background">
-                            {selectedReport.thread.map((msg: ReportThread) => (
-                                <div key={msg.id} className={cn("flex items-start gap-3", msg.role === "admin" ? "justify-end" : "justify-start")}>
-                                    {msg.role !== "admin" && (
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={msg.sender.avatar || undefined} />
-                                            <AvatarFallback>{msg.sender.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                    <div className={cn("p-3 rounded-lg max-w-xs shadow-none", msg.role === "admin" ? "bg-primary text-primary-foreground" : "bg-teal-700 text-primary-foreground")}>
-                                        <p className="text-sm">{msg.content}</p>
-                                        <p className="text-xs text-gray-300 text-right mt-1">{new Date(msg.date).toLocaleTimeString()}</p>
+                            {selectedReport.thread
+                                .filter((msg, idx, arr) =>
+                                    !msg.id.startsWith("optimistic-") ||
+                                    // Only show optimistic if no real message with same content exists after it
+                                    !arr.some((m, i) => i > idx && m.content === msg.content && !m.id.startsWith("optimistic-"))
+                                )
+                                .map((msg: ReportThread) => (
+                                    <div key={msg.id} className={cn("flex items-start gap-3", msg.role === "admin" ? "justify-end" : "justify-start")}>
+                                        {msg.role !== "admin" && (
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={msg.sender?.avatar || undefined} />
+                                                <AvatarFallback>{msg.sender?.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                        )}
+                                        <div className={cn("p-3 rounded-lg max-w-xs shadow-none", msg.role === "admin" ? "bg-primary text-primary-foreground" : "bg-teal-700 text-white")}>
+                                            <p className="text-lg">{msg.content}</p>
+                                            <p className="text-sm text-white text-right mt-1">{new Date(msg.date).toLocaleTimeString()}</p>
+                                        </div>
+                                        {msg.role === "admin" && (
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={msg.sender?.avatar || undefined} />
+                                                <AvatarFallback>A</AvatarFallback>
+                                            </Avatar>
+                                        )}
                                     </div>
-                                    {msg.role === "admin" && (
-                                        <Avatar className="h-8 w-8">
-                                            <AvatarImage src={msg.sender.avatar || undefined} />
-                                            <AvatarFallback>A</AvatarFallback>
-                                        </Avatar>
-                                    )}
-                                </div>
-                            ))}
+                                ))}
+                            <div ref={messagesEndRef} />
                         </div>
                         <form
                             className="flex items-center gap-2 p-4 border-t bg-background"
