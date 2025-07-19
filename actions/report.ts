@@ -5,10 +5,8 @@ import { z } from "zod";
 import { Report, ReportThread } from "@/types/report";
 import { authenticatedFetch } from "./user";
 
-
 const createMessageSchema = z.object({
   content: z.string().trim().min(1, "Content is required"),
-
 });
 
 export type FormState = {
@@ -47,29 +45,18 @@ export async function getReportById(id: string): Promise<Report | null> {
   }
 }
 
-// export async function sendReportMessage(reportId: string, message: string) {
-//   const res = await authenticatedFetch(`${reportUrl}/${reportId}/message`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify({ message }),
-//   });
-//   if (!res.ok) {
-//     throw new Error("Failed to send message");
-//   }
-//   return res.json();
-// }
-
 export const sendReportMessage = async (
   reportId: string,
-  messageData: z.infer<typeof createMessageSchema>
+  content: z.infer<typeof createMessageSchema>
 ): Promise<ReportThread | { error: string }> => {
   try {
-    const result = await authenticatedFetch(`${reportUrl}/${reportId}/message`, {
-      method: "POST",
-      body: messageData,
-    });
+    const result = await authenticatedFetch(
+      `${reportUrl}/${reportId}/message`,
+      {
+        method: "POST",
+        body: JSON.stringify(content),
+      }
+    );
 
     const data = await result.json();
     return {

@@ -56,9 +56,9 @@ export default function IssuesPage() {
     const queryClient = useQueryClient();
     const sendMessageMutation = useMutation({
         mutationFn: async ({ reportId, content }: { reportId: string, content: string }) => {
-            return sendReportMessage(reportId, content);
+            return sendReportMessage(reportId, { content });
         },
-        onMutate: async ({ reportId, message }) => {
+        onMutate: async ({ reportId, content }) => {
             await queryClient.cancelQueries({ queryKey: ["issues"] });
             const previousReports = queryClient.getQueryData<Report[]>(["issues"]);
             queryClient.setQueryData<Report[]>(["issues"], old =>
@@ -75,7 +75,7 @@ export default function IssuesPage() {
                                         message_type: "text",
                                         role: "admin",
                                         date: new Date().toISOString(),
-                                        content: message,
+                                        content,
                                         read: true,
                                     },
                                 ],
