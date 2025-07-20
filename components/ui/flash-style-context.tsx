@@ -1,3 +1,5 @@
+'use client'
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const FLASH_STYLE_KEY = 'flashStyle';
