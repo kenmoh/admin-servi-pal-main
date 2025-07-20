@@ -50,10 +50,6 @@ export default async function Page() {
   });
 
 
-  const [selectedAudit, setSelectedAudit] = React.useState<AuditLog | null>(
-    null
-  );
-
   // Prepare stats for section cards
   const statsCards = platformOverview ? [
     {
