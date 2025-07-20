@@ -59,6 +59,8 @@ import {
 import { DeliveryDetail, PaginatedDeliveryDetailResponse } from "@/types/order-types";
 import { RiderProfileModal } from "./rider-profile";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useFlashStyle } from "@/components/ui/flash-style-context";
+import { useDataFlash } from "@/hooks/use-flash";
 
 
 const columns: ColumnDef<DeliveryDetail>[] = [
@@ -269,6 +271,17 @@ function TableCellViewer({ item }: { item: DeliveryDetail }) {
   );
 }
 
+function getFlashClass(style: string) {
+  switch (style) {
+    case "pulse":
+      return "animate-pulse";
+    case "glow":
+      return "shadow-[0_0_8px_2px_rgba(0,255,255,0.5)]";
+    default:
+      return "";
+  }
+}
+
 export function PickupOrderDataTable({
   data,
   loading,
@@ -292,6 +305,8 @@ export function PickupOrderDataTable({
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [filterText, setFilterText] = React.useState("");
   const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
+  const { flashStyle } = useFlashStyle();
+  const { getFlashClass } = useDataFlash(data, "order.id", 2000, flashStyle);
 
 
   React.useEffect(() => {
@@ -418,7 +433,7 @@ export function PickupOrderDataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-
+                  className={getFlashClass(row.original.order.id)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

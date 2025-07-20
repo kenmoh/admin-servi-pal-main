@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
     closestCenter,
     DndContext,
@@ -11,16 +11,16 @@ import {
     useSensors,
     type DragEndEvent,
     type UniqueIdentifier,
-} from "@dnd-kit/core"
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+} from "@dnd-kit/core";
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
 import {
     arrayMove,
     SortableContext,
     useSortable,
     verticalListSortingStrategy,
-} from "@dnd-kit/sortable"
-import { CSS } from "@dnd-kit/utilities"
-import { useMutation } from "@tanstack/react-query"
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     IconEye,
     IconChevronDown,
@@ -35,7 +35,7 @@ import {
     IconLoader,
     IconPlus,
     IconTrendingUp,
-} from "@tabler/icons-react"
+} from "@tabler/icons-react";
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -50,22 +50,22 @@ import {
     SortingState,
     useReactTable,
     VisibilityState,
-} from "@tanstack/react-table"
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
-import { toast } from "sonner"
+} from "@tanstack/react-table";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { toast } from "sonner";
 import { Loader } from "lucide-react";
-import { z } from "zod"
+import { z } from "zod";
 
-import { useIsMobile } from "@/hooks/use-mobile"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     ChartConfig,
     ChartContainer,
     ChartTooltip,
     ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Checkbox } from "@/components/ui/checkbox"
+} from "@/components/ui/chart";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
     Drawer,
     DrawerClose,
@@ -75,24 +75,24 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerTrigger,
-} from "@/components/ui/drawer"
+} from "@/components/ui/drawer";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
     DropdownMenuContent,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { AddUserDialog } from "@/components/add-user"
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { AddUserDialog } from "@/components/add-user";
 import {
     Table,
     TableBody,
@@ -100,12 +100,13 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 import { toggleBlockUser } from "@/actions/user";
 import { EditUserModal } from "./edit-user-modal";
 import { useRealtime } from "@/hooks/use-realtime";
-import { useDataFlash } from '@/hooks/use-flash';
-import { cn } from "@/lib/utils"
+import { useDataFlash } from "@/hooks/use-flash";
+import { useFlashStyle } from "@/components/ui/flash-style-context";
+import { cn } from "@/lib/utils";
 
 // Team schema - adapted from user schema
 export const teamSchema = z.object({
@@ -126,13 +127,13 @@ export const teamSchema = z.object({
         store_name: z.string().optional(),
         bank_account_number: z.string().optional(),
         bike_number: z.string().optional(),
-    })
-})
+    }),
+});
 
 function DragHandle({ id }: { id: string }) {
     const { attributes, listeners } = useSortable({
         id,
-    })
+    });
 
     return (
         <Button
@@ -145,7 +146,7 @@ function DragHandle({ id }: { id: string }) {
             <IconGripVertical className="text-muted-foreground size-3" />
             <span className="sr-only">Drag to reorder</span>
         </Button>
-    )
+    );
 }
 
 const columns: ColumnDef<z.infer<typeof teamSchema>>[] = [
@@ -184,7 +185,7 @@ const columns: ColumnDef<z.infer<typeof teamSchema>>[] = [
         accessorKey: "id",
         header: "Team ID",
         cell: ({ row }) => {
-            return <TableCellViewer item={row.original} />
+            return <TableCellViewer item={row.original} />;
         },
         enableHiding: false,
     },
@@ -192,9 +193,7 @@ const columns: ColumnDef<z.infer<typeof teamSchema>>[] = [
         accessorKey: "email",
         header: "Email",
         cell: ({ row }) => (
-            <div className="max-w-48 truncate">
-                {row.original.email}
-            </div>
+            <div className="max-w-48 truncate">{row.original.email}</div>
         ),
     },
     {
@@ -202,7 +201,10 @@ const columns: ColumnDef<z.infer<typeof teamSchema>>[] = [
         header: "User Type",
         cell: ({ row }) => (
             <div className="w-32">
-                <Badge variant="outline" className="text-muted-foreground px-1.5 capitalize">
+                <Badge
+                    variant="outline"
+                    className="text-muted-foreground px-1.5 capitalize"
+                >
                     {row.original.user_type}
                 </Badge>
             </div>
@@ -235,7 +237,7 @@ const columns: ColumnDef<z.infer<typeof teamSchema>>[] = [
             </div>
         ),
     },
-]
+];
 
 function DraggableRow({
     row,
@@ -278,21 +280,29 @@ export function TeamDataTable({
 }) {
     // Remove local data state, use data prop directly
     // const [data, setData] = React.useState(() => initialData);
-    const [rowSelection, setRowSelection] = React.useState({})
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [sorting, setSorting] = React.useState<SortingState>([])
+    const [rowSelection, setRowSelection] = React.useState({});
+    const [columnVisibility, setColumnVisibility] =
+        React.useState<VisibilityState>({});
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+        []
+    );
+    const [sorting, setSorting] = React.useState<SortingState>([]);
     const [pagination, setPagination] = React.useState({
         pageIndex: 0,
         pageSize: 20,
-    })
+    });
     const [filterText, setFilterText] = React.useState("");
     const [debouncedFilterText, setDebouncedFilterText] = React.useState("");
     const [isMounted, setIsMounted] = React.useState(false);
-    const [flashStyle, setFlashStyle] = React.useState<"default" | "pulse" | "glow">("default");
+    const { flashStyle, setFlashStyle } = useFlashStyle();
 
     // Use data prop directly for flash logic
-    const { getFlashClass, isFlashing } = useDataFlash(data, 'id', 2000, flashStyle);
+    const { getFlashClass, isFlashing } = useDataFlash(
+        data,
+        "id",
+        2000,
+        flashStyle
+    );
 
     // Fix hydration error by waiting for component to mount
     React.useEffect(() => {
@@ -314,26 +324,26 @@ export function TeamDataTable({
 
         const searchTerm = debouncedFilterText.toLowerCase();
 
-        return data.filter(team => {
+        return data.filter((team) => {
             const fieldsToSearch = [
                 team.id,
                 team.email,
                 team.user_type,
                 team.profile.full_name || "",
                 team.profile.business_name || "",
-                team.profile.phone_number || ""
+                team.profile.phone_number || "",
             ];
 
-            return fieldsToSearch.some(field =>
+            return fieldsToSearch.some((field) =>
                 field.toLowerCase().includes(searchTerm)
             );
         });
     }, [data, debouncedFilterText]);
 
-    const dataIds = React.useMemo(() =>
-        filteredData.map(({ id }) => id),
+    const dataIds = React.useMemo(
+        () => filteredData.map(({ id }) => id),
         [filteredData]
-    )
+    );
 
     const table = useReactTable({
         data: filteredData,
@@ -358,7 +368,7 @@ export function TeamDataTable({
         getSortedRowModel: getSortedRowModel(),
         getFacetedRowModel: getFacetedRowModel(),
         getFacetedUniqueValues: getFacetedUniqueValues(),
-    })
+    });
 
     if (!isMounted) {
         return null;
@@ -380,21 +390,33 @@ export function TeamDataTable({
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-56">
-                                {table.getAllColumns().filter((column) => typeof column.accessorFn !== "undefined" && column.getCanHide()).map((column) => {
-                                    return (
-                                        <DropdownMenuCheckboxItem
-                                            key={column.id}
-                                            className="capitalize"
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                                        >
-                                            {column.id.replace(/profile\./, '').replace(/_/g, ' ')}
-                                        </DropdownMenuCheckboxItem>
+                                {table
+                                    .getAllColumns()
+                                    .filter(
+                                        (column) =>
+                                            typeof column.accessorFn !== "undefined" &&
+                                            column.getCanHide()
                                     )
-                                })}
+                                    .map((column) => {
+                                        return (
+                                            <DropdownMenuCheckboxItem
+                                                key={column.id}
+                                                className="capitalize"
+                                                checked={column.getIsVisible()}
+                                                onCheckedChange={(value) =>
+                                                    column.toggleVisibility(!!value)
+                                                }
+                                            >
+                                                {column.id.replace(/profile\./, "").replace(/_/g, " ")}
+                                            </DropdownMenuCheckboxItem>
+                                        );
+                                    })}
                             </DropdownMenuContent>
                         </DropdownMenu>
-                        <Select value={flashStyle} onValueChange={v => setFlashStyle(v as "default" | "pulse" | "glow")}>
+                        <Select
+                            value={flashStyle}
+                            onValueChange={(v) => setFlashStyle(v as "default" | "pulse" | "glow")}
+                        >
                             <SelectTrigger className="w-28" aria-label="Flash Style">
                                 <SelectValue />
                             </SelectTrigger>
@@ -418,7 +440,6 @@ export function TeamDataTable({
 
             <div className="relative flex flex-col gap-4 overflow-auto px-4 lg:px-6">
                 <div className="overflow-hidden rounded-lg border">
-
                     <Table>
                         <TableHeader className="bg-muted sticky top-0 z-10">
                             {table.getHeaderGroups().map((headerGroup) => (
@@ -433,7 +454,7 @@ export function TeamDataTable({
                                                         header.getContext()
                                                     )}
                                             </TableHead>
-                                        )
+                                        );
                                     })}
                                 </TableRow>
                             ))}
@@ -482,7 +503,7 @@ export function TeamDataTable({
                             <Select
                                 value={`${table.getState().pagination.pageSize}`}
                                 onValueChange={(value) => {
-                                    table.setPageSize(Number(value))
+                                    table.setPageSize(Number(value));
                                 }}
                             >
                                 <SelectTrigger size="sm" className="w-20" id="rows-per-page">
@@ -548,7 +569,7 @@ export function TeamDataTable({
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
@@ -556,17 +577,21 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
     const [isBlocked, setIsBlocked] = React.useState(item.is_blocked);
     const [isMounted, setIsMounted] = React.useState(false);
 
+    const queryClient = useQueryClient();
+
     const { mutate: toggleBlock, isPending } = useMutation({
         mutationFn: toggleBlockUser,
         onSuccess: (data) => {
             if ("is_blocked" in data) {
                 setIsBlocked(data.is_blocked);
             }
+            toast.success("User blocked");
+            queryClient.invalidateQueries({ queryKey: ["teams"] });
             // Optionally handle error case here
         },
-        onError: () => {
-            // toast.error("Failed to update user status");
-        }
+        onError: (error: Error) => {
+            toast.error(error.message || "Failed to toggle block");
+        },
     });
 
     React.useEffect(() => {
@@ -575,14 +600,18 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
 
     function AccountStatusPill({ status }: { status: string }) {
         return status === "confirmed" ? (
-            <Badge variant="default" className="bg-green-500 text-white">Confirmed</Badge>
+            <Badge variant="default" className="bg-green-500 text-white">
+                Confirmed
+            </Badge>
         ) : (
-            <Badge variant="default" className="text-white border rounded-full">Pending</Badge>
+            <Badge variant="default" className="text-white border rounded-full">
+                Pending
+            </Badge>
         );
     }
 
     if (!isMounted) {
-        return <span>{item.id}</span>; // Simple fallback during SSR
+        return <span>{item.id}</span>;
     }
 
     return (
@@ -611,9 +640,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                         </div>
                         <div className="flex flex-col gap-1">
                             <Label>Team ID</Label>
-                            <div className="text-sm font-medium font-mono">
-                                {item.id}
-                            </div>
+                            <div className="text-sm font-medium font-mono">{item.id}</div>
                         </div>
                     </div>
 
@@ -658,12 +685,7 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                                 {item.profile.business_name || "N/A"}
                             </div>
                         </div>
-                        {/* <div className="flex flex-col gap-1">
-                            <Label>Store Name</Label>
-                            <div className="text-sm font-medium">
-                                {item.profile.store_name || "N/A"}
-                            </div>
-                        </div> */}
+
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
@@ -692,21 +714,6 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                         </div>
                     </div>
 
-                    {/* <div className="grid grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-1">
-                            <Label>Business Registration</Label>
-                            <div className="text-sm font-medium">
-                                {item.profile.business_registration_number || "N/A"}
-                            </div>
-                        </div>
-                        <div className="flex flex-col gap-1">
-                            <Label>Bike Number</Label>
-                            <div className="text-sm font-medium">
-                                {item.profile.bike_number || "N/A"}
-                            </div>
-                        </div>
-                    </div> */}
-
                     <Separator />
 
                     <div className="grid grid-cols-2 gap-4">
@@ -716,16 +723,15 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                                 {isBlocked ? (
                                     <Badge variant="destructive">Blocked</Badge>
                                 ) : (
-                                    <Badge variant="outline" className="text-green-600 border-green-600 rounded-full">Active</Badge>
+                                    <Badge
+                                        variant="outline"
+                                        className="text-green-600 border-green-600 rounded-full"
+                                    >
+                                        Active
+                                    </Badge>
                                 )}
                             </div>
                         </div>
-                        {/* <div className="flex flex-col gap-1">
-                            <Label>Order Cancel Count</Label>
-                            <div className="text-sm font-medium">
-                                {item.order_cancel_count || 0}
-                            </div>
-                        </div> */}
                     </div>
 
                     <div className="flex flex-col gap-1 mt-2">
@@ -736,24 +742,9 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                     </div>
                 </div>
                 <DrawerFooter>
-                    <Button
-                        className='cursor-pointer w-full'
-                        variant={item.account_status === "confirmed" ? "ghost" : "default"}
-                        onClick={() => toggleBlock(item.id)}
-                        disabled={isPending}
-                    >
-                        {isPending ? (
-                            <>
-                                <Loader className="mr-2 h-4 w-4 animate-spin" />
-                                Confirming...
-                            </>
-                        ) : (
-                            'Confirm'
-                        )}
-                    </Button>
-                    <div className='flex justify-between gap-2'>
+                    <div className="flex justify-between gap-2">
                         <Button
-                            className='cursor-pointer w-1/2'
+                            className="cursor-pointer w-1/2"
                             variant={isBlocked ? "default" : "destructive"}
                             onClick={() => toggleBlock(item.id)}
                             disabled={isPending}
@@ -770,12 +761,10 @@ function TableCellViewer({ item }: { item: z.infer<typeof teamSchema> }) {
                             )}
                         </Button>
 
-
-
                         <EditUserModal user={item} />
                     </div>
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>
     );
-} 
+}

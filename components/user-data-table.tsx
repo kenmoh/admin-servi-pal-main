@@ -97,6 +97,8 @@ import {
 } from "@/components/ui/table"
 import { toggleBlockUser } from "@/actions/user";
 import { EditUserModal } from "./edit-user-modal";
+import { useFlashStyle } from "@/components/ui/flash-style-context";
+import { useDataFlash } from "@/hooks/use-flash";
 
 export const schema = z.object({
   id: z.string(),
@@ -254,6 +256,17 @@ function DraggableRow({ row, className = "" }: { row: Row<z.infer<typeof schema>
   )
 }
 
+function getFlashClass(style: string) {
+  switch (style) {
+    case "pulse":
+      return "animate-pulse";
+    case "glow":
+      return "shadow-[0_0_8px_2px_rgba(0,255,255,0.5)]";
+    default:
+      return "";
+  }
+}
+
 export function UserDataTable({
   data: initialData,
 }: {
@@ -343,7 +356,8 @@ export function UserDataTable({
 
 
 
-  const [open, setOpen] = React.useState(false);
+  const { flashStyle } = useFlashStyle();
+  const { getFlashClass } = useDataFlash(filteredData, "id", 2000, flashStyle);
 
   if (!isMounted) {
     return null;
@@ -423,6 +437,7 @@ export function UserDataTable({
                     <DraggableRow
                       key={row.id}
                       row={row}
+                      className={getFlashClass(row.original.id)}
                     />
                   ))}
                 </SortableContext>

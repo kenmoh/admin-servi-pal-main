@@ -4,7 +4,7 @@ import { z } from "zod";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
-import * as jwt from 'jsonwebtoken';
+import * as jwt from "jsonwebtoken";
 import { usersUrl, authsUrl } from "@/lib/constant";
 import {
   User,
@@ -63,8 +63,11 @@ export const getUserIdFromToken = async (): Promise<string | null> => {
     }
 
     try {
-      const decodedToken = jwt.verify(token.value, process.env.JWT_SECRET || '');
-      if (typeof decodedToken === 'string') {
+      const decodedToken = jwt.verify(
+        token.value,
+        process.env.JWT_SECRET || ""
+      );
+      if (typeof decodedToken === "string") {
         return null;
       }
 
@@ -326,8 +329,18 @@ export const createStaff = async (
 };
 
 export async function logoutUser() {
+  const cookieStore = await cookies();
+  const refreshToken = cookieStore.get("refresh_token");
+
+  if (!refreshToken?.value) {
+    throw new Error("No refresh token found. Please log in again.");
+  }
+
   try {
-    await authenticatedFetch(`${authsUrl}/logout`, { method: "POST" });
+    await authenticatedFetch(`${authsUrl}/logout`, {
+      method: "POST",
+      body: JSON.stringify({ refresh_token: refreshToken.value }),
+    });
   } catch (error) {
     console.error("Logout failed", error);
     // Even if logout fails on the server, we still want to clear the cookies
@@ -341,21 +354,17 @@ export async function logoutUser() {
 }
 
 export const updateUser = async (userId: string, userData: any) => {
-  const result = await authenticatedFetch(`${usersUrl}/${userId}`,
-    {
-      method: "PUT",
-      body: userData,
-    }
-  );
+  const result = await authenticatedFetch(`${usersUrl}/${userId}`, {
+    method: "PUT",
+    body: userData,
+  });
   return result.json();
 };
 
 export const updatePassword = async (userId: string, password: any) => {
-  const result = await authenticatedFetch(`${authsUrl}/change-password`,
-    {
-      method: "PUT",
-      body: {user_id: userId, new_password: password},
-    }
-  );
+  const result = await authenticatedFetch(`${authsUrl}/change-password`, {
+    method: "PUT",
+    body: { user_id: userId, new_password: password },
+  });
   return result.json();
 };

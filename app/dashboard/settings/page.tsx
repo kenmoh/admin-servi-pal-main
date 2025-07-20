@@ -17,6 +17,7 @@ import { getTeams, updatePassword } from "@/actions/user";
 import { SettingsType } from "@/types/settings-types";
 import { User } from "@/types/user-types";
 import { Switch } from "@/components/ui/switch";
+import { useFlashStyle } from "@/components/ui/flash-style-context";
 
 const payoutSchema = z.object({
   payout_charge_transaction_upto_5000_naira: z.coerce.number().min(0, "Must be 0 or positive"),
@@ -56,6 +57,7 @@ type MaintenanceFormValues = z.infer<typeof maintenanceSchema>;
 
 export default function PayoutSettingsPage() {
   const queryClient = useQueryClient();
+  const { flashStyle, setFlashStyle } = useFlashStyle();
 
   // Fetch current settings
   const { data, isLoading, isError, refetch } = useQuery({
@@ -574,7 +576,7 @@ export default function PayoutSettingsPage() {
                 />
               </CardContent>
               <CardFooter>
-                <Button type="submit" disabled={brandingMutation.isPending}>
+                <Button className="mt-3" type="submit" disabled={brandingMutation.isPending}>
                   {brandingMutation.isPending ? "Saving..." : "Save Branding"}
                 </Button>
               </CardFooter>
@@ -610,13 +612,30 @@ export default function PayoutSettingsPage() {
                 />
               </CardContent>
               <CardFooter>
-                <Button type="submit" disabled={maintenanceMutation.isPending}>
+                <Button className="mt-5" type="submit" disabled={maintenanceMutation.isPending}>
                   {maintenanceMutation.isPending ? "Saving..." : "Save Settings"}
                 </Button>
               </CardFooter>
             </form>
           </Form>
         </Card>
+      </div>
+
+      <div className="p-6 space-y-6">
+        <h1 className="text-2xl font-semibold">Settings</h1>
+        <div className="max-w-xs">
+          <label className="block mb-2 font-medium">Flash Style</label>
+          <Select value={flashStyle} onValueChange={v => setFlashStyle(v as "default" | "pulse" | "glow")}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Default</SelectItem>
+              <SelectItem value="pulse">Pulse</SelectItem>
+              <SelectItem value="glow">Glow</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     </div>
   );
