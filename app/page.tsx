@@ -63,7 +63,7 @@ const Home = () => {
               alt="ServiPal Logo"
               className="h-10 w-10"
             />
-            <div className="font-bold text-2xl bg-clip-text text-transparent bg-gradient-to-r from-brand-orange via-primary to-brand-blue">
+            <div className="font-bold text-2xl  text-yellow-900 ">
               ServiPal
             </div>
           </div>
