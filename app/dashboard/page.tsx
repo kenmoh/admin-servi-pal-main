@@ -16,7 +16,7 @@ import {
   getComprehensiveStats
 } from "@/actions/stats";
 import { StatsPeriod } from "@/types/stats-types";
-import {getActiveUserCount} from '@/types/user'
+import {getActiveUserCount} from '@/actions/user'
 import { formatCurrency, formatNumber } from "@/lib/stats-utils";
 
 export default async function Page() {
