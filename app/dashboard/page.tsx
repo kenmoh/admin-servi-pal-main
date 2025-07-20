@@ -57,7 +57,7 @@ export default async function Page() {
     },
     {
       title: "Active Users",
-      value: `${count},
+      value: `${count}`,
       description: "Users active today",
       footer: `${count} total users`,
     },
