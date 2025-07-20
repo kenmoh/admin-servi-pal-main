@@ -138,11 +138,20 @@ export default function IssuesPage() {
         },
     });
 
+    const unreadCount = reports?.filter(r => !r.is_read).length || 0;
+
     return (
         <div className="flex h-[calc(100vh-4rem)] bg-background rounded-lg border shadow-sm overflow-hidden">
             {/* Issues List */}
             <aside className="w-80 border-r bg-muted/50 flex flex-col">
-                <div className="p-4 font-semibold text-lg">Issues</div>
+                <div className="p-4 font-semibold text-lg flex items-center gap-2">
+                    Issues
+                    {unreadCount > 0 && (
+                        <span className="ml-2 inline-flex items-center justify-center rounded-full bg-yellow-500 text-white text-xs font-bold px-2 py-0.5">
+                            {unreadCount}
+                        </span>
+                    )}
+                </div>
                 <Separator />
                 <div className="flex-1 overflow-y-auto">
                     {isLoadingReports ? (
@@ -205,7 +214,7 @@ export default function IssuesPage() {
                                 </Button>
                                 {statusDropdownOpen && (
                                     <div className="absolute right-0 mt-2 w-40 bg-popover text-popover-foreground border rounded shadow z-10">
-                                        {["resolved", "investigating", "dismissed"].map((status) => (
+                                        {["resolved", "dismissed"].map((status) => (
                                             <button
                                                 key={status}
                                                 className="block w-full text-left px-4 py-2 hover:bg-muted"
