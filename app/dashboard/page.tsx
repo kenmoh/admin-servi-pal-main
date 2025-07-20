@@ -4,8 +4,10 @@ import { SectionCards } from "@/components/section-cards";
 import { RevenueStatsTable } from "@/components/revenue-stats-table";
 import { TopPerformers } from "@/components/top-performers";
 import { UserEngagementDashboard } from "@/components/user-engagement-dashboard";
+import { useQuery } from "@tanstack/react-query";
 import { OperationalEfficiencyDashboard } from "@/components/operational-efficiency-dashboard";
 import { FinancialAnalyticsDashboard } from "@/components/financial-analytics-dashboard";
+
 import {
   getOrderStats,
   getPlatformOverview,
@@ -14,6 +16,7 @@ import {
   getComprehensiveStats
 } from "@/actions/stats";
 import { StatsPeriod } from "@/types/stats-types";
+import {getActiveUserCount} from '@/types/user'
 import { formatCurrency, formatNumber } from "@/lib/stats-utils";
 
 export default async function Page() {
@@ -39,6 +42,17 @@ export default async function Page() {
   const userStats = "error" in userStatsResult ? null : userStatsResult;
   const comprehensiveStats = "error" in comprehensiveStatsResult ? null : comprehensiveStatsResult;
 
+
+  const { data } = useQuery({
+    queryKey: ['active-user-count'],
+    queryFn: getActiveUserCount
+  });
+
+
+  const [selectedAudit, setSelectedAudit] = React.useState<AuditLog | null>(
+    null
+  );
+
   // Prepare stats for section cards
   const statsCards = platformOverview ? [
     {
@@ -49,7 +63,7 @@ export default async function Page() {
     },
     {
       title: "Active Users",
-      value: formatNumber(platformOverview.active_users_today),
+      value: formatNumber(data?.count),
       description: "Users active today",
       footer: `${formatNumber(platformOverview.total_users)} total users`,
     },

@@ -268,6 +268,28 @@ export const getRiderProfileDetails = async (
   }
 };
 
+
+interface Count {
+  count: number | string;
+}
+
+export const getActiveUserCount = async (): Promise<
+  Count | { error: string }
+> => {
+  try {
+    const result = await authenticatedFetch(`${usersUrl}/active/count`);
+    const data = await result.json();
+
+    return data;
+  } catch (error) {
+    return {
+      error:
+        error instanceof Error ? error.message : "An unknown error occurred",
+    };
+  }
+};
+
+
 export const getWallets = async (): Promise<
   WalletSchema[] | { error: string }
 > => {

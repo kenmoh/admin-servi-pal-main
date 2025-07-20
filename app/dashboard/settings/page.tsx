@@ -586,6 +586,19 @@ export default function PayoutSettingsPage() {
 
         {/* Maintenance Mode Card */}
         <Card className="w-full">
+        <div className="max-w-xs">
+          <label className="block mb-2 font-medium">Flash Style</label>
+          <Select value={flashStyle} onValueChange={v => setFlashStyle(v as "default" | "pulse" | "glow")}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Default</SelectItem>
+              <SelectItem value="pulse">Pulse</SelectItem>
+              <SelectItem value="glow">Glow</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
           <CardHeader>
             <CardTitle>Maintenance Mode</CardTitle>
           </CardHeader>
@@ -621,22 +634,6 @@ export default function PayoutSettingsPage() {
         </Card>
       </div>
 
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold">Settings</h1>
-        <div className="max-w-xs">
-          <label className="block mb-2 font-medium">Flash Style</label>
-          <Select value={flashStyle} onValueChange={v => setFlashStyle(v as "default" | "pulse" | "glow")}>
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="default">Default</SelectItem>
-              <SelectItem value="pulse">Pulse</SelectItem>
-              <SelectItem value="glow">Glow</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
     </div>
   );
 }
