@@ -43,8 +43,8 @@ export default async function Page() {
   const comprehensiveStats = "error" in comprehensiveStatsResult ? null : comprehensiveStatsResult;
 
 
-  const data = await getActiveUserCount()
-  console.log(data)
+  const {count} = await getActiveUserCount()
+  console.log(count)
 
 
 
@@ -58,7 +58,7 @@ export default async function Page() {
     },
     {
       title: "Active Users",
-      value: formatNumber(data?.count),
+      value: formatNumber(count),
       description: "Users active today",
       footer: `${formatNumber(platformOverview.total_users)} total users`,
     },

@@ -280,8 +280,6 @@ export const getActiveUserCount = async (): Promise<
     const result = await authenticatedFetch(`${usersUrl}/active/count`);
     const data = await result.json();
 
-    console.log(data)
-
     return data;
   } catch (error) {
     return {
