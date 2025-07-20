@@ -35,7 +35,7 @@ export function RealtimeProvider({ children }: { children: React.ReactNode }) {
 
     const { isConnected, connectionAttempts } = useRealtime({
         url: wsUrl,
-        events: ['new_order', 'new_report_message', 'delivery_order_status_update', 'wallet_update', 'new_transaction', 'transaction_update', 'new_user', 'new_team', 'order_status_update'],
+        events: ['new_order', 'new_report_message', 'user_update', 'delivery_order_status_update', 'wallet_update', 'new_transaction', 'transaction_update', 'new_user', 'new_team', 'order_status_update'],
     });
 
     return (

@@ -314,6 +314,22 @@ export function useRealtime({ url, events, onMessage }: RealtimeConfig) {
               }
               break;
 
+
+            case "user_update":
+              console.log("🔴 Processing user_update event");
+              console.log("🔴 Invalidating teams query...");
+              queryClient.invalidateQueries({ queryKey: ["teams"] });
+              queryClient.refetchQueries({ queryKey: ["teams"] });
+              if (data.user_id || data.email) {
+                const identifier = data.user_id || data.email;
+                showDebouncedToast(
+                  "user_update",
+                  identifier,
+                  `User updated: ${data.email}`
+                );
+              }
+              break;
+
             case "order_status_update":
               console.log("🔴 Processing order_status_update event");
               console.log("🔴 Invalidating orders query for status update...");
