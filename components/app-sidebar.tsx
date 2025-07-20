@@ -115,7 +115,7 @@ const data = {
       icon: Utensils,
     },
     {
-      name: "Laundry Menu",
+      name: "Laundry Items",
       url: "/dashboard/laundry-items",
       icon: WashingMachine,
     },

@@ -273,9 +273,7 @@ interface Count {
   count: number | string;
 }
 
-export const getActiveUserCount = async (): Promise<
-  Count | { error: string }
-> => {
+export const getActiveUserCount = async (): Promise<Count | { error: string }> => {
   try {
     const result = await authenticatedFetch(`${usersUrl}/active/count`);
     const data = await result.json();

@@ -10,3 +10,5 @@ export const settingsUrl = `${baseUrl}/settings`;
 export const paymentUrl = `${baseUrl}/payment`;
 export const auditUrl = `${baseUrl}/audit-logs`;
 export const reportUrl = `${baseUrl}/reports`;
+export const itemUrl = `${baseUrl}/items`;
+

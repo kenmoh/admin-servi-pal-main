@@ -1,21 +1,13 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
-import React from "react";
-import data from "../data.json";
+import { getFoodMenus } from "@/actions/item";
+import { CustomMenuTable } from "@/components/custom-menu-table";
 
-const UserPage = () => {
+export default async function FoodItemsPage() {
+  const menus = await getFoodMenus();
+
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2">
-        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          <SectionCards />
-
-          <DataTable data={data} />
-        </div>
-      </div>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Food Items</h1>
+      <CustomMenuTable data={menus} />
     </div>
   );
-};
-
-export default UserPage;
+}

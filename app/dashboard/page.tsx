@@ -43,10 +43,9 @@ export default async function Page() {
   const comprehensiveStats = "error" in comprehensiveStatsResult ? null : comprehensiveStatsResult;
 
 
-  const {count} = await getActiveUserCount()
-  console.log(count)
-
-
+  const activeUserCountResult = await getActiveUserCount();
+  const count = "error" in activeUserCountResult ? 0 : activeUserCountResult.count;
+ 
 
   // Prepare stats for section cards
   const statsCards = platformOverview ? [
