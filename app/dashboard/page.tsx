@@ -1,11 +1,10 @@
-import React from 'react'
 import { ChartAreaInteractive } from "@/components/chart-area-interactive";
 import { DataTable } from "@/components/data-table";
 import { SectionCards } from "@/components/section-cards";
 import { RevenueStatsTable } from "@/components/revenue-stats-table";
 import { TopPerformers } from "@/components/top-performers";
 import { UserEngagementDashboard } from "@/components/user-engagement-dashboard";
-import { useQuery } from "@tanstack/react-query";
+// import { useQuery } from "@tanstack/react-query";
 import { OperationalEfficiencyDashboard } from "@/components/operational-efficiency-dashboard";
 import { FinancialAnalyticsDashboard } from "@/components/financial-analytics-dashboard";
 
@@ -44,10 +43,9 @@ export default async function Page() {
   const comprehensiveStats = "error" in comprehensiveStatsResult ? null : comprehensiveStatsResult;
 
 
-  const { data } = useQuery({
-    queryKey: ['active-user-count'],
-    queryFn: getActiveUserCount
-  });
+  const data = await getActiveUserCount()
+  console.log(data)
+
 
 
   // Prepare stats for section cards
