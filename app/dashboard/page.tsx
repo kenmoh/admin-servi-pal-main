@@ -57,9 +57,9 @@ export default async function Page() {
     },
     {
       title: "Active Users",
-      value: formatNumber(count),
+      value: `${count},
       description: "Users active today",
-      footer: `${formatNumber(platformOverview.total_users)} total users`,
+      footer: `${count} total users`,
     },
     {
       title: "Total Revenue",
