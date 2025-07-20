@@ -9,10 +9,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getAllReports } from "@/actions/report";
 import { cn } from "@/lib/utils"
 
-import { sendReportMessage } from "@/actions/report";
-import { updateReportStatus } from "@/actions/report";
+import { sendReportMessage, updateReportStatus, updateIssueStatus, markReportAsRead } from "@/actions/report";
 import { Report, ReportThread } from "@/types/report";
 import { AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
+import { CheckCircle, Circle } from 'lucide-react';
 
 
 // Map report_type to color classes
@@ -37,7 +38,24 @@ export default function IssuesPage() {
     const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
     const [input, setInput] = useState("");
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
-    const [statusLoading, setStatusLoading] = useState(false);
+    const queryClient = useQueryClient();
+    const statusMutation = useMutation({
+        mutationFn: async (status: string) => {
+            if (!selectedReportId) return;
+            return updateIssueStatus(selectedReportId, status);
+        },
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ["issues"] });
+            if (data && !("error" in data)) {
+                toast.success("Issue status updated");
+            } else {
+                toast.error(data?.error || "Failed to update status");
+            }
+        },
+        onError: (err: any) => {
+            toast.error(err?.message || "Failed to update status");
+        },
+    });
     const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
     // Fetch paginated data
@@ -50,6 +68,20 @@ export default function IssuesPage() {
     });
 
     const selectedReport = reports?.find(report => report.id === selectedReportId);
+
+    // Mark report as read when selected and unread
+    const markReadMutation = useMutation({
+        mutationFn: async (reportId: string) => markReportAsRead(reportId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["issues"] });
+        },
+    });
+
+    React.useEffect(() => {
+        if (selectedReport && !selectedReport.is_read) {
+            markReadMutation.mutate(selectedReport.id);
+        }
+    }, [selectedReport]);
 
     React.useEffect(() => {
         if (!selectedReportId && reports && reports.length > 0) {
@@ -64,15 +96,6 @@ export default function IssuesPage() {
         }
     }, [selectedReport?.thread?.length]);
 
-    // Status update handler
-    const handleStatusUpdate = async (status: string) => {
-        if (!selectedReportId) return;
-        setStatusLoading(true);
-        await updateReportStatus(selectedReportId, status);
-        setStatusLoading(false);
-    };
-
-    const queryClient = useQueryClient();
     const sendMessageMutation = useMutation({
         mutationFn: async ({ reportId, content }: { reportId: string, content: string }) => {
             return sendReportMessage(reportId, { content });
@@ -151,7 +174,11 @@ export default function IssuesPage() {
                                     </div>
                                     <span className="text-sm text-muted-foreground truncate">{report.description}</span>
                                     <span className="mt-1 text-xs text-muted-foreground">{new Date(report.created_at).toLocaleDateString()}</span>
-                                    {report.is_read && <span className="mt-1 text-xs text-primary">● Unread</span>}
+                                    {report.is_read ? (
+                                        <span className="mt-1 text-xs flex items-center gap-1 text-green-500"><CheckCircle className="w-4 h-4 mr-1" />Read</span>
+                                    ) : (
+                                        <span className="mt-1 text-xs flex items-center gap-1 text-yellow-500"><Circle className="w-4 h-4 mr-1" />Unread</span>
+                                    )}
                                 </li>
                             ))}
                         </ul>
@@ -172,7 +199,7 @@ export default function IssuesPage() {
                                     variant="outline"
                                     size="sm"
                                     onClick={() => setStatusDropdownOpen((v) => !v)}
-                                    disabled={statusLoading}
+                                    disabled={statusMutation.isPending}
                                 >
                                     Update Status
                                 </Button>
@@ -184,9 +211,9 @@ export default function IssuesPage() {
                                                 className="block w-full text-left px-4 py-2 hover:bg-muted"
                                                 onClick={async () => {
                                                     setStatusDropdownOpen(false);
-                                                    await handleStatusUpdate(status);
+                                                    statusMutation.mutate(status);
                                                 }}
-                                                disabled={statusLoading}
+                                                disabled={statusMutation.isPending}
                                             >
                                                 {status.charAt(0).toUpperCase() + status.slice(1)}
                                             </button>
@@ -199,8 +226,13 @@ export default function IssuesPage() {
                             {selectedReport.thread
                                 .filter((msg, idx, arr) =>
                                     !msg.id.startsWith("optimistic-") ||
-                                    // Only show optimistic if no real message with same content exists after it
-                                    !arr.some((m, i) => i > idx && m.content === msg.content && !m.id.startsWith("optimistic-"))
+                                    // Only show optimistic if no real message with same content and role exists after it
+                                    !arr.some((m, i) =>
+                                        i > idx &&
+                                        m.content === msg.content &&
+                                        m.role === msg.role &&
+                                        !m.id.startsWith("optimistic-")
+                                    )
                                 )
                                 .map((msg: ReportThread) => (
                                     <div key={msg.id} className={cn("flex items-start gap-3", msg.role === "admin" ? "justify-end" : "justify-start")}>

@@ -535,19 +535,9 @@ export default function PayoutSettingsPage() {
           <Form {...brandingForm}>
             <form onSubmit={brandingForm.handleSubmit(onBrandingSubmit)}>
               <CardContent className="space-y-6">
-                    <div className="max-w-xs">
-          <label className="block mb-2 font-medium">Flash Style</label>
-          <Select value={flashStyle} onValueChange={v => setFlashStyle(v as "default" | "pulse" | "glow")}>
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="default">Default</SelectItem>
-              <SelectItem value="pulse">Pulse</SelectItem>
-              <SelectItem value="glow">Glow</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+                <div className="max-w-xs">
+
+                </div>
                 <FormField
                   control={brandingForm.control}
                   name="company_name"
@@ -599,7 +589,19 @@ export default function PayoutSettingsPage() {
 
         {/* Maintenance Mode Card */}
         <Card className="w-full">
-    
+
+          <label className="block mb-2 font-medium">Flash Style</label>
+          <Select value={flashStyle} onValueChange={v => setFlashStyle(v as "default" | "pulse" | "glow")}>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="default">Default</SelectItem>
+              <SelectItem value="pulse">Pulse</SelectItem>
+              <SelectItem value="glow">Glow</SelectItem>
+            </SelectContent>
+          </Select>
+
           <CardHeader>
             <CardTitle>Maintenance Mode</CardTitle>
           </CardHeader>

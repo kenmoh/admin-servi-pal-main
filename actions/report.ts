@@ -94,3 +94,39 @@ export const updateReportStatus = async (
     };
   }
 };
+
+interface StatusResponse {
+  issue_status: string;
+}
+
+export const updateIssueStatus = async (
+  reportId: string,
+  newStatus: string
+): Promise<StatusResponse | { error: string }> => {
+  try {
+    const res = await authenticatedFetch(
+      `${reportUrl}/${reportId}/status?issue_status=${encodeURIComponent(
+        newStatus
+      )}`,
+      {
+        method: "PUT",
+      }
+    );
+    if (!res.ok) throw new Error("Failed to update issue status");
+    return await res.json();
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Unknown error" };
+  }
+};
+
+export const markReportAsRead = async (reportId: string): Promise<any> => {
+  try {
+    const res = await authenticatedFetch(`${reportUrl}/${reportId}/mark-read`, {
+      method: "PUT",
+    });
+    if (!res.ok) throw new Error("Failed to mark report as read");
+    return await res.json();
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Unknown error" };
+  }
+};
