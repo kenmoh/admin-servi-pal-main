@@ -8,11 +8,11 @@ interface MousePosition {
 
 interface Radius {
   number: number
-   label: string 
-   delay: number 
-   radius: number 
-   angle: number
-   size: string
+  label: string
+  delay: number
+  radius: number
+  angle: number
+  size: string
 }
 
 const ServiPal = () => {
@@ -74,7 +74,7 @@ const ServiPal = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-400 via-black to-orange-300 overflow-hidden">
       {/* Background Animation */}
-      <div 
+      <div
         className="fixed inset-0 opacity-30"
         style={{
           background: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(255,255,255,0.1) 0%, transparent 50%)`
@@ -86,9 +86,8 @@ const ServiPal = () => {
         {/* Left Side - Text Content */}
         <div className="flex-1 max-w-xl mt-28">
           <h1 className="text-5xl md:text-6xl font-bold text-white leading-tight mb-8">
-               “Your Neighborhood in Your Pocket — Order, Deliver, Wash”
-           <h1 className="text-4xl italic text-gray-300">Transforming Errands into Ease</h1>
-        
+            “Your Neighborhood in Your Pocket — Order, Deliver, Wash”
+
           </h1>
 
           <p className='text-xl mb-8 text-white'>
@@ -98,21 +97,21 @@ const ServiPal = () => {
 
 
 
-            <div className="flex flex-col sm:flex-row gap-4">
-                <a
-                  href="https://play.google.com/store"
-                  className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
-                >
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-12" />
-                </a>
-                <a
-                  href="https://www.apple.com/app-store/"
-                  className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
-                >
-                  <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-12" />
-                </a>
-              </div>
-          
+          <div className="flex flex-col sm:flex-row gap-4">
+            <a
+              href="https://play.google.com/store"
+              className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
+            >
+              <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Google Play" className="h-12" />
+            </a>
+            <a
+              href="https://www.apple.com/app-store/"
+              className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
+            >
+              <img src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg" alt="App Store" className="h-12" />
+            </a>
+          </div>
+
         </div>
 
         {/* Right Side - Animated Circles */}

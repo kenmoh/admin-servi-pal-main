@@ -10,7 +10,7 @@ import {
   Utensils,
   WashingMachine,
   Handshake,
-Bike,
+  Bike,
   LogIn,
 
 } from 'lucide-react';
@@ -101,14 +101,15 @@ const Home = () => {
       </header>
 
       {/* Hero Section  HERE*/}
-      <ServiPal/>
- 
+      <ServiPal />
+
 
       {/* Services Section */}
       < section id="services" className="bg-gradient-to-br from-brand-orange/5 to-brand-blue/5" >
         <div className="max-w-[75vw] mx-auto px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">Our Services</h2>
+
+            <h1 className="text-4xl italic text-gray-300">Transform Errands into Ease:  <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">Our Services</h2></h1>
             <p className="text-muted-foreground text-2xl max-w-4xl mx-auto">
               We bring together essential services on one powerful platform
             </p>
@@ -383,7 +384,9 @@ const Home = () => {
             <div>
               <h3 className="font-bold mb-4">Legal</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</a></li>
+                <Link href="/privacy">
+                  <p className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</p>
+                </Link>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Cookie Policy</a></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">GDPR</a></li>
