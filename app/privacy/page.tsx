@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle, Menu } from "lucide-react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -79,7 +79,7 @@ const PrivacyPolicy = () => {
     </div>
   );
 
-  const ListItem = ({ children }) => (
+  const ListItem = ({ children }: {children: React.ReactNode}) => (
     <li className="flex items-start">
       <CheckCircle className="text-primary w-5 h-5 mr-3 mt-1 flex-shrink-0" />
       <div>{children}</div>
@@ -187,7 +187,9 @@ const PrivacyPolicy = () => {
                 <ListItem><p>Email address</p></ListItem>
                 <ListItem><p>First name and last name</p></ListItem>
                 <ListItem><p>Phone number</p></ListItem>
-                <ListItem><p>Address, State, Province, ZIP/Postal code, City</p></ListItem>
+                <ListItem><p>Business name</p></ListItem>
+                <ListItem><p>Company or Business registration number</p></ListItem>
+                <ListItem><p>Address, State, City</p></ListItem>
                 <ListItem><p>Usage Data</p></ListItem>
               </ul>
               <h4 className="text-lg font-semibold mb-2 mt-4">Usage Data</h4>

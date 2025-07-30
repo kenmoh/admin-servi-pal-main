@@ -358,9 +358,8 @@ const Home = () => {
               <h3 className="font-bold mb-4">ServiPal</h3>
               <ul className="space-y-2">
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">About Us</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Careers</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Press</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Blog</a></li>
+                
+                
               </ul>
             </div>
             <div>
@@ -375,7 +374,6 @@ const Home = () => {
             <div>
               <h3 className="font-bold mb-4">Resources</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Help Center</a></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">FAQs</a></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Safety</a></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Support</a></li>
@@ -384,12 +382,9 @@ const Home = () => {
             <div>
               <h3 className="font-bold mb-4">Legal</h3>
               <ul className="space-y-2">
-                <Link href="/privacy">
-                  <p className="text-muted-foreground hover:text-foreground transition-colors">Privacy Policy</p>
-                </Link>
+                <li><Link href="/privacy" className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Privacy Policy</Link></li>
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Cookie Policy</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">GDPR</a></li>
+               
               </ul>
             </div>
           </div>
@@ -397,8 +392,9 @@ const Home = () => {
             <p className="text-muted-foreground">© 2025 ServiPal. All rights reserved.</p>
             <div className="flex gap-4 mt-4 md:mt-0">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Twitter</a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">LinkedIn</a>
-              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">GitHub</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Facebook</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Instagram</a>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">TikTok</a>
             </div>
           </div>
         </div>
