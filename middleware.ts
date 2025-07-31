@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtDecode } from "jwt-decode";
 
-const PUBLIC_PATHS = ["/", "/login", "/privacy"];
+const PUBLIC_PATHS = ["/", "/login", "/privacy", "/.well-known/assetlinks.json"];
 
 function isJwtExpired(token: string): boolean {
   try {
@@ -36,5 +36,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico|public).*)"],
+  matcher: ["/((?!_next|favicon.ico).*)"],
 };
