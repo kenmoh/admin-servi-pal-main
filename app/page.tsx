@@ -80,12 +80,12 @@ const Home = () => {
             >
               How It Works
             </button>
-            <button
+            {/* <button
               onClick={() => scrollToSection('testimonials')}
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
               Testimonials
-            </button>
+            </button> */}
           </nav>
           <div className="flex items-center gap-3">
 
@@ -109,8 +109,8 @@ const Home = () => {
         <div className="max-w-[75vw] mx-auto px-8">
           <div className="text-center mb-16">
 
-            <h1 className="text-4xl italic text-gray-300">Transform Errands into Ease:  <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">Our Services</h2></h1>
-            <p className="text-muted-foreground text-2xl max-w-4xl mx-auto">
+            <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-blue to-brand-orange">Our Services</h2>
+            <p className="text-white text-2xl max-w-4xl mx-auto">
               We bring together essential services on one powerful platform
             </p>
           </div>
@@ -137,7 +137,7 @@ const Home = () => {
         <div className="max-w-[75vw] mx-auto px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-brand-orange to-brand-blue">How It Works</h2>
-            <p className="text-muted-foreground max-w-4xl text-2xl mx-auto">
+            <p className="text-white max-w-4xl text-2xl mx-auto">
               Simple, fast and efficient - here's how our platform brings services to your doorstep
             </p>
           </div>
@@ -218,7 +218,7 @@ const Home = () => {
               <div className="order-1 md:order-2">
                 <h3 className="text-2xl font-bold mb-4">Convenient Laundry Service</h3>
                 <p className="text-muted-foreground mb-6">
-                  Let us handle your laundry with professional care. Schedule pickups and deliveries that fit your busy schedule.
+                  Let registered laundry servie provider handle your laundry with professional care. Schedule pickups and deliveries that fit your busy schedule.
                 </p>
                 <ul className="space-y-3">
                   {["Professional cleaning", "Fabric-specific care", "Scheduled pickups", "Fast turnaround"].map((item, idx) => (
@@ -238,7 +238,7 @@ const Home = () => {
               <div>
                 <h3 className="text-2xl font-bold mb-4">P2P Marketplace</h3>
                 <p className="text-muted-foreground mb-6">
-                  Connect directly with local service providers and sellers in a secure peer-to-peer marketplace.
+                  Connect directly with others to buy/sell in a secure peer-to-peer marketplace.
                 </p>
                 <ul className="space-y-3">
                   {["Verified providers", "Secure transactions", "Rating system", "Direct communication"].map((item, idx) => (
@@ -358,8 +358,8 @@ const Home = () => {
               <h3 className="font-bold mb-4">ServiPal</h3>
               <ul className="space-y-2">
                 <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">About Us</a></li>
-                
-                
+
+
               </ul>
             </div>
             <div>
@@ -373,19 +373,18 @@ const Home = () => {
             </div>
             <div>
               <h3 className="font-bold mb-4">Resources</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">FAQs</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Safety</a></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Support</a></li>
-              </ul>
+              <div className="space-y-2 flex flex-col">
+                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">FAQs</Link>
+                <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Safety</Link>
+                <Link href="/support" className="text-muted-foreground hover:text-foreground transition-colors">Support</Link>
+              </div>
             </div>
             <div>
               <h3 className="font-bold mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><Link href="/privacy" className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Privacy Policy</Link></li>
-                <li><a href="#" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Service</a></li>
-               
-              </ul>
+              <div className="space-y-2 flex flex-col">
+                <Link href="/privacy" className="text-muted-foreground cursor-pointer hover:text-foreground transition-colors">Privacy Policy</Link>
+                <Link href="/terms" className="text-muted-foreground hover:text-foreground transition-colors">Terms of Service</Link>
+              </div>
             </div>
           </div>
           <div className="border-t border-border/30 pt-8 flex flex-col md:flex-row justify-between items-center">
