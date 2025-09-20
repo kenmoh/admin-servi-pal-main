@@ -87,7 +87,7 @@ const TermsAndConditions = () => {
 
   return (
     <div className="">
-      <Card className="text-card-foreground">
+      <Card className="text-card-foreground px-2 shadow-none border-none">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="md:hidden">
