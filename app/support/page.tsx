@@ -115,11 +115,11 @@ const SupportPage = () => {
                 content="+234 907345335"
                 link="tel:+2349074345335"
               />
-              <ContactCard
+              {/* <ContactCard
                 icon={MessageCircle}
                 title="Live Chat"
-                content="Available in the app"
-              />
+                content="Coming Soon"
+              />*/}
               <ContactCard
                 icon={Clock}
                 title="Support Hours"
@@ -130,12 +130,12 @@ const SupportPage = () => {
                 title="Office Location"
                 content="Lagos, Nigeria"
               />
-              <ContactCard
+              {/*<ContactCard
                 icon={Mail}
                 title="Business Inquiries"
                 content="business@servipal.com"
-                link="mailto:business@servipal.com"
-              />
+                link="mailto:business@servi-pal.com"
+              />*/}
             </div>
           </section>
 

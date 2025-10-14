@@ -86,14 +86,14 @@ const Home = () => {
               How It Works
             </button>
           </nav>
-          <div className="flex items-center gap-3">
+          {/* <div className="flex items-center gap-3">
             <Link href="/login">
               <Button size="sm" className="md:size-default">
                 <LogIn className="mr-2 h-4 w-4" />
                 <span className="hidden sm:inline">Login</span>
               </Button>
             </Link>
-          </div>
+          </div>*/}
         </div>
       </header>
 
