@@ -388,7 +388,7 @@ const Home = () => {
             </div>
           </div>
           <div className="border-t border-border/30 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-muted-foreground">© 2025 ServiPal. All rights reserved.</p>
+            <p className="text-muted-foreground">© 2025 MohStack Ltd. All rights reserved.</p>
             <div className="flex gap-4 mt-4 md:mt-0">
               <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">X</Link>
               <Link href="#" className="text-muted-foreground hover:text-foreground transition-colors">Facebook</Link>
