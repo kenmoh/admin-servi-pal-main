@@ -95,7 +95,7 @@ const ServiPal = () => {
       {/* Main Content */}
       <main className="relative z-10 flex items-center justify-between px-6 py-12 max-w-7xl mx-auto">
         {/* Left Side - Text Content */}
-        <div className="flex-1 w-full mt-20 md:mt-28">
+        <div className="flex-1 w-full mt-[50%] md:mt-[12.5%]">
           <h1 className="text-3xl text-center md:text-6xl font-bold text-white leading-tight mb-8">
             From doorstep deliveries to sparkling laundry, satisfying meals to
             seamless peer-to-peer shopping — we’re your all-in-one app for
