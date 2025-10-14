@@ -69,10 +69,10 @@ const AboutPage = () => {
 
             <p className="text-muted-foreground leading-relaxed">
               ServiPal is proudly developed and operated by{" "}
-              <strong className="text-foreground">MohStack</strong>, a leading
-              software and app development company dedicated to creating
-              innovative digital solutions that transform how people live and do
-              business in Nigeria.
+              <strong className="text-foreground">MohStack</strong>, a software
+              and app development company dedicated to creating innovative
+              digital solutions that transform how people live and do business
+              in Nigeria.
             </p>
 
             <p className="text-muted-foreground leading-relaxed">
