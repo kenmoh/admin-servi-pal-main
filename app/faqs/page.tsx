@@ -23,13 +23,13 @@ const FAQPage = () => {
           id: "gen-1",
           question: "What is ServiPal?",
           answer:
-            "ServiPal is Nigeria's trusted multi-vendor lifestyle app that connects customers with verified service providers. We offer food delivery, package logistics, laundry services, and a peer-to-peer marketplace—all in one convenient platform.",
+            "ServiPal is a trusted multi-vendor lifestyle app that connects customers with verified service providers. We offer food delivery, package logistics, laundry services, and a peer-to-peer marketplace—all in one convenient platform.",
         },
         {
           id: "gen-2",
           question: "How do I create an account?",
           answer:
-            "Download the ServiPal app from Google Play Store or Apple App Store. Open the app, tap 'Sign Up', and follow the prompts to create your account using your phone number or email address. Verify your account and you're ready to go!",
+            "Download the ServiPal app from Google Play Store or Apple App Store. Open the app, tap 'Sign Up', and follow the prompts to create your account. Verify your account and you're ready to go!",
         },
         {
           id: "gen-3",
@@ -41,7 +41,7 @@ const FAQPage = () => {
           id: "gen-4",
           question: "How do I become a vendor on ServiPal?",
           answer:
-            "Register as a vendor through the ServiPal app by selecting 'Vendor Sign Up'. Complete the verification process by providing your business details and required documents. Once approved, you can start listing your services and reaching thousands of customers!",
+            "Register as a vendor through the ServiPal app. Complete the verification process by providing your business details. Once approved, you can start listing your services and reaching thousands of customers!",
         },
       ],
     },
@@ -58,7 +58,7 @@ const FAQPage = () => {
           id: "pay-2",
           question: "How does the escrow system work?",
           answer:
-            "For marketplace transactions, your payment is held securely by ServiPal until you confirm that you've received your item and are satisfied with it. This protects both buyers and sellers, ensuring fair transactions for everyone.",
+            "Your payment is held securely by ServiPal until you confirm that you've received your item and are satisfied with it. This protects both buyers, sellers and riders, ensuring fair transactions for everyone.",
         },
         {
           id: "pay-3",
@@ -85,10 +85,11 @@ const FAQPage = () => {
         },
         {
           id: "food-2",
-          question: "What if my food arrives cold or incorrect?",
+          question: "What if my food arrives incorrect?",
           answer:
-            "We're sorry if this happens! Contact our support team immediately through the app. We'll work with the restaurant to resolve the issue, which may include a refund, replacement, or credit for your next order.",
+            "We understand how disappointing that can be. If your order incomplete, or incorrect, please report the issue immediately through the app using the 'Report an Issue' option on your order page. Our support team will review your report and work with the restaurant to resolve it. Depending on the situation, you may receive a replacement, partial refund, or ServiPal credit for your next order.",
         },
+
         {
           id: "food-3",
           question: "Can I customize my food order?",
@@ -112,11 +113,17 @@ const FAQPage = () => {
           answer:
             "You can send most items including documents, gifts, electronics, clothing, and food items. However, we don't accept illegal items, hazardous materials, or prohibited goods. Check our Terms & Conditions for the complete list.",
         },
+        // {
+        //   id: "pkg-2",
+        //   question: "How do I track my package?",
+        //   answer:
+        //     "Once your delivery is confirmed, you'll receive a tracking link in the app. You can monitor your package's real-time location and get updates at every stage—from pickup to delivery.",
+        // },
         {
           id: "pkg-2",
           question: "How do I track my package?",
           answer:
-            "Once your delivery is confirmed, you'll receive a tracking link in the app. You can monitor your package's real-time location and get updates at every stage—from pickup to delivery.",
+            "Once your delivery is confirmed, you'll see the details of the rider(real-time tracking coming soon).",
         },
         {
           id: "pkg-3",
@@ -124,12 +131,12 @@ const FAQPage = () => {
           answer:
             "While this is rare, we take such incidents seriously. Contact our support team immediately with your tracking number. We'll investigate and work toward a resolution, which may include compensation based on our liability policy.",
         },
-        {
-          id: "pkg-4",
-          question: "Can I schedule a delivery for a specific time?",
-          answer:
-            "Yes! When placing your delivery order, you can select a preferred pickup and delivery time window. Our dispatch riders will do their best to meet your schedule, though exact timing may vary slightly based on traffic and other factors.",
-        },
+        // {
+        //   id: "pkg-4",
+        //   question: "Can I schedule a delivery for a specific time?",
+        //   answer:
+        //     "Yes! When placing your delivery order, you can select a preferred pickup and delivery time window. Our dispatch riders will do their best to meet your schedule, though exact timing may vary slightly based on traffic and other factors.",
+        // },
       ],
     },
     {
@@ -139,8 +146,9 @@ const FAQPage = () => {
           id: "lau-1",
           question: "How does the laundry service work?",
           answer:
-            "Book a pickup through the app, and our partner laundry service will collect your items at your chosen time. They'll clean, iron, and return your clothes within the agreed timeframe—usually 24-48 hours depending on the service level you choose.",
+            "Choose your preferred laundry vendor from the list of verified providers on the app. Select the type of items you want cleaned, each with vendor-set prices,. At checkout, you can decide whether to drop off your laundry yourself or request delivery. If you choose delivery, you'll cover the delivery cost for both pickup and return.",
         },
+
         {
           id: "lau-2",
           question: "What types of clothing do you handle?",
@@ -168,8 +176,9 @@ const FAQPage = () => {
           id: "p2p-1",
           question: "How do I buy items on the marketplace?",
           answer:
-            "Browse listings in the marketplace section, select an item you're interested in, and contact the seller through our in-app messaging. Once you agree on terms, complete the purchase—your payment will be held in escrow until you confirm receipt of the item.",
+            "Browse listings in the marketplace section and select the item you want to buy. Once you're ready, make your payment securely through the app. Your money will be held in escrow until you confirm that you've received your item and are satisfied with it. This ensures a safe and fair transaction for both you and the seller.",
         },
+
         {
           id: "p2p-2",
           question: "How do I sell items on ServiPal?",
@@ -186,7 +195,7 @@ const FAQPage = () => {
           id: "p2p-4",
           question: "What happens if I receive a fake or damaged item?",
           answer:
-            "Don't release the escrow payment! Immediately report the issue through our dispute resolution system with photos and details. Our team will investigate and mediate between you and the seller to reach a fair resolution.",
+            "Don't release the escrow payment! Immediately report the issue through our dispute resolution system. Our team will investigate and mediate between you and the seller to reach a fair resolution.",
         },
       ],
     },
@@ -197,7 +206,7 @@ const FAQPage = () => {
           id: "sec-1",
           question: "How do I reset my password?",
           answer:
-            "On the login screen, tap 'Forgot Password'. Enter your registered email or phone number, and we'll send you a verification code to reset your password. Follow the prompts to create a new password.",
+            "On the login screen, tap 'Forgot Password'. Enter your registered email, and we'll send you a verification code to reset your password. Follow the prompts to create a new password.",
         },
         {
           id: "sec-2",
@@ -209,7 +218,7 @@ const FAQPage = () => {
           id: "sec-3",
           question: "How do I update my profile information?",
           answer:
-            "Go to 'Settings' in the app menu, then select 'Profile'. You can update your name, phone number, email, delivery addresses, and other information. Don't forget to save your changes!",
+            "Go to 'Profile' in the app menu, then select 'Profile'. You can update your name, phone number, email, delivery addresses, and other information. Don't forget to save your changes!",
         },
         {
           id: "sec-4",
