@@ -112,7 +112,7 @@ const SupportPage = () => {
               <ContactCard
                 icon={Phone}
                 title="Phone Support"
-                content="+234 907345335"
+                content="+234907345335 | +2347063692766"
                 link="tel:+2349074345335"
               />
               {/* <ContactCard
@@ -128,7 +128,7 @@ const SupportPage = () => {
               <ContactCard
                 icon={MapPin}
                 title="Office Location"
-                content="Lagos, Nigeria"
+                content="KM 28 Lekki Epe Express way, Abijo GRA.Lagos, Nigeria"
               />
               {/*<ContactCard
                 icon={Mail}
