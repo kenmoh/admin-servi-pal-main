@@ -3,6 +3,7 @@ import { CustomMenuTable } from "@/components/custom-menu-table";
 
 export default async function FoodItemsPage() {
   const menus = await getFoodMenus();
+  console.log(menus)
 
   return (
     <div className="p-4">
