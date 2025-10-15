@@ -83,7 +83,7 @@ const ServiPal = () => {
   };
 
   return (
-    <div className="h-[500px] md:min-h-1/2 bg-gradient-to-br from-orange-400 via-black to-orange-300 overflow-hidden">
+    <div className="h-[550px] md:min-h-1/2 bg-gradient-to-br from-orange-400 via-black to-orange-300 overflow-hidden">
       {/* Background Animation */}
       <div
         className="fixed inset-0 opacity-30"

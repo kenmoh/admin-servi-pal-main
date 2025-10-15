@@ -7,6 +7,9 @@ import { Input } from "@/components/ui/input";
 import ServiPal from "@/components/landingpage";
 import {
   Check,
+  X, 
+  Facebook, 
+  Instagram,
   Package,
   Utensils,
   WashingMachine,
@@ -442,29 +445,29 @@ const Home = () => {
             </p>
             <div className="flex gap-4 mt-4 md:mt-0">
               <Link
-                href="#"
+                href="https://x.com/Servipal_?t=O24owGSmjbgpGaRrl3o63g&s=09"
                 className="text-muted-foreground hover:text-foreground transition-colors relative z-10"
               >
-                X
+                <X />
               </Link>
               <Link
-                href="#"
+                href="https://www.facebook.com/profile.php?id=61577850530753"
                 className="text-muted-foreground hover:text-foreground transition-colors relative z-10"
               >
-                Facebook
+                <Facebook />
               </Link>
               <Link
-                href="#"
+                href="https://www.instagram.com/servipal_?igsh=d3VtaXhpbHhhYWZ4"
                 className="text-muted-foreground hover:text-foreground transition-colors relative z-10"
               >
-                Instagram
+                <Instagram />
               </Link>
-              <Link
-                href="#"
+             {/* <Link
+                href="https://x.com/Servipal_?t=O24owGSmjbgpGaRrl3o63g&s=09"
                 className="text-muted-foreground hover:text-foreground transition-colors relative z-10"
               >
                 TikTok
-              </Link>
+              </Link>*/}
             </div>
           </div>
         </div>
