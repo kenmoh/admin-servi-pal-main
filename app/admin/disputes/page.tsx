@@ -38,9 +38,9 @@ function DisputeListItem({ dispute, selected, onClick }: { dispute: DisputeSumma
       )}
     >
       <div className="flex items-center justify-between mb-1">
-        <span className="font-medium text-sm truncate">
-          {dispute.raised_by?.full_name || 'Unknown'}
-        </span>
+        {/* <span className="font-medium text-sm truncate">
+          {dispute.?.full_name || 'Unknown'}
+        </span> */}
         <Badge variant="secondary" className={cn('text-xs shrink-0 ml-2', statusColor(dispute.status))}>
           {dispute.status}
         </Badge>
@@ -48,8 +48,8 @@ function DisputeListItem({ dispute, selected, onClick }: { dispute: DisputeSumma
       <p className="text-xs text-muted-foreground truncate">{dispute.reason || 'No reason provided'}</p>
       <div className="flex items-center gap-2 mt-1">
         <span className="text-xs text-muted-foreground">{dispute.order_type}</span>
-        {dispute.order_number && (
-          <span className="text-xs text-muted-foreground">· #{dispute.order_number}</span>
+        {dispute.order_id && (
+          <span className="text-xs text-muted-foreground">· #{dispute.order_id}</span>
         )}
         <span className="text-xs text-muted-foreground ml-auto">
           {new Date(dispute.created_at).toLocaleDateString()}
@@ -73,14 +73,14 @@ export default function DisputesPage() {
     queryFn: () => fetchApi(`/api/disputes?page=${page}&limit=20`),
   })
 
-  const disputes = (data?.data ?? []).filter((d) => {
-    const matchSearch = !search ||
-      d.raised_by?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-      d.reason?.toLowerCase().includes(search.toLowerCase()) ||
-      String(d.order_number).includes(search)
-    const matchStatus = !statusFilter || d.status === statusFilter
-    return matchSearch && matchStatus
-  })
+  // const disputes = (data?.data ?? []).filter((d) => {
+  //   const matchSearch = !search ||
+  //     d.raised_by?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
+  //     d.reason?.toLowerCase().includes(search.toLowerCase()) ||
+  //     String(d.order_number).includes(search)
+  //   const matchStatus = !statusFilter || d.status === statusFilter
+  //   return matchSearch && matchStatus
+  // })
 
   const { data: detail, isLoading: detailLoading } = useQuery<DisputeDetail>({
     queryKey: ['dispute-detail', selectedId],
@@ -154,7 +154,7 @@ export default function DisputesPage() {
             </div>
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto">
+            {/* <div className="flex-1 overflow-y-auto">
               {listLoading ? (
                 <div className="p-4 space-y-3">
                   {Array.from({ length: 6 }).map((_, i) => (
@@ -179,7 +179,7 @@ export default function DisputesPage() {
                   />
                 ))
               )}
-            </div>
+            </div> */}
 
             {/* Pagination */}
             {data?.meta && (
@@ -211,9 +211,9 @@ export default function DisputesPage() {
                 ) : detail && (
                   <div className="px-4 py-3 border-b flex items-center gap-3 shrink-0">
                     <div>
-                      <p className="font-semibold text-sm">{detail.raised_by?.full_name || 'Unknown'}</p>
+                      {/* <p className="font-semibold text-sm">{detail.raised_by?.full_name || 'Unknown'}</p> */}
                       <p className="text-xs text-muted-foreground">
-                        {detail.order_type} · {detail.order_number ? `#${detail.order_number}` : detail.order_id}
+                        {detail.order_type} · {detail.initiator_id ? `#${detail.initiator_id}` : detail.order_id}
                       </p>
                     </div>
                     <div className="ml-auto flex items-center gap-2">
@@ -253,14 +253,14 @@ export default function DisputesPage() {
                       const isAdmin = msg.sender_id === ADMIN_SENDER_ID
                       return (
                         <div key={msg.id} className={cn('flex gap-2 items-end', isAdmin && 'flex-row-reverse')}>
-                          <Avatar className="w-7 h-7 shrink-0">
+                          {/* <Avatar className="w-7 h-7 shrink-0">
                             <AvatarImage src={msg.sender_image_url ?? undefined} />
                             <AvatarFallback className="text-xs">
                               {msg.sender_name?.[0]?.toUpperCase() || '?'}
                             </AvatarFallback>
-                          </Avatar>
+                          </Avatar> */}
                           <div className={cn('max-w-[70%] space-y-1', isAdmin && 'items-end flex flex-col')}>
-                            <p className="text-xs text-muted-foreground px-1">{msg.sender_name || 'Unknown'}</p>
+                            {/* <p className="text-xs text-muted-foreground px-1">{msg.sender_name || 'Unknown'}</p>
                             <div className={cn(
                               'px-3 py-2 rounded-2xl text-sm',
                               isAdmin
@@ -268,7 +268,7 @@ export default function DisputesPage() {
                                 : 'bg-muted rounded-bl-sm'
                             )}>
                               {msg.message}
-                            </div>
+                            </div> */}
                             <p className="text-xs text-muted-foreground px-1">
                               {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
