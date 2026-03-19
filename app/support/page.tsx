@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { BackButton } from "@/components/back-button";
 
 const SupportPage = () => {
   const [formData, setFormData] = useState({
@@ -85,8 +86,9 @@ const SupportPage = () => {
   ];
 
   return (
-    <div className="">
-      <Card className="text-card-foreground px-2 shadow-none border-none">
+    <div className="p-4 md:p-8">
+      <BackButton />
+      <Card className="text-card-foreground px-2 shadow-none border-none mt-4">
         <CardHeader>
           <CardTitle className="text-3xl md:text-4xl font-bold text-center">
             Support Center
@@ -102,7 +104,7 @@ const SupportPage = () => {
           <section className="space-y-6">
             <h2 className="text-2xl font-bold text-center">Get In Touch</h2>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
               <ContactCard
                 icon={Mail}
                 title="Email Support"

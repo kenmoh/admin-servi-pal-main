@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronDown, Search } from "lucide-react";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
+import { BackButton } from "@/components/back-button";
 
 const FAQPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,7 +24,7 @@ const FAQPage = () => {
           id: "gen-1",
           question: "What is ServiPal?",
           answer:
-            "ServiPal is a trusted multi-vendor lifestyle app that connects customers with verified service providers. We offer food delivery, package logistics, laundry services, and a peer-to-peer marketplace—all in one convenient platform.",
+            "ServiPal is a trusted multi-vendor lifestyle app that brings customers and service providers together on a single, secure platform. We’re transforming how Nigerians access everyday services; from food delivery and parcel logistics to laundry and online shopping; with seamless experiences and built-in escrow protection for safe, worry-free transactions.",
         },
         {
           id: "gen-2",
@@ -35,7 +36,7 @@ const FAQPage = () => {
           id: "gen-3",
           question: "Is ServiPal available in my city?",
           answer:
-            "ServiPal is currently available across major Nigerian cities and continuously expanding. Check the app to see if services are available in your specific location. If we're not in your area yet, stay tuned—we're growing fast!",
+            "ServiPal is currently available across major Nigerian cities and continuously expanding. Check the app to see if services are available in your specific location. If we're not in your area yet, stay tuned; we're growing fast!",
         },
         {
           id: "gen-4",
@@ -52,7 +53,7 @@ const FAQPage = () => {
           id: "pay-1",
           question: "What payment methods do you accept?",
           answer:
-            "We accept bank transfers, debit cards, and credit cards through our secure payment gateway powered by Flutterwave. All transactions are encrypted and protected for your safety.",
+            "We accept bank transfers, debit cards through our secure payment gateway powered by Flutterwave. All transactions are encrypted and protected for your safety.",
         },
         {
           id: "pay-2",
@@ -87,7 +88,7 @@ const FAQPage = () => {
           id: "food-2",
           question: "What if my food arrives incorrect?",
           answer:
-            "We understand how disappointing that can be. If your order incomplete, or incorrect, please report the issue immediately through the app using the 'Report an Issue' option on your order page. Our support team will review your report and work with the restaurant to resolve it. Depending on the situation, you may receive a replacement, partial refund, or ServiPal credit for your next order.",
+            "We understand how disappointing that can be. If your order is incomplete, or incorrect, please report the issue immediately through the app using the 'Report an Issue' option on your order page. Our support team will review your report and work with the restaurant to resolve it. Depending on the situation, you may receive a replacement, partial refund, or ServiPal credit for your next order.",
         },
 
         {
@@ -260,7 +261,7 @@ const FAQPage = () => {
         >
           <span className="font-medium pr-4">{question}</span>
           <ChevronDown
-            className={`w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform ${
+            className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform ${
               isOpen ? "rotate-180" : ""
             }`}
           />
@@ -275,8 +276,9 @@ const FAQPage = () => {
   };
 
   return (
-    <div className="">
-      <Card className="text-card-foreground px-2 shadow-none border-none">
+    <div className="p-4 md:p-8">
+      <BackButton />
+      <Card className="text-card-foreground px-2 shadow-none border-none mt-4">
         <CardHeader>
           <CardTitle className="text-3xl md:text-4xl font-bold text-center">
             Frequently Asked Questions

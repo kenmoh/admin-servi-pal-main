@@ -1,40 +1,55 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { jwtDecode } from "jwt-decode";
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-const PUBLIC_PATHS = ["/", "/login", "/privacy", "/terms", "/about", "/faqs", "/support",  "/.well-known/assetlinks.json"];
+const ALLOWED_USER_TYPES = ['MODERATOR', 'ADMIN', 'SUPER_ADMIN']
 
-function isJwtExpired(token: string): boolean {
+export async function middleware(request: NextRequest) {
+  const accessToken = request.cookies.get('access_token')?.value
+  const pathname = request.nextUrl.pathname
+
+  if (!accessToken) {
+    if (pathname.startsWith('/admin')) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    return NextResponse.next()
+  }
+
   try {
-    const decoded: any = jwtDecode(token);
-    if (!decoded.exp) return true;
-    return Date.now() >= decoded.exp * 1000;
-  } catch {
-    return true;
-  }
-}
+    const payload = JSON.parse(
+      Buffer.from(accessToken.split('.')[1], 'base64url').toString()
+    )
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  
-  if (PUBLIC_PATHS.includes(pathname)) {
-    return NextResponse.next();
+    const userType = payload?.user_metadata?.user_type
+    const isExpired = payload.exp && payload.exp * 1000 < Date.now()
+    const isAuthorized = userType && ALLOWED_USER_TYPES.includes(userType)
+
+    if (isExpired) {
+      if (pathname.startsWith('/admin')) {
+        const refreshUrl = new URL('/api/auth/refresh-redirect', request.url)
+        refreshUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(refreshUrl)
+      }
+      return NextResponse.next()
+    }
+
+    if (isAuthorized && pathname === '/login') {
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    }
+
+    if (!isAuthorized && pathname.startsWith('/admin')) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    return NextResponse.next()
+
+  } catch {
+    if (pathname.startsWith('/admin')) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+    return NextResponse.next()
   }
-  
-  // Check for access_token instead of jwt
-  const accessToken = request.cookies.get("access_token")?.value || "";
-  
-  if (!accessToken || isJwtExpired(accessToken)) {
-    const response = NextResponse.redirect(new URL("/login", request.url));
-    // Clear both tokens
-    response.cookies.delete("access_token");
-    response.cookies.delete("refresh_token");
-    return response;
-  }
-  
-  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico).*)"],
-};
+  matcher: ['/admin/:path*', '/login'],
+}

@@ -1,6 +1,4 @@
-"use client";
-
-import { ReactElement } from "react";
+"use client"
 
 import {
   SidebarGroup,
@@ -8,41 +6,41 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { LucideProps } from "lucide-react";
-
-interface NavDocumentItem {
-  name: string;
-  url: string;
-  icon?: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-}
-
-interface NavDocumentsProps {
-  items: NavDocumentItem[];
-  title?: string;
-}
+} from "@/components/ui/sidebar"
+import { usePathname } from "next/navigation"
 
 export function NavDocuments({
   items,
-  title = "Services",
-}: NavDocumentsProps): ReactElement {
+  label = "Orders",
+}: {
+  items: {
+    name: string
+    url: string
+    icon: React.ReactNode
+  }[]
+  label?: string
+}) {
+  const pathname = usePathname()
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>{title}</SidebarGroupLabel>
+      <SidebarGroupLabel>{label}</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                {item.icon && <item.icon />}
-                <span>{item.name}</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+        {items.map((item) => {
+          const isActive = pathname === item.url
+          return (
+            <SidebarMenuItem key={item.name}>
+              <SidebarMenuButton asChild isActive={isActive}
+                className={isActive ? "bg-orange-500/15 text-orange-600 hover:bg-orange-500/20 hover:text-orange-600" : ""}>
+                <a href={item.url}>
+                  {item.icon}
+                  <span>{item.name}</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )
+        })}
       </SidebarMenu>
     </SidebarGroup>
-  );
+  )
 }

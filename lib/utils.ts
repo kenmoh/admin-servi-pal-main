@@ -1,49 +1,20 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-import { DeliveryDetail } from "@/types/order-types";
+import { clsx, type ClassValue } from "clsx"
+import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  return twMerge(clsx(inputs))
 }
 
-export function calculateOrderStats(orders: DeliveryDetail[]) {
-  const stats = {
-    totalOrders: orders.length,
-    assignedOrders: 0,
-    deliveredOrders: 0,
-    pendingOrders: 0,
-    totalFoodOrders: 0,
-    totalLaundryOrders: 0,
-    totalPackageOrders: 0,
-  };
+export class ApiError extends Error {
+  status: number
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+  }
+}
 
-  orders.forEach((order) => {
-    // Count by delivery status
-    switch (order.delivery?.delivery_status) {
-      case "pending":
-        stats.pendingOrders++;
-        break;
-      case "delivered":
-        stats.deliveredOrders++;
-        break;
-      case "accepted":
-        stats.assignedOrders++;
-        break;
-    }
-
-    // Count by order type
-    switch (order.order?.order_type) {
-      case "food":
-        stats.totalFoodOrders++;
-        break;
-      case "package":
-        stats.totalPackageOrders++;
-        break;
-      case "laundry":
-        stats.totalLaundryOrders++;
-        break;
-    }
-  });
-
-  return stats;
+export async function fetchApi(input: RequestInfo, init?: RequestInit) {
+  const res = await fetch(input, init)
+  if (!res.ok) throw new ApiError(`Request failed`, res.status)
+  return res.json()
 }

@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Target, Sparkles, Shield, Users, Zap } from "lucide-react";
 import React from "react";
+import { BackButton } from "@/components/back-button";
 
 const AboutPage = () => {
   const FeatureCard = ({
@@ -35,7 +36,7 @@ const AboutPage = () => {
     description: string;
   }) => (
     <li className="flex items-start">
-      <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-4 mt-1 flex-shrink-0">
+      <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold mr-4 mt-1 shrink-0">
         {number}
       </span>
       <div>
@@ -46,15 +47,16 @@ const AboutPage = () => {
   );
 
   return (
-    <div className="">
-      <Card className="text-card-foreground px-2 shadow-none border-none">
+    <div className="p-4 md:p-8">
+      <BackButton />
+      <Card className="text-card-foreground px-2 shadow-none border-none mt-4">
         <CardHeader>
           <CardTitle className="text-3xl md:text-4xl font-bold text-center">
             About Us
           </CardTitle>
-          <p className="text-center text-muted-foreground mt-2">
+          {/* <p className="text-center text-muted-foreground mt-2">
             Connecting Nigeria, One Service at a Time
-          </p>
+          </p> */}
         </CardHeader>
 
         <CardContent className="max-w-4xl mx-auto space-y-12">
@@ -99,17 +101,17 @@ const AboutPage = () => {
           {/* ServiPal Section */}
           <section className="space-y-6">
             <div className="flex items-center space-x-3 mb-4">
-              <Sparkles className="w-8 h-8 text-primary" />
+              {/* <Sparkles className="w-8 h-8 text-primary" /> */}
               <h2 className="text-2xl font-bold">About ServiPal</h2>
             </div>
 
             <p className="text-muted-foreground leading-relaxed">
               ServiPal is a trusted multi-vendor lifestyle app that brings
-              together customers and service providers on a single, secure
-              platform. We're revolutionizing how Nigerians access everyday
-              services by making food delivery, parcel logistics, laundry
-              services, and online shopping seamlessly available in one
-              convenient app.
+              customers and service providers together on a single, secure
+              platform. We’re transforming how Nigerians access everyday
+              services; from food delivery and parcel logistics to laundry and
+              online shopping; with seamless experiences and built-in escrow
+              protection for safe, worry-free transactions.
             </p>
           </section>
 
@@ -176,23 +178,23 @@ const AboutPage = () => {
             <ol className="space-y-6">
               <ServiceItem
                 number="1"
-                title="Food Delivery"
-                description="Order from multiple restaurants in your city with fast, affordable delivery to your doorstep."
+                title="Restaurant"
+                description="Craving Jollof rice or Pizza? Your favourite restaurants are just a tap away. Bon appétit!"
               />
               <ServiceItem
                 number="2"
-                title="Logistics & Delivery"
-                description="Send or receive packages through our network of trusted dispatch riders."
+                title="Logistics"
+                description="From documents to parcels, get your items delivered safely and swiftly across the city."
               />
               <ServiceItem
                 number="3"
-                title="Laundry Services"
-                description="Choose your preferred laundry vendor from the list of vendors and enjoy easy pickup and delivery right from your doorstep."
+                title="Laundry"
+                description="Say goodbye to laundry day stress. Our laundry services providers will keep your wardrobe fresh and fabulous."
               />
               <ServiceItem
                 number="4"
-                title="Peer-to-Peer Marketplace"
-                description="Buy and sell safely with our escrow-protected payment system that holds funds until you confirm satisfaction."
+                title="Marketplace"
+                description="Shop with peace of mind. Our escrow service ensures your money is safe until you're satisfied. What you ordered is what you get!"
               />
             </ol>
           </section>
@@ -202,7 +204,7 @@ const AboutPage = () => {
             <h2 className="text-2xl font-bold">Why Businesses Choose Us</h2>
 
             <p className="text-muted-foreground leading-relaxed">
-              We offer vendors more than just a platform—we provide a complete
+              We offer vendors more than just a platform; we provide a complete
               business solution with free registration, a custom dashboard for
               managing operations, secure payment processing, and the visibility
               needed to build a strong reputation through ratings and reviews.

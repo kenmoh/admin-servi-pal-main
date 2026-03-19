@@ -1,42 +1,44 @@
-"use client";
+"use client"
 
-import { IconCirclePlusFilled, IconMail } from "@tabler/icons-react";
-import { ReactElement } from "react";
-import { Button } from "@/components/ui/button";
 import {
   SidebarGroup,
   SidebarGroupContent,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import Link from "next/link";
-import { LucideProps } from "lucide-react";
+} from "@/components/ui/sidebar"
+import { usePathname } from "next/navigation"
 
-interface NavItem {
-  title: string;
-  url: string;
-  icon?: React.ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>
-  >;
-}
-
-export function NavMain({ items }: { items: NavItem[] }): ReactElement {
+export function NavMain({
+  items,
+}: {
+  items: {
+    title: string
+    url: string
+    icon?: React.ReactNode
+  }[]
+}) {
+  const pathname = usePathname()
   return (
     <SidebarGroup>
-      <SidebarGroupContent className="flex flex-col gap-2">
-
+      <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
-                <Link href={item.url}>{item.title}</Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
+          {items.map((item) => {
+            const isActive = pathname === item.url
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton tooltip={item.title} asChild isActive={isActive}
+                  className={isActive ? "bg-orange-500/15 text-orange-600 hover:bg-orange-500/20 hover:text-orange-600" : ""}>
+                  <a href={item.url}>
+                    {item.icon}
+                    <span>{item.title}</span>
+                  </a>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
-  );
+  )
 }

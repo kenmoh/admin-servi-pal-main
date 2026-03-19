@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
+import { BackButton } from "@/components/back-button";
 
 const sections = [
   { id: "interpretation", title: "Interpretation & Definitions" },
@@ -81,14 +82,15 @@ const PrivacyPolicy = () => {
 
   const ListItem = ({ children }: { children: React.ReactNode }) => (
     <li className="flex items-start">
-      <CheckCircle className="text-primary w-5 h-5 mr-3 mt-1 flex-shrink-0" />
+      <CheckCircle className="text-primary w-5 h-5 mr-3 mt-1 shrink-0" />
       <div>{children}</div>
     </li>
   );
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <Card className="bg-card text-card-foreground">
+      <BackButton />
+      <Card className="bg-card text-card-foreground mt-4">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="md:hidden">
@@ -103,7 +105,7 @@ const PrivacyPolicy = () => {
                 </SheetContent>
               </Sheet>
             </div>
-            <CardTitle className="text-3xl font-bold text-center flex-grow">
+            <CardTitle className="text-3xl font-bold text-center grow">
               Privacy Policy
             </CardTitle>
           </div>

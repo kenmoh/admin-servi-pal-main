@@ -1,9 +1,11 @@
-"use client";
-import * as React from "react";
-import { IconInnerShadowTop } from "@tabler/icons-react";
-import { NavDocuments } from "@/components/nav-documents";
-import { NavMain } from "@/components/nav-main";
-import { NavUser } from "@/components/nav-user";
+"use client"
+
+import * as React from "react"
+
+import { NavDocuments } from "@/components/nav-documents"
+import { NavMain } from "@/components/nav-main"
+import { NavSecondary } from "@/components/nav-secondary"
+import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -12,131 +14,89 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import {
-  Handshake,
-  ListCheck,
-  Utensils,
-  WashingMachine,
-  UsersRound,
-  Wallet,
-  SettingsIcon,
-  LayoutDashboardIcon,
-  DollarSign,
-  Users,
-  TrendingUp,
-  BarChart3,
-  Activity,
-  BugIcon,
-  Bike,
-  Logs
-} from "lucide-react";
-import { useQuery } from "@tanstack/react-query"
-import { getUserProfileDetails } from "@/actions/user";
-import { User } from "@/types/user-types";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+} from "@/components/ui/sidebar"
+import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon } from "lucide-react"
+import Image from "next/image"
 
 const data = {
+  user: {
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
+  },
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboardIcon,
+      url: "/admin/dashboard",
+      icon: <LayoutDashboardIcon />,
+    },
+    {
+      title: "Analytics",
+      url: "/admin/analytics",
+      icon: <ChartBarIcon />,
     },
     {
       title: "Users",
-      url: "/dashboard/users",
-      icon: UsersRound,
+      url: "/admin/user",
+      icon: <UsersIcon />,
     },
     {
-      title: "Team",
-      url: "/dashboard/team",
-      icon: UsersRound,
-    },
-    {
-      title: "Wallet",
-      url: "/dashboard/wallet",
-      icon: Wallet,
-    },
-    {
-      title: "Transactions",
-      url: "/dashboard/transactions",
-      icon: DollarSign,
-    },
-
-  ],
-  analytics: [
-    {
-      name: "User Analytics",
-      url: "/dashboard/user-analytics",
-      icon: Users,
-    },
-    {
-      name: "Operational Analytics",
-      url: "/dashboard/operational-analytics",
-      icon: Activity,
+      title: "Wallets",
+      url: "/admin/wallets",
+      icon: <Wallet />,
     },
   ],
-  navIssues: [
+ 
+  disputes: [
     {
-      name: "Issues",
-      url: "/dashboard/issues",
-      icon: BugIcon,
+      name: "Disputes",
+      url: "/admin/disputes",
+      icon: <ShieldAlertIcon />,
+    },
+  ],
+  logs: [
+    {
+      name: "Audit Logs",
+      url: "/admin/audit-logs",
+      icon: <ScrollTextIcon />,
     },
   ],
   navSecondary: [
     {
-      name: "Settings",
-      url: "/dashboard/settings",
-      icon: SettingsIcon,
+      title: "Settings",
+      url: "/admin/settings",
+      icon: (
+        <Settings2Icon
+        />
+      ),
     },
-     {
-      name: "Audit Logs",
-      url: "/dashboard/audit-logs",
-      icon: Logs,
+   
+  ],
+  orders: [
+    {
+      name: "Delivery Orders",
+      url: "/admin/delivery-order",
+      icon: <Bike />,
+    },
+    {
+      name: "Restaurant Orders",
+      url: "/admin/restaurant-order",
+      icon: <ForkKnife />,
+    },
+    {
+      name: "Laundry Orders",
+      url: "/admin/laundry-order",
+      icon: <WashingMachine />,
+    },
+    {
+      name: "Marketplace Orders",
+      url: "/admin/marketplace-order",
+      icon: <StoreIcon />,
     },
   ],
-  
-  services: [
-    {
-      name: "Pickup Orders",
-      url: "/dashboard/orders",
-      icon: ListCheck,
-    },
-    {
-      name: "Delivery Order",
-      url: "/dashboard/delivery-orders",
-      icon: Bike,
-    },
-    {
-      name: "Food Menu",
-      url: "/dashboard/food-items",
-      icon: Utensils,
-    },
-    {
-      name: "Laundry Items",
-      url: "/dashboard/laundry-items",
-      icon: WashingMachine,
-    },
-
-  ],
-};
+}
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [userProfile, setUserProfile] = React.useState<User | undefined>(undefined);
-
-  const { data: profile, isLoading, error } = useQuery({
-    queryKey: ['currentUserProfile'],
-    queryFn: getUserProfileDetails,
-  });
-
-  React.useEffect(() => {
-    if (profile && !('error' in profile)) {
-      setUserProfile(profile);
-    }
-  }, [profile]);
-
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -144,31 +104,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <Link href="/dashboard">
-                {/* <IconInnerShadowTop className="!size-5" /> */}
-                <img
-                  src="/mainicon.png"
-                  alt="ServiPal Logo"
-                  className="h-7 w-7"
-                />
+              <a href="/admin/dashboard">
+                <Image src="/mainicon.png" alt="ServiPal" width={28} height={28} className="rounded-md" />
                 <span className="text-base font-semibold">ServiPal</span>
-              </Link>
+              </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavDocuments items={data.services} />
-        <NavDocuments items={data.analytics} title="Analytics" />
-        <NavDocuments items={data.navSecondary} title="Platform Settings" />
-        <NavDocuments items={data.navIssues} title="Issues" />
+        <NavDocuments items={data.orders} />
+        <NavDocuments items={data.disputes} label="Disputes" />
+        <NavDocuments items={data.logs} label="Logs" />
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        {userProfile && <NavUser user={userProfile} />}
+        <NavUser user={data.user} />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

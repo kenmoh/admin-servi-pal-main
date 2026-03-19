@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/components/theme-provider";
-import QueryProvider from "@/components/client-provider";
-import { Toaster } from '@/components/ui/sonner'
-import { FlashStyleProvider } from "@/components/ui/flash-style-context";
+import { AppProvider } from "@/lib/context";
+import { QueryProvider } from "@/components/query-provider";
 
 
 const geistSans = Geist({
@@ -18,9 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ServiPal-Admin",
-  description:
-    "Item delivry, food ordering, laundry request, and a p2p marketplace",
+  title: "ServiPal",
+  description: "Comprehensive management system for delivery, food ordering, laundry services, and P2P marketplace with real-time features and detailed analytics",
 };
 
 export default function RootLayout({
@@ -29,26 +28,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <FlashStyleProvider>
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <QueryProvider>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <main>
-                {children}
-              </main>
-              <Toaster />
-
-            </ThemeProvider>
+            <AppProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </AppProvider>
           </QueryProvider>
-        </FlashStyleProvider>
+        </ThemeProvider>
+
       </body>
     </html>
   );
