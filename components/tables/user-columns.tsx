@@ -1,4 +1,4 @@
-import { ProfileSummary } from "@/types/user-types"
+import { ProfileDetail, ProfileSummary } from "@/types/user-types"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 
@@ -12,7 +12,7 @@ function statusColor(status: string) {
   }
 }
 
-export const userColumns: ColumnDef<ProfileSummary>[] = [
+export const userColumns: ColumnDef<ProfileDetail>[] = [
   {
     accessorKey: "full_name",
     header: "Name",

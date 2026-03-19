@@ -111,7 +111,7 @@ export interface ProfileDetail extends ProfileSummary {
 
 
 export interface ProfileListResponse {
-  data: ProfileSummary[];
+  data: ProfileDetail[];
   meta: PaginationMeta;
 }
 

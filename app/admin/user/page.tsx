@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { DataTable } from '@/components/tables/data-table'
 import { userColumns } from '@/components/tables/user-columns'
-import { ProfileListResponse, ProfileSummary } from '@/types/user-types'
+import { ProfileDetail, ProfileListResponse, ProfileSummary } from '@/types/user-types'
 import { useQuery } from '@tanstack/react-query'
 import { fetchApi } from '@/lib/utils'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -109,7 +109,7 @@ const UserPage = () => {
               <DataTable
                 columns={userColumns}
                 data={users}
-                onRowClick={(user: ProfileSummary) => setSelectedProfile(user)}
+                onRowClick={(user: ProfileDetail) => setSelectedProfile(user)}
               />
 
               {meta && (
