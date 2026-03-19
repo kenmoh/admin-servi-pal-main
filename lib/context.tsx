@@ -7,7 +7,7 @@ import { DeliveryOrderSummary } from "@/types/delivery-types"
 import { FoodOrderSummary } from "@/types/restaurant-types"
 import { LaundryOrderSummary } from "@/types/laundry-types"
 import { ProductOrderSummary } from "@/types/product-types"
-import { ProfileSummary } from "@/types/user-types"
+import { ProfileDetail, ProfileSummary } from "@/types/user-types"
 
 
 interface AppContextType {
@@ -36,8 +36,8 @@ interface AppContextType {
   setSelectedUser: (user: User | null) => void
   selectedWallet: Wallet | null
   setSelectedWallet: (wallet: Wallet | null) => void
-  selectedProfile: ProfileSummary | null
-  setSelectedProfile: (profile: ProfileSummary | null) => void
+  selectedProfile: ProfileDetail | null
+  setSelectedProfile: (profile: ProfileDetail | null) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -55,7 +55,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [selectedProductOrder, setSelectedProductOrder] = useState<ProductOrderSummary | null>(null)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null)
-  const [selectedProfile, setSelectedProfile] = useState<ProfileSummary | null>(null)
+  const [selectedProfile, setSelectedProfile] = useState<ProfileDetail | null>(null)
 
   useEffect(() => {
     const savedTheme = localStorage?.getItem("theme") as "light" | "dark" | null
