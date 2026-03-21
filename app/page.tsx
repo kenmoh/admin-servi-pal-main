@@ -310,6 +310,14 @@ export default function LandingPage() {
                     Support
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    href="/delete-account"
+                    className="text-sm text-muted-foreground hover:text-foreground transition"
+                  >
+                    Delete Account
+                  </Link>
+                </li>
               </ul>
             </div>
 
