@@ -312,7 +312,7 @@ export default function LandingPage() {
                 </li>
                 <li>
                   <Link
-                    href="/delete-account"
+                    href="/deleted-account"
                     className="text-sm text-muted-foreground hover:text-foreground transition"
                   >
                     Delete Account
