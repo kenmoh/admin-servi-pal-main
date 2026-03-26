@@ -100,7 +100,7 @@ function OrderTrendsChart() {
       <CardContent>
         {isLoading ? <SectionSkeleton rows={6} /> : (
           <ChartContainer config={orderTrendConfig} className="h-64 w-full">
-            <AreaChart data={data}>
+            <AreaChart data={data} margin={{ top: 15, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="period" tick={{ fontSize: 11 }} tickFormatter={(v) => v.slice(5)} />
               <YAxis tick={{ fontSize: 11 }} />
@@ -156,7 +156,7 @@ function UserGrowthChart() {
       <CardContent>
         {isLoading ? <SectionSkeleton rows={6} /> : (
           <ChartContainer config={userGrowthConfig} className="h-64 w-full">
-            <BarChart data={data}>
+            <BarChart data={data} margin={{ top: 15, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
               <XAxis dataKey="period" tick={{ fontSize: 11 }} tickFormatter={(v) => v.slice(5)} />
               <YAxis tick={{ fontSize: 11 }} />
@@ -263,12 +263,12 @@ function TransactionSection() {
       <CardContent className="space-y-6">
         {isLoading ? <SectionSkeleton rows={6} /> : data && (
           <>
-            <ChartContainer config={txTrendConfig} className="h-56 w-full">
-              <AreaChart data={data.trend}>
+            <ChartContainer config={txTrendConfig} className="h-72 w-full text-xs aspect-auto">
+              <AreaChart data={data.trend} margin={{ top: 35, right: 30, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
                 <XAxis dataKey="period" tick={{ fontSize: 11 }} tickFormatter={(v) => v.slice(5)} />
-                <YAxis yAxisId="left" tick={{ fontSize: 11 }} tickFormatter={(v) => fmt(v)} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} />
+                <YAxis yAxisId="left" tick={{ fontSize: 11 }} tickFormatter={(v) => fmt(v)} width={60} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11 }} width={40} />
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <ChartLegend content={<ChartLegendContent />} />
                 <Area yAxisId="left" type="monotone" dataKey="volume" stroke="#f97316" fill="#f97316" fillOpacity={0.15} strokeWidth={2} dot={false} />
