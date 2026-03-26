@@ -14,6 +14,7 @@ import type {
 import { Badge } from "@/components/ui/badge"
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { safeToFixed } from "@/lib/utils"
 
 // Helper function to create sortable headers
 const createSortableHeader = (label: string) => ({
@@ -63,8 +64,8 @@ export const orderColumns: ColumnDef<Order>[] = [
     accessorKey: "totalAmount",
     header: "Amount",
     cell: ({ row }) => {
-      const amount = row.getValue("totalAmount") as number
-      return <span className="font-semibold text-accent">${amount.toFixed(2)}</span>
+      const amount = row.getValue("totalAmount")
+      return <span className="font-semibold text-accent">${safeToFixed(amount, 2)}</span>
     },
   },
   {
@@ -232,8 +233,8 @@ export const foodOrderColumns: ColumnDef<FoodOrder>[] = [
     accessorKey: "totalAmount",
     header: "Total",
     cell: ({ row }) => {
-      const amount = row.getValue("totalAmount") as number
-      return <span className="font-semibold text-accent">${amount.toFixed(2)}</span>
+      const amount = row.getValue("totalAmount")
+      return <span className="font-semibold text-accent">${safeToFixed(amount, 2)}</span>
     },
   },
 ]
@@ -288,16 +289,16 @@ export const laundryOrderColumns: ColumnDef<LaundryOrder>[] = [
     accessorKey: "weight",
     header: "Weight",
     cell: ({ row }) => {
-      const weight = row.getValue("weight") as number
-      return <span className="text-sm">{weight?.toFixed(2)} kg</span>
+      const weight = row.getValue("weight")
+      return <span className="text-sm">{safeToFixed(weight, 2)} kg</span>
     },
   },
   {
     accessorKey: "totalAmount",
     header: "Total",
     cell: ({ row }) => {
-      const amount = row.getValue("totalAmount") as number
-      return <span className="font-semibold text-accent">${amount.toFixed(2)}</span>
+      const amount = row.getValue("totalAmount")
+      return <span className="font-semibold text-accent">${safeToFixed(amount, 2)}</span>
     },
   },
 ]
@@ -400,11 +401,11 @@ export const walletTransactionColumns: ColumnDef<WalletTransaction>[] = [
     accessorKey: "amount",
     header: "Amount",
     cell: ({ row }) => {
-      const amount = row.getValue("amount") as number
+      const amount = row.getValue("amount")
       const type = row.original.type
       return (
         <span className={`font-semibold ${type === "credit" ? "text-green-600" : "text-red-600"}`}>
-          {type === "credit" ? "+" : "-"}₦{((amount || 0) * 1500).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+          {type === "credit" ? "+" : "-"}₦{safeToFixed((Number(amount) || 0) * 1500, 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
         </span>
       )
     },
@@ -425,8 +426,8 @@ export const walletTransactionColumns: ColumnDef<WalletTransaction>[] = [
     accessorKey: "balanceAfter",
     header: "Balance After",
     cell: ({ row }) => {
-      const balance = row.getValue("balanceAfter") as number
-      return <span className="font-semibold text-accent">₦{((balance || 0) * 1500).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+      const balance = row.getValue("balanceAfter")
+      return <span className="font-semibold text-accent">₦{safeToFixed((Number(balance) || 0) * 1500, 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
     },
   },
   {

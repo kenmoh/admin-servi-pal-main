@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { safeToFixed } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { FoodOrderDetail } from "@/types/restaurant-types";
 import Image from "next/image";
@@ -268,7 +269,7 @@ export function RestaurantDetailDrawer() {
                 <div className="space-y-2 text-sm">
                   <DetailRow label="Pickup" value={detail.pickup_location} />
                   <DetailRow label="Dropoff" value={detail.destination} />
-                  <DetailRow label="Distance" value={detail.distance ? `${detail.distance.toFixed(1)} km` : null} />
+                  <DetailRow label="Distance" value={detail.distance ? `${safeToFixed(detail.distance, 1)} km` : null} />
                 </div>
               </div>
               

@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useQuery } from '@tanstack/react-query'
 import { DashboardOverviewResponse } from '@/types/analytics-types'
-import { fetchApi } from '@/lib/utils'
+import { fetchApi, safeToFixed } from '@/lib/utils'
 import {
   Users, ShoppingBag, TrendingUp, Wallet,
   ArrowUpRight, Star, Bike, UtensilsCrossed,
@@ -16,10 +16,11 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-function fmt(n: number) {
-  if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `₦${(n / 1_000).toFixed(1)}K`
-  return `₦${n.toFixed(2)}`
+function fmt(n: any) {
+  const num = Number(n);
+  if (num >= 1_000_000) return `₦${(num / 1_000_000).toFixed(1)}M`
+  if (num >= 1_000) return `₦${(num / 1_000).toFixed(1)}K`
+  return `₦${safeToFixed(num, 2)}`
 }
 
 function num(n: number) {
@@ -90,7 +91,7 @@ export default function DashboardPage() {
               <KpiCard title="Total Revenue" value={fmt(data.revenue.total)} sub={`${fmt(data.revenue.revenue_30d)} this month`} icon={TrendingUp} />
               <KpiCard title="Wallet Balance" value={fmt(data.wallets.total_balance)} sub={`${fmt(data.wallets.total_escrow)} in escrow`} icon={Wallet} />
               <KpiCard title="Tx Volume (30d)" value={fmt(data.transactions.volume_30d)} sub={`${num(data.transactions.count_30d)} transactions`} icon={ArrowUpRight} />
-              <KpiCard title="Avg Rating" value={Number(data.reviews.avg_rating).toFixed(2)} sub={`${num(data.reviews.total)} reviews · ${Number(data.reviews.five_star_pct).toFixed(0)}% five-star`} icon={Star} />
+              <KpiCard title="Avg Rating" value={safeToFixed(data.reviews.avg_rating, 2)} sub={`${num(data.reviews.total)} reviews · ${safeToFixed(data.reviews.five_star_pct, 0)}% five-star`} icon={Star} />
               <KpiCard title="Active Users" value={num(data.users.active)} sub={`${num(data.users.blocked)} blocked`} icon={Users} />
               <KpiCard title="Disputed Orders" value={num(data.orders.totals.all_disputed)} sub={`${num(data.orders.totals.all_cancelled)} cancelled`} icon={AlertTriangle} iconClass="bg-red-500/10" />
             </>)}
@@ -117,7 +118,7 @@ export default function DashboardPage() {
                       <StatRow label="Cancelled" value={num(stats.cancelled)} />
                       <StatRow label="Disputed" value={num(stats.disputed)} />
                       <StatRow label="Last 30d" value={num(stats.orders_30d)} />
-                      <StatRow label="Completion" value={`${Number(stats.completion_rate).toFixed(1)}%`} />
+                      <StatRow label="Completion" value={`${safeToFixed(stats.completion_rate, 1)}%`} />
                       <StatRow label="Revenue" value={fmt(revenue)} highlight />
                     </CardContent>
                   </Card>

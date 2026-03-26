@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
+import { safeToFixed } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
 import { ProfileDetail } from "@/types/user-types"
 import Image from "next/image"
@@ -88,7 +89,7 @@ export function UserDetailDrawer() {
                 <span className="text-muted-foreground">Rating</span>
                 <span className="font-medium flex items-center gap-1">
                   <Star className="w-3 h-3 text-yellow-500" />
-                  {Number(selectedProfile.average_rating).toFixed(1)} ({selectedProfile.review_count})
+                  {safeToFixed(selectedProfile.average_rating, 1)} ({selectedProfile.review_count})
                 </span>
               </div>
               <DetailRow label="Joined" value={new Date(selectedProfile.created_at).toLocaleDateString()} />

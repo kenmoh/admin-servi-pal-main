@@ -9,7 +9,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useQuery } from '@tanstack/react-query'
-import { fetchApi } from '@/lib/utils'
+import { fetchApi, safeToFixed } from '@/lib/utils'
 import {
   OrderTrendPoint, UserGrowthPoint, StatusBreakdownResponse,
   TopRider, TopVendor, TransactionAnalyticsResponse,
@@ -27,10 +27,11 @@ import { Star } from 'lucide-react'
 
 
 // ── helpers ──────────────────────────────────────────────────
-function fmt(n: number) {
-  if (n >= 1_000_000) return `₦${(n / 1_000_000).toFixed(1)}M`
-  if (n >= 1_000) return `₦${(n / 1_000).toFixed(1)}K`
-  return `₦${Number(n).toFixed(0)}`
+function fmt(n: any) {
+  const num = Number(n);
+  if (num >= 1_000_000) return `₦${(num / 1_000_000).toFixed(1)}M`
+  if (num >= 1_000) return `₦${(num / 1_000).toFixed(1)}K`
+  return `₦${safeToFixed(num, 0)}`
 }
 
 const INTERVAL_OPTIONS: { label: string; value: AnalyticsInterval }[] = [
@@ -180,7 +181,7 @@ function StatusPie({ title, data }: { title: string; data: { status: string; cou
       <div className="h-40">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
-            <Pie data={data} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={60} label={({ status, percentage }) => `${status} ${Number(percentage).toFixed(0)}%`} labelLine={false} fontSize={9}>
+            <Pie data={data} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={60} label={({ status, percentage }) => `${status} ${safeToFixed(percentage, 0)}%`} labelLine={false} fontSize={9}>
               {data.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
             </Pie>
             <Tooltip formatter={(v, n) => [v, n]} />
@@ -345,8 +346,8 @@ function TopRidersSection() {
                   <p className="text-sm font-semibold text-orange-500">{rider.completed_deliveries} done</p>
                   <div className="flex items-center gap-1 justify-end text-xs text-muted-foreground">
                     <Star className="w-3 h-3 text-yellow-500" />
-                    {Number(rider.average_rating).toFixed(1)}
-                    <span>· {Number(rider.cancel_rate).toFixed(0)}% cancel</span>
+                    {safeToFixed(rider.average_rating, 1)}
+                    <span>· {safeToFixed(rider.cancel_rate, 0)}% cancel</span>
                   </div>
                 </div>
               </div>
@@ -408,7 +409,7 @@ function TopVendorsSection() {
                   <p className="text-sm font-semibold text-orange-500">{vendor.completed_orders} done</p>
                   <div className="flex items-center gap-1 justify-end text-xs text-muted-foreground">
                     <Star className="w-3 h-3 text-yellow-500" />
-                    {Number(vendor.average_rating).toFixed(1)}
+                    {safeToFixed(vendor.average_rating, 1)}
                     <span>· {fmt(vendor.revenue)}</span>
                   </div>
                 </div>

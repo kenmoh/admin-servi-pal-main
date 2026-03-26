@@ -18,3 +18,8 @@ export async function fetchApi(input: RequestInfo, init?: RequestInit) {
   if (!res.ok) throw new ApiError(`Request failed`, res.status)
   return res.json()
 }
+
+export function safeToFixed(val: any, digits: number = 2): string {
+  const n = Number(val);
+  return isNaN(n) ? (0).toFixed(digits) : n.toFixed(digits);
+}
