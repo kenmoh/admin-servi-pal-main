@@ -447,11 +447,11 @@ function TransactionSection() {
             <>
               <ChartContainer
                 config={txTrendConfig}
-                className="min-h-80 w-full text-xs aspect-auto"
+                className="h-64 w-full text-xs aspect-auto"
               >
                 <AreaChart
                   data={data.trend}
-                  margin={{ top: 35, right: 30, left: 0, bottom: 0 }}
+                  margin={{ top: 15, right: 10, left: 0, bottom: 0 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
