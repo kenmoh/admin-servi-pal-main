@@ -67,6 +67,11 @@ const data = {
       url: "/admin/contacts",
       icon: <MailIcon />,
     },
+    {
+      name: "Subscribers",
+      url: "/admin/subscribers",
+      icon: <UsersIcon />,
+    },
   ],
   navSecondary: [
     {

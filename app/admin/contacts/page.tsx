@@ -1,91 +1,131 @@
-'use client'
+"use client";
 
-import { AppSidebar } from '@/components/app-sidebar'
-import { SiteHeader } from '@/components/site-header'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { useQuery } from '@tanstack/react-query'
-import { useState } from 'react'
-import React from 'react'
-import { Search, Mail, User, Calendar, MessageSquare, ChevronLeft, ChevronRight, Inbox, X } from 'lucide-react'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
-import { supabase } from '@/supabase/supabase'
+import { AppSidebar } from "@/components/app-sidebar";
+import { SiteHeader } from "@/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import React from "react";
+import {
+  Search,
+  Mail,
+  User,
+  Calendar,
+  MessageSquare,
+  ChevronLeft,
+  ChevronRight,
+  Inbox,
+  X,
+} from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { supabase } from "@/supabase/supabase";
 
 interface Contact {
-  id: string
-  full_name: string
-  email: string
-  category: string
-  subject: string
-  message: string
-  created_at: string
+  id: string;
+  full_name: string;
+  email: string;
+  category: string;
+  subject: string;
+  message: string;
+  created_at: string;
 }
 
 interface ContactsResponse {
-  data: Contact[]
-  total: number
+  data: Contact[];
+  total: number;
 }
 
-const PAGE_SIZE = 20
+const PAGE_SIZE = 20;
 
 function categoryColor(category: string) {
   switch (category?.toUpperCase()) {
-    case 'DELIVERY': return 'bg-blue-500/15 text-blue-600'
-    case 'RESTAURANT': return 'bg-orange-500/15 text-orange-600'
-    case 'LAUNDRY': return 'bg-purple-500/15 text-purple-600'
-    case 'MARKETPLACE': return 'bg-green-500/15 text-green-600'
-    case 'OTHERS': return 'bg-gray-500/15 text-gray-600'
-    default: return 'bg-gray-500/15 text-gray-600'
+    case "Account Issues":
+      return "bg-blue-500/15 text-blue-600";
+    case "Payment & Refunds":
+      return "bg-orange-500/15 text-orange-600";
+    case "Food Delivery":
+      return "bg-purple-500/15 text-purple-600";
+    case "Package Delivery":
+      return "bg-green-500/15 text-green-600";
+    case "Laundry Services":
+      return "bg-gray-500/15 text-gray-600";
+    case "Marketplace":
+      return "bg-gray-500/15 text-gray-600";
+    case "Technical Issues":
+      return "bg-gray-500/15 text-gray-600";
+    case "Vendor Inquiries":
+      return "bg-gray-500/15 text-gray-600";
+    case "Other":
+      return "bg-gray-500/15 text-gray-600";
+    default:
+      return "bg-gray-500/15 text-gray-600";
   }
 }
 
-async function fetchContacts(page: number, category: string, search: string): Promise<ContactsResponse> {
+async function fetchContacts(
+  page: number,
+  category: string,
+  search: string,
+): Promise<ContactsResponse> {
   let query = supabase
-    .from('contacts')
-    .select('*', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
+    .from("contacts")
+    .select("*", { count: "exact" })
+    .order("created_at", { ascending: false })
+    .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
 
   if (category) {
-    query = query.eq('category', category)
+    query = query.eq("category", category);
   }
 
   if (search) {
-    query = query.or(`full_name.ilike.%${search}%,email.ilike.%${search}%,subject.ilike.%${search}%`)
+    query = query.or(
+      `full_name.ilike.%${search}%,email.ilike.%${search}%,subject.ilike.%${search}%`,
+    );
   }
 
-  const { data, count, error } = await query
+  const { data, count, error } = await query;
 
-  if (error) throw error
+  console.log(data);
 
-  return { data: data ?? [], total: count ?? 0 }
+  if (error) throw error;
+
+  return { data: data ?? [], total: count ?? 0 };
 }
 
 export default function ContactsPage() {
-  const [page, setPage] = useState(1)
-  const [search, setSearch] = useState('')
-  const [categoryFilter, setCategoryFilter] = useState('')
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
 
   const { data, isLoading } = useQuery<ContactsResponse>({
-    queryKey: ['contacts', page, categoryFilter, search],
+    queryKey: ["contacts", page, categoryFilter, search],
     queryFn: () => fetchContacts(page, categoryFilter, search),
-  })
+  });
 
-  const contacts = data?.data ?? []
-  const total = data?.total ?? 0
-  const totalPages = Math.ceil(total / PAGE_SIZE)
+  const contacts = data?.data ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <SidebarProvider
-      style={{
-        '--sidebar-width': 'calc(var(--spacing) * 72)',
-        '--header-height': 'calc(var(--spacing) * 12)',
-      } as React.CSSProperties}
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
     >
       <AppSidebar variant="inset" />
       <SidebarInset>
@@ -93,10 +133,12 @@ export default function ContactsPage() {
 
         <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
           {/* Left: Contact List */}
-          <div className={cn(
-            "flex flex-col border-r transition-all",
-            selectedContact ? "w-96 shrink-0" : "flex-1"
-          )}>
+          <div
+            className={cn(
+              "flex flex-col border-r transition-all",
+              selectedContact ? "w-96 shrink-0" : "flex-1",
+            )}
+          >
             {/* Filters */}
             <div className="p-3 space-y-2 border-b">
               <div className="relative">
@@ -106,16 +148,16 @@ export default function ContactsPage() {
                   className="pl-9 h-8 text-sm"
                   value={search}
                   onChange={(e) => {
-                    setSearch(e.target.value)
-                    setPage(1)
+                    setSearch(e.target.value);
+                    setPage(1);
                   }}
                 />
               </div>
               <Select
                 value={categoryFilter || "ALL"}
                 onValueChange={(v) => {
-                  setCategoryFilter(v === "ALL" ? "" : v)
-                  setPage(1)
+                  setCategoryFilter(v === "ALL" ? "" : v);
+                  setPage(1);
                 }}
               >
                 <SelectTrigger className="h-8 text-sm">
@@ -155,19 +197,32 @@ export default function ContactsPage() {
                     key={contact.id}
                     onClick={() => setSelectedContact(contact)}
                     className={cn(
-                      'w-full text-left px-4 py-3 border-b transition-colors hover:bg-muted/50',
-                      selectedContact?.id === contact.id && 'bg-orange-500/10 border-l-2 border-l-orange-500'
+                      "w-full text-left px-4 py-3 border-b transition-colors hover:bg-muted/50",
+                      selectedContact?.id === contact.id &&
+                        "bg-orange-500/10 border-l-2 border-l-orange-500",
                     )}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className="font-medium text-sm truncate">{contact.full_name}</span>
-                      <Badge variant="secondary" className={cn('text-xs shrink-0 ml-2', categoryColor(contact.category))}>
+                      <span className="font-medium text-sm truncate">
+                        {contact.full_name}
+                      </span>
+                      <Badge
+                        variant="secondary"
+                        className={cn(
+                          "text-xs shrink-0 ml-2",
+                          categoryColor(contact.category),
+                        )}
+                      >
                         {contact.category}
                       </Badge>
                     </div>
-                    <p className="text-sm text-foreground/80 truncate">{contact.subject}</p>
+                    <p className="text-sm text-foreground/80 truncate">
+                      {contact.subject}
+                    </p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-muted-foreground truncate">{contact.email}</span>
+                      <span className="text-xs text-muted-foreground truncate">
+                        {contact.email}
+                      </span>
                       <span className="text-xs text-muted-foreground ml-auto shrink-0">
                         {new Date(contact.created_at).toLocaleDateString()}
                       </span>
@@ -180,14 +235,18 @@ export default function ContactsPage() {
             {/* Pagination */}
             {total > 0 && (
               <div className="flex items-center justify-between px-3 py-2 border-t text-xs text-muted-foreground">
-                <span>{total} contact{total !== 1 ? 's' : ''}</span>
+                <span>
+                  {total} contact{total !== 1 ? "s" : ""}
+                </span>
                 <div className="flex items-center gap-1">
-                  <span className="mr-1">Page {page} of {totalPages}</span>
+                  <span className="mr-1">
+                    Page {page} of {totalPages}
+                  </span>
                   <Button
                     variant="outline"
                     size="sm"
                     className="h-6 w-6 p-0"
-                    onClick={() => setPage(p => p - 1)}
+                    onClick={() => setPage((p) => p - 1)}
                     disabled={page === 1}
                   >
                     <ChevronLeft className="w-3 h-3" />
@@ -196,7 +255,7 @@ export default function ContactsPage() {
                     variant="outline"
                     size="sm"
                     className="h-6 w-6 p-0"
-                    onClick={() => setPage(p => p + 1)}
+                    onClick={() => setPage((p) => p + 1)}
                     disabled={page >= totalPages}
                   >
                     <ChevronRight className="w-3 h-3" />
@@ -212,12 +271,20 @@ export default function ContactsPage() {
               {/* Detail Header */}
               <div className="px-6 py-4 border-b flex items-center gap-3 shrink-0">
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-semibold text-lg truncate">{selectedContact.subject}</h2>
+                  <h2 className="font-semibold text-lg truncate">
+                    {selectedContact.subject}
+                  </h2>
                   <p className="text-sm text-muted-foreground">
                     From {selectedContact.full_name}
                   </p>
                 </div>
-                <Badge variant="secondary" className={cn('text-xs shrink-0', categoryColor(selectedContact.category))}>
+                <Badge
+                  variant="secondary"
+                  className={cn(
+                    "text-xs shrink-0",
+                    categoryColor(selectedContact.category),
+                  )}
+                >
                   {selectedContact.category}
                 </Badge>
                 <Button
@@ -236,7 +303,9 @@ export default function ContactsPage() {
                 <div className="flex flex-wrap gap-6">
                   <div className="flex items-center gap-2 text-sm">
                     <User className="w-4 h-4 text-muted-foreground" />
-                    <span className="font-medium">{selectedContact.full_name}</span>
+                    <span className="font-medium">
+                      {selectedContact.full_name}
+                    </span>
                   </div>
                   <a
                     href={`mailto:${selectedContact.email}`}
@@ -284,5 +353,5 @@ export default function ContactsPage() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

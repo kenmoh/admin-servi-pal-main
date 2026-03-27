@@ -18,21 +18,45 @@ import {
   Utensils,
   Shirt,
   ShoppingBag,
+  Loader2,
 } from "lucide-react";
+import { supabase } from "@/supabase/supabase";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const date = new Date().getFullYear();
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
-      setSubscribed(true);
-      setTimeout(() => {
+    if (!email) return;
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase
+        .from("email_subscribers")
+        .insert([{ email }]);
+
+      if (error) {
+        if (error.code === "23505") {
+          // Unique violation
+          alert("This email is already subscribed!");
+        } else {
+          throw error;
+        }
+      } else {
+        setSubscribed(true);
         setEmail("");
-        setSubscribed(false);
-      }, 3000);
+        setTimeout(() => {
+          setSubscribed(false);
+        }, 3000);
+      }
+    } catch (error: any) {
+      console.error("Error subscribing:", error);
+      alert(error.message || "Failed to subscribe. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -120,10 +144,10 @@ export default function LandingPage() {
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto text-center space-y-6">
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-            From deliveries to food, laundry to marketplace
+            From deliveries to food, laundry to marketplace;
             <br />
             <span className="bg-linear-to-r from-accent via-accent/80 to-accent/60 bg-clip-text text-transparent">
-              — manage it all from one unified app
+              manage it all from one unified app
             </span>
           </h1>
 
@@ -177,7 +201,7 @@ export default function LandingPage() {
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-4">Services You Control</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              One app. Every service. Total convenience at your fingertips.
+              One app. Four(4) service. Total convenience at your fingertips.
             </p>
           </div>
 
@@ -226,8 +250,16 @@ export default function LandingPage() {
               className="flex-1"
               required
             />
-            <Button type="submit" className="bg-accent hover:bg-accent/90">
-              <Mail className="w-4 h-4" />
+            <Button
+              type="submit"
+              className="bg-accent hover:bg-accent/90"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Mail className="w-4 h-4" />
+              )}
             </Button>
           </form>
 
