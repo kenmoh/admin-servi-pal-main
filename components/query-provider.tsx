@@ -4,9 +4,14 @@ import { QueryClient, QueryClientProvider, MutationCache, QueryCache } from '@ta
 import { useState } from 'react'
 import { ApiError } from '@/lib/utils'
 
+let refreshPromise: Promise<boolean> | null = null
+
 async function tryRefresh(): Promise<boolean> {
-  const res = await fetch('/api/auth/refresh', { method: 'POST' })
-  return res.ok
+  if (refreshPromise) return refreshPromise
+  refreshPromise = fetch('/api/auth/refresh', { method: 'POST' })
+    .then((res) => res.ok)
+    .finally(() => { refreshPromise = null })
+  return refreshPromise
 }
 
 function makeQueryClient() {

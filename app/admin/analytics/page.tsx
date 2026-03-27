@@ -447,7 +447,7 @@ function TransactionSection() {
             <>
               <ChartContainer
                 config={txTrendConfig}
-                className="h-[640px] w-full text-xs aspect-auto"
+                className="min-h-80 w-full text-xs aspect-auto"
               >
                 <AreaChart
                   data={data.trend}

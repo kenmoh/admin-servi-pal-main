@@ -1,12 +1,23 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, MessageCircle, Phone, Clock, MapPin, Send } from "lucide-react";
+import {
+  Mail,
+  MessageCircle,
+  Phone,
+  Clock,
+  MapPin,
+  Send,
+  Loader2,
+  CheckCircle2,
+  AlertCircle,
+} from "lucide-react";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { BackButton } from "@/components/back-button";
+import { supabase } from "@/supabase/supabase";
 
 const SupportPage = () => {
   const [formData, setFormData] = useState({
@@ -16,19 +27,47 @@ const SupportPage = () => {
     category: "",
     message: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    console.log("Form submitted:", formData);
-    alert("Thank you for contacting us! We'll get back to you soon.");
-    setFormData({
-      name: "",
-      email: "",
-      subject: "",
-      category: "",
-      message: "",
-    });
+    setIsSubmitting(true);
+    setSubmitStatus("idle");
+
+    try {
+      const { error } = await supabase.from("contacts").insert({
+        full_name: formData.name,
+        email: formData.email,
+        category: formData.category,
+        subject: formData.subject,
+        message: formData.message,
+      });
+
+      if (error) throw error;
+
+      setSubmitStatus("success");
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        category: "",
+        message: "",
+      });
+
+      setTimeout(() => setSubmitStatus("idle"), 5000);
+    } catch (err: any) {
+      setSubmitStatus("error");
+      setErrorMessage(
+        err?.message || "Something went wrong. Please try again.",
+      );
+      setTimeout(() => setSubmitStatus("idle"), 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -239,10 +278,35 @@ const SupportPage = () => {
                 />
               </div>
 
-              <Button type="submit" className="w-full" size="lg">
-                <Send className="mr-2 h-4 w-4" />
-                Send Message
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Send className="mr-2 h-4 w-4" />
+                )}
+                {isSubmitting ? "Sending..." : "Send Message"}
               </Button>
+
+              {submitStatus === "success" && (
+                <div className="flex items-center gap-2 text-green-600 dark:text-green-400 justify-center p-3 rounded-lg bg-green-500/10 border border-green-500/20">
+                  <CheckCircle2 className="w-5 h-5" />
+                  <span>
+                    Thank you! We&apos;ll get back to you within 24 hours.
+                  </span>
+                </div>
+              )}
+
+              {submitStatus === "error" && (
+                <div className="flex items-center gap-2 text-destructive justify-center p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <AlertCircle className="w-5 h-5" />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
 
               <p className="text-xs text-center text-muted-foreground">
                 By submitting this form, you agree to our Privacy Policy and
