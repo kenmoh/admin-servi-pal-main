@@ -63,27 +63,55 @@ export default function LandingPage() {
   const features = [
     {
       icon: Bike,
+      image: "/delivery.png",
       title: "Swift Delivery",
       description:
-        "From documents to gifts, our registered dispatch riders deliver it all with lightning speed. Your items, our priority.",
+        "From documents to gifts, our registered dispatch riders deliver it all with lightning speed.",
+      points: [
+        "Real-time tracking",
+        "Registered professional riders",
+        "Instant package insurance",
+        "Door-to-door fulfillment"
+      ]
     },
     {
       icon: Utensils,
+      image: "/food.png",
       title: "Food on Demand",
       description:
-        "Craving Jollof rice or Pizza? Your favourite restaurants are just a tap away. Bon appétit!",
+        "Craving Jollof rice or Pizza? Your favourite restaurants are just a tap away.",
+      points: [
+        "Wide variety of cuisines",
+        "Fastest delivery times",
+        "Group order discounts",
+        "Schedule future meals"
+      ]
     },
     {
       icon: Shirt,
+      image: "/laundry.png",
       title: "Pristine Laundry",
       description:
-        "Say goodbye to laundry day stress. Our laundry services providers will keep your wardrobe fresh and fabulous.",
+        "Say goodbye to laundry day stress. Our providers will keep your wardrobe fresh.",
+      points: [
+        "Pickup and delivery",
+        "Premium dry cleaning",
+        "Eco-friendly detergents",
+        "Stain removal experts"
+      ]
     },
     {
       icon: ShoppingBag,
+      image: "/marketplace.png",
       title: "Secure Shopping",
       description:
-        "Shop with peace of mind. Our escrow service ensures your money is safe until you're satisfied. What you ordered is what you get! 😊",
+        "Shop with peace of mind. Our escrow service ensures your money is safe until you're satisfied.",
+      points: [
+        "Verified seller network",
+        "Secure escrow payment",
+        "Multi-category catalog",
+        "Easy return policy"
+      ]
     },
   ];
 
@@ -141,87 +169,131 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight">
-            From deliveries to food, laundry to marketplace;
-            <br />
-            <span className="bg-linear-to-r from-accent via-accent/80 to-accent/60 bg-clip-text text-transparent">
-              manage it all from one unified app
-            </span>
-          </h1>
+      <section className="pt-32 pb-20 px-6 relative overflow-hidden">
+        {/* Decorative Background Element */}
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl pointer-events-none" />
+        
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-8 text-left">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20 text-accent text-sm font-medium animate-in fade-in slide-in-from-bottom-4 duration-1000">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+              </span>
+              The All-in-One Everyday App
+            </div>
 
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            From sending packages to ordering food, cleaning clothes to buying
-            and selling — ServiPal handles your daily needs in one easy app.
-          </p>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
+              From deliveries to food, laundry to marketplace;
+              <br />
+              <span className="bg-linear-to-r from-accent via-accent/80 to-accent/60 bg-clip-text text-transparent">
+                manage it all from one unified app
+              </span>
+            </h1>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link
-              href="https://play.google.com/store"
-              className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
-            >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                alt="Google Play"
-                className="h-12"
-              />
-            </Link>
-            <a
-              href="https://www.apple.com/app-store/"
-              className="rounded-lg flex items-center justify-center gap-2 hover:scale-105 transition-transform active:scale-95"
-            >
-              <img
-                src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-                alt="App Store"
-                className="h-12"
-              />
-            </a>
+            <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
+              From sending packages to ordering food, cleaning clothes to buying
+              and selling — ServiPal handles your daily needs in one easy app.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 items-start pt-4">
+              <Link
+                href="https://play.google.com/store"
+                className="rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all active:scale-95 shadow-lg shadow-accent/5"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                  alt="Google Play"
+                  className="h-14"
+                />
+              </Link>
+              <a
+                href="https://www.apple.com/app-store/"
+                className="rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all active:scale-95 shadow-lg shadow-black/5"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                  alt="App Store"
+                  className="h-14"
+                />
+              </a>
+            </div>
           </div>
 
-          {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-12">
-            {stats.map((stat, i) => (
-              <div
-                key={i}
-                className="p-4 rounded-lg bg-card border border-border/50 hover:border-accent/30 transition"
-              >
-                <p className="text-2xl font-bold text-accent">{stat.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div> */}
+          <div className="relative group lg:ml-auto">
+            <div className="absolute -inset-4 bg-linear-to-tr from-accent/20 to-transparent rounded-3xl blur-2xl group-hover:opacity-75 transition duration-500 opacity-50" />
+            <div className="relative overflow-hidden rounded-3xl border border-border/50 shadow-2xl">
+              <Image
+                src="/header_images.png"
+                alt="ServiPal App Interface"
+                width={600}
+                height={600}
+                className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-105"
+                priority
+              />
+            </div>
+          </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-6 bg-card/30 border-y border-border/50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Services You Control</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              One app. Four(4) service. Total convenience at your fingertips.
+      <section className="py-24 px-6 bg-linear-to-b from-card/30 to-background border-y border-border/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-20 space-y-4">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Services You Control</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+              One app. Four powerful services. Total convenience at your fingertips.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
             {features.map((feature, i) => {
               const Icon = feature.icon;
               return (
                 <div
                   key={i}
-                  className="group p-6 rounded-xl border border-border/50 hover:border-accent/30 bg-background/50 hover:bg-card transition duration-300"
+                  className="group relative flex flex-col md:flex-row gap-8 p-4 rounded-3xl border border-border/50 bg-background/50 hover:bg-card transition-all duration-500 hover:shadow-2xl hover:shadow-accent/5 overflow-hidden"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition mb-4">
-                    <Icon className="w-6 h-6 text-accent" />
+                  <div className="md:w-1/2 relative overflow-hidden rounded-2xl aspect-4/3 md:aspect-auto h-64 md:h-full min-h-[300px]">
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      fill
+                      className="object-contain transform transition-transform duration-700 group-hover:scale-105"
+                    />
                   </div>
-                  <h3 className="font-semibold text-lg mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {feature.description}
-                  </p>
+
+                  <div className="flex-1 py-4 md:py-6 pr-4 space-y-6">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center border border-accent/20">
+                          <Icon className="w-5 h-5 text-accent" />
+                        </div>
+                        <h3 className="font-bold text-2xl tracking-tight">
+                          {feature.title}
+                        </h3>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
+                    
+                    <ul className="grid grid-cols-1 gap-3 pt-2">
+                      {feature.points.map((point, idx) => (
+                        <li key={idx} className="flex items-start gap-3 text-sm text-foreground/80">
+                          <CheckCircle2 className="w-4 h-4 text-accent mt-0.5 shrink-0" />
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="pt-2">
+                      <Button variant="outline" size="sm" className="group/btn rounded-full border-accent/20 hover:bg-accent/10 hover:border-accent">
+                        Learn More
+                        <ArrowRight className="w-4 h-4 ml-2 transform group-hover/btn:translate-x-1 transition-transform" />
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               );
             })}
@@ -288,9 +360,7 @@ export default function LandingPage() {
                 </div>
                 <span className="font-bold">ServiPal</span>
               </div>
-              {/* <p className="text-sm text-muted-foreground">
-                Enterprise-grade multi-vendor dashboard
-              </p> */}
+            
             </div>
 
             <div>
