@@ -78,29 +78,20 @@ async function fetchContacts(
   category: string,
   search: string,
 ): Promise<ContactsResponse> {
-  let query = supabase
-    .from("contacts")
-    .select("*", { count: "exact" })
-    .order("created_at", { ascending: false })
-    .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+  const url = new URL("/api/contacts", window.location.origin);
+  url.searchParams.set("page", page.toString());
+  url.searchParams.set("limit", PAGE_SIZE.toString());
+  if (category) url.searchParams.set("category", category);
+  if (search) url.searchParams.set("search", search);
 
-  if (category) {
-    query = query.eq("category", category);
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to fetch contacts");
   }
 
-  if (search) {
-    query = query.or(
-      `full_name.ilike.%${search}%,email.ilike.%${search}%,subject.ilike.%${search}%`,
-    );
-  }
-
-  const { data, count, error } = await query;
-
-  console.log(data);
-
-  if (error) throw error;
-
-  return { data: data ?? [], total: count ?? 0 };
+  const result = await response.json();
+  return { data: result.data ?? [], total: result.meta?.total ?? 0 };
 }
 
 export default function ContactsPage() {
@@ -165,11 +156,15 @@ export default function ContactsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="ALL">All Categories</SelectItem>
-                  <SelectItem value="DELIVERY">Delivery</SelectItem>
-                  <SelectItem value="RESTAURANT">Restaurant</SelectItem>
-                  <SelectItem value="LAUNDRY">Laundry</SelectItem>
-                  <SelectItem value="MARKETPLACE">Marketplace</SelectItem>
-                  <SelectItem value="OTHERS">Others</SelectItem>
+                  <SelectItem value="Account Issues">Account Issues</SelectItem>
+                  <SelectItem value="Payment & Refunds">Payment & Refunds</SelectItem>
+                  <SelectItem value="Food Delivery">Food Delivery</SelectItem>
+                  <SelectItem value="Package Delivery">Package Delivery</SelectItem>
+                  <SelectItem value="Laundry Services">Laundry Services</SelectItem>
+                  <SelectItem value="Marketplace">Marketplace</SelectItem>
+                  <SelectItem value="Technical Issues">Technical Issues</SelectItem>
+                  <SelectItem value="Vendor Inquiries">Vendor Inquiries</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>
             </div>

@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
   const params = new URLSearchParams();
   params.set("page", sp.get("page") || "1");
   params.set("page_size", sp.get("page_size") || "20");
+  
   for (const key of ["entity_type", "entity_id", "action", "actor_id", "date_from", "date_to"]) {
     const val = sp.get(key);
     if (val) params.set(key, val);
@@ -25,12 +26,19 @@ export async function GET(request: NextRequest) {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
-        "X-User-Role": userRole,
       },
     });
-    if (!response.ok) throw new Error(`${response.status}`);
-    return NextResponse.json(await response.json());
-  } catch {
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Audit logs API error:", response.status, errorText);
+        return NextResponse.json({ error: `Failed to fetch audit logs: ${response.status}` }, { status: response.status });
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Proxy error:", error);
     return NextResponse.json({ error: "Failed to fetch audit logs" }, { status: 500 });
   }
 }
