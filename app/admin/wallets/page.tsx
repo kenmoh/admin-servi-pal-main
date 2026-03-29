@@ -87,7 +87,9 @@ export default function WalletsPage() {
                 {wallets.map((wallet) => (
                   <Card
                     key={wallet.id}
-                    onClick={() => router.push(`/admin/wallets/${wallet.id}`)}
+                    onClick={() =>
+                      router.push(`/admin/wallets/${wallet.user_id}`)
+                    }
                     className="p-4 cursor-pointer hover:border-primary/50 transition-all"
                   >
                     <div className="space-y-3">

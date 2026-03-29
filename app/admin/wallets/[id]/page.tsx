@@ -30,12 +30,12 @@ function statusColor(status: string) {
 export default function WalletDetailPage() {
   const params = useParams();
   const router = useRouter();
-  const walletId = params.id as string;
+  const userId = params.id as string;
 
   const { data: wallet, isLoading } = useQuery<WalletWithTransactions>({
-    queryKey: ["wallet", walletId],
+    queryKey: ["wallet", userId],
     queryFn: async () => {
-      const response = await fetch(`/api/wallets/${walletId}`);
+      const response = await fetch(`/api/wallets/${userId}`);
       if (!response.ok) throw new Error("Failed to fetch wallet");
       return response.json();
     },
