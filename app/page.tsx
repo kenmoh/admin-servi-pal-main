@@ -82,9 +82,9 @@ export default function LandingPage() {
         "Craving Jollof rice or Pizza? Your favourite restaurants are just a tap away.",
       points: [
         "Wide variety of cuisines",
-        "Fastest delivery times",
-        "Group order discounts",
-        "Schedule future meals"
+        "Fast and reliable order fulfillment",
+        "Flexible pickup or delivery options (based on vendor availability)",
+        "Seamless ordering experience from start to finish"
       ]
     },
     {
@@ -107,7 +107,7 @@ export default function LandingPage() {
       description:
         "Shop with peace of mind. Our escrow service ensures your money is safe until you're satisfied.",
       points: [
-        "Verified seller network",
+        "Access to multiple sellers across categories",
         "Secure escrow payment",
         "Multi-category catalog",
         "Easy return policy"
@@ -171,7 +171,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6 relative overflow-hidden">
         {/* Decorative Background Element */}
-        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-[500px] h-[500px] bg-accent/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-125 h-125 bg-accent/5 rounded-full blur-3xl pointer-events-none" />
         
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 text-left">
@@ -254,7 +254,7 @@ export default function LandingPage() {
                   key={i}
                   className="group relative flex flex-col md:flex-row gap-8 p-4 rounded-3xl border border-border/50 bg-background/50 hover:bg-card transition-all duration-500 hover:shadow-2xl hover:shadow-accent/5 overflow-hidden"
                 >
-                  <div className="md:w-1/2 relative overflow-hidden rounded-2xl aspect-4/3 md:aspect-auto h-64 md:h-full min-h-[300px]">
+                  <div className="md:w-1/2 relative overflow-hidden rounded-2xl aspect-4/3 md:aspect-auto h-64 md:h-full min-h-75">
                     <Image
                       src={feature.image}
                       alt={feature.title}
