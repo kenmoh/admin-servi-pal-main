@@ -287,12 +287,12 @@ export default function LandingPage() {
                       ))}
                     </ul>
 
-                    <div className="pt-2">
+                    {/* <div className="pt-2">
                       <Button variant="outline" size="sm" className="group/btn rounded-full border-accent/20 hover:bg-accent/10 hover:border-accent">
                         Learn More
                         <ArrowRight className="w-4 h-4 ml-2 transform group-hover/btn:translate-x-1 transition-transform" />
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               );
