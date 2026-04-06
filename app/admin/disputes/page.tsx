@@ -101,7 +101,7 @@ export default function DisputesPage() {
     queryFn: () => getDisputes({
       page,
       limit: 20,
-      status: statusFilter as DisputeStatus | '',
+      status: (statusFilter || null) as DisputeStatus | null,
       search,
     }),
   })
