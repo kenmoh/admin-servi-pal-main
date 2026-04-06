@@ -8,7 +8,7 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer";
 import { useAppContext } from "@/lib/context";
-import { X, User, Star, Phone, Mail, MapPin } from "lucide-react";
+import { X, User, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -18,7 +18,7 @@ import { ProfileDetail } from "@/types/user-types";
 import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ShieldAlert, ShieldCheck, Loader2 } from "lucide-react";
+import { ShieldAlert, ShieldCheck, Loader2, BadgeCheck } from "lucide-react";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -84,15 +84,7 @@ export function UserDetailDrawer() {
   });
 
   const blockMutation = useMutation({
-    mutationFn: async ({
-      id,
-      isBlocked,
-      reason,
-    }: {
-      id: string;
-      isBlocked: boolean;
-      reason: string;
-    }) => {
+    mutationFn: async ({ id, isBlocked, reason }: { id: string; isBlocked: boolean; reason: string }) => {
       const response = await fetch(`/api/users/${id}/block`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -105,19 +97,25 @@ export function UserDetailDrawer() {
       return response.json();
     },
     onSuccess: (data) => {
-      toast.success(
-        data.is_blocked
-          ? "User blocked successfully"
-          : "User unblocked successfully",
-      );
-      queryClient.invalidateQueries({
-        queryKey: ["user-detail", selectedProfile?.id],
-      });
+      toast.success(data.is_blocked ? "User blocked successfully" : "User unblocked successfully");
+      queryClient.invalidateQueries({ queryKey: ["user-detail", selectedProfile?.id] });
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
-    onError: (error: Error) => {
-      toast.error(error.message);
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const response = await fetch(`/api/users/${id}/verify`, { method: "PATCH" });
+      if (!response.ok) throw new Error("Failed to verify user");
+      return response.json();
     },
+    onSuccess: () => {
+      toast.success("User verified successfully");
+      queryClient.invalidateQueries({ queryKey: ["user-detail", selectedProfile?.id] });
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+    onError: (error: Error) => toast.error(error.message),
   });
 
   if (!selectedProfile) return null;
@@ -330,87 +328,77 @@ export function UserDetailDrawer() {
         </div>
 
         {detail && (
-          <div className="p-4 border-t mt-auto bg-muted/30">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1">
-                <p className="text-xs text-muted-foreground mb-2">
-                  {detail.is_blocked
-                    ? "User is currently blocked"
-                    : "User is active"}
-                </p>
-                {detail.is_blocked ? (
-                  <Button
-                    variant="outline"
-                    className="w-full border-green-600/50 text-green-600 hover:bg-green-50 dark:hover:bg-green-950/20"
-                    onClick={() =>
-                      blockMutation.mutate({
-                        id: detail.id,
-                        isBlocked: true,
-                        reason: "Unblocking",
-                      })
-                    }
-                    disabled={blockMutation.isPending}
-                  >
-                    {blockMutation.isPending ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <ShieldCheck className="w-4 h-4 mr-2" />
-                    )}
-                    Unblock User
-                  </Button>
-                ) : (
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        className="w-full"
-                        disabled={blockMutation.isPending}
-                      >
-                        {blockMutation.isPending ? (
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        ) : (
-                          <ShieldAlert className="w-4 h-4 mr-2" />
-                        )}
-                        Block User
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80">
-                      <div className="grid gap-4">
-                        <div className="space-y-2">
-                          <h4 className="font-medium leading-none">
-                            Block User
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            Specify a reason for blocking this user.
-                          </p>
-                        </div>
-                        <div className="grid gap-2">
-                          <Label htmlFor="reason">Reason</Label>
-                          <Input
-                            id="reason"
-                            value={blockReason}
-                            onChange={(e) => setBlockReason(e.target.value)}
-                            className="h-8"
-                          />
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => {
-                            blockMutation.mutate({
-                              id: detail.id,
-                              isBlocked: false,
-                              reason: blockReason,
-                            });
-                          }}
-                        >
-                          Confirm Block
-                        </Button>
+          <div className="p-4 border-t mt-auto bg-muted/30 space-y-2">
+            <p className="text-xs text-muted-foreground">
+              {detail.is_blocked ? "User is currently blocked" : "User is active"}
+              {detail.is_verified && " · Verified"}
+            </p>
+            <div className="flex gap-2">
+              {!detail.is_verified && (
+                <Button
+                  variant="outline"
+                  className="flex-1 border-blue-600/50 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/20"
+                  onClick={() => verifyMutation.mutate(detail.id)}
+                  disabled={verifyMutation.isPending}
+                >
+                  {verifyMutation.isPending
+                    ? <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    : <BadgeCheck className="w-4 h-4 mr-2" />}
+                  Verify
+                </Button>
+              )}
+              {detail.is_blocked ? (
+                <Button
+                  variant="outline"
+                  className="flex-1 border-green-600/50 text-green-600 hover:bg-green-50 dark:hover:bg-green-950/20"
+                  onClick={() => blockMutation.mutate({ id: detail.id, isBlocked: true, reason: "Unblocking" })}
+                  disabled={blockMutation.isPending}
+                >
+                  {blockMutation.isPending
+                    ? <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    : <ShieldCheck className="w-4 h-4 mr-2" />}
+                  Unblock
+                </Button>
+              ) : (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="destructive"
+                      className="flex-1"
+                      disabled={blockMutation.isPending}
+                    >
+                      {blockMutation.isPending
+                        ? <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        : <ShieldAlert className="w-4 h-4 mr-2" />}
+                      Block
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-80">
+                    <div className="grid gap-4">
+                      <div className="space-y-2">
+                        <h4 className="font-medium leading-none">Block User</h4>
+                        <p className="text-sm text-muted-foreground">Specify a reason for blocking this user.</p>
                       </div>
-                    </PopoverContent>
-                  </Popover>
-                )}
-              </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="reason">Reason</Label>
+                        <Input
+                          id="reason"
+                          value={blockReason}
+                          onChange={(e) => setBlockReason(e.target.value)}
+                          className="h-8"
+                        />
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        onClick={() => blockMutation.mutate({ id: detail.id, isBlocked: false, reason: blockReason })}
+                      >
+                        Confirm Block
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
             </div>
           </div>
         )}

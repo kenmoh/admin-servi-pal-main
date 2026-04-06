@@ -28,6 +28,7 @@ export async function GET(request: NextRequest) {
       },
     });
     if (!response.ok) throw new Error(`${response.status}`);
+    console.log(await response.json());
     return NextResponse.json(await response.json());
   } catch (error) {
     return NextResponse.json({ error: "Failed to fetch disputes" }, { status: 500 });

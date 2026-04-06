@@ -9,16 +9,32 @@ import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { DisputeListResponse, DisputeSummary, DisputeDetail } from '@/types/dispute-types'
+import {
+  Dispute,
+  DisputeDetails,
+  DisputeListItem,
+  DisputeListResponse,
+  DisputeMessage,
+  DisputeMessagesResponse,
+  DisputeStatus,
+} from '@/types/dispute-types'
+import {
+  getDisputes,
+  getDisputeDetails,
+  getDisputeMessages,
+  sendDisputeMessage,
+  markDisputeAsRead,
+  subscribeToDisputeMessages,
+  subscribeToDisputeUpdates,
+  getDisputeUnreadCount,
+} from '@/lib/dispute-service'
 import { useState, useRef, useEffect } from 'react'
 import React from 'react'
 import { Search, Send, AlertTriangle, MessageSquare } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { cn, fetchApi } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 
-const ADMIN_SENDER_ID = "admin"
-
-function statusColor(status: string) {
+function statusColor(status: DisputeStatus | string) {
   switch (status?.toUpperCase()) {
     case 'OPEN': return 'bg-red-500/15 text-red-600'
     case 'IN_PROGRESS': return 'bg-yellow-500/15 text-yellow-600'
@@ -28,7 +44,12 @@ function statusColor(status: string) {
   }
 }
 
-function DisputeListItem({ dispute, selected, onClick }: { dispute: DisputeSummary; selected: boolean; onClick: () => void }) {
+function DisputeListItemRow({ dispute, selected, onClick, unreadCount }: {
+  dispute: DisputeListItem
+  selected: boolean
+  onClick: () => void
+  unreadCount: number
+}) {
   return (
     <button
       onClick={onClick}
@@ -38,20 +59,24 @@ function DisputeListItem({ dispute, selected, onClick }: { dispute: DisputeSumma
       )}
     >
       <div className="flex items-center justify-between mb-1">
-        {/* <span className="font-medium text-sm truncate">
-          {dispute.?.full_name || 'Unknown'}
-        </span> */}
+        <span className="font-medium text-sm truncate">
+          {dispute.other_party_name || dispute.order_type || 'Dispute'}
+        </span>
         <Badge variant="secondary" className={cn('text-xs shrink-0 ml-2', statusColor(dispute.status))}>
           {dispute.status}
         </Badge>
       </div>
       <p className="text-xs text-muted-foreground truncate">{dispute.reason || 'No reason provided'}</p>
       <div className="flex items-center gap-2 mt-1">
-        <span className="text-xs text-muted-foreground">{dispute.order_type}</span>
         {dispute.order_id && (
-          <span className="text-xs text-muted-foreground">· #{dispute.order_id}</span>
+          <span className="text-xs text-muted-foreground">#{dispute.order_id.slice(0, 8)}</span>
         )}
-        <span className="text-xs text-muted-foreground ml-auto">
+        {unreadCount > 0 && (
+          <span className="ml-auto bg-orange-500 text-white text-xs rounded-full px-1.5 py-0.5 leading-none">
+            {unreadCount}
+          </span>
+        )}
+        <span className={cn('text-xs text-muted-foreground', unreadCount > 0 ? '' : 'ml-auto')}>
           {new Date(dispute.created_at).toLocaleDateString()}
         </span>
       </div>
@@ -65,49 +90,100 @@ export default function DisputesPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [message, setMessage] = useState('')
   const [page, setPage] = useState(1)
+  const [realtimeMessages, setRealtimeMessages] = useState<DisputeMessage[]>([])
+  const [detailStatus, setDetailStatus] = useState<DisputeStatus | null>(null)
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
   const bottomRef = useRef<HTMLDivElement>(null)
   const queryClient = useQueryClient()
 
   const { data, isLoading: listLoading } = useQuery<DisputeListResponse>({
-    queryKey: ['disputes', page],
-    queryFn: () => fetchApi(`/api/disputes?page=${page}&limit=20`),
+    queryKey: ['disputes', page, statusFilter, search],
+    queryFn: () => getDisputes({
+      page,
+      limit: 20,
+      status: statusFilter as DisputeStatus | '',
+      search,
+    }),
   })
 
-  // const disputes = (data?.data ?? []).filter((d) => {
-  //   const matchSearch = !search ||
-  //     d.raised_by?.full_name?.toLowerCase().includes(search.toLowerCase()) ||
-  //     d.reason?.toLowerCase().includes(search.toLowerCase()) ||
-  //     String(d.order_number).includes(search)
-  //   const matchStatus = !statusFilter || d.status === statusFilter
-  //   return matchSearch && matchStatus
-  // })
+  const disputes = data?.data ?? []
 
-  const { data: detail, isLoading: detailLoading } = useQuery<DisputeDetail>({
+  // Fetch unread counts for all disputes
+  useEffect(() => {
+    disputes.forEach((d) => {
+      getDisputeUnreadCount(d.id)
+        .then((res) => setUnreadCounts((prev) => ({ ...prev, [d.id]: res.unread_count })))
+        .catch(() => {})
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
+
+  const { data: detail, isLoading: detailLoading } = useQuery<DisputeDetails>({
     queryKey: ['dispute-detail', selectedId],
-    queryFn: () => fetchApi(`/api/disputes/${selectedId}`),
+    queryFn: () => getDisputeDetails(selectedId!),
     enabled: !!selectedId,
     refetchInterval: 10000,
   })
 
-  const sendMutation = useMutation({
-    mutationFn: async (msg: string) => {
-      const res = await fetch(`/api/disputes/${selectedId}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg }),
-      })
-      if (!res.ok) throw new Error('Failed to send')
-      return res.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dispute-detail', selectedId] })
-      setMessage('')
-    },
+  const { data: messagesData, isLoading: messagesLoading } = useQuery<DisputeMessagesResponse>({
+    queryKey: ['dispute-messages', selectedId],
+    queryFn: () => getDisputeMessages(selectedId!),
+    enabled: !!selectedId,
+    refetchInterval: 10000,
   })
+
+  const messages = messagesData?.messages ?? []
+  const allMessages = [
+    ...messages,
+    ...realtimeMessages.filter((r) => !messages.some((m) => m.id === r.id)),
+  ]
+
+  useEffect(() => {
+    setRealtimeMessages([])
+    setDetailStatus(null)
+  }, [selectedId])
+
+  // Realtime subscriptions
+  useEffect(() => {
+    if (!selectedId) return
+    const msgChannel = subscribeToDisputeMessages(selectedId, (newMsg) => {
+      setRealtimeMessages((prev) =>
+        prev.some((m) => m.id === newMsg.id) ? prev : [...prev, newMsg]
+      )
+      setUnreadCounts((prev) => ({ ...prev, [selectedId]: 0 }))
+      markDisputeAsRead(selectedId).catch(() => {})
+    })
+    const updateChannel = subscribeToDisputeUpdates(selectedId, (updated: Dispute) => {
+      setDetailStatus(updated.status)
+      queryClient.invalidateQueries({ queryKey: ['disputes'] })
+    })
+    return () => {
+      msgChannel.unsubscribe()
+      updateChannel.unsubscribe()
+    }
+  }, [selectedId, queryClient])
+
+  // Clear unread + mark read on select
+  useEffect(() => {
+    if (!selectedId) return
+    setUnreadCounts((prev) => ({ ...prev, [selectedId]: 0 }))
+    markDisputeAsRead(selectedId).catch(() => {})
+  }, [selectedId])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [detail?.messages])
+  }, [allMessages.length])
+
+  const sendMutation = useMutation({
+    mutationFn: (msg: string) =>
+      sendDisputeMessage({ dispute_id: selectedId!, message_text: msg }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['dispute-messages', selectedId] })
+      queryClient.invalidateQueries({ queryKey: ['disputes'] })
+      setRealtimeMessages([])
+      setMessage('')
+    },
+  })
 
   const handleSend = () => {
     if (!message.trim() || !selectedId) return
@@ -128,7 +204,6 @@ export default function DisputesPage() {
         <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
           {/* Left: Dispute List */}
           <div className="w-80 shrink-0 flex flex-col border-r">
-            {/* Filters */}
             <div className="p-3 space-y-2 border-b">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -136,10 +211,10 @@ export default function DisputesPage() {
                   placeholder="Search disputes..."
                   className="pl-9 h-8 text-sm"
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => { setSearch(e.target.value); setPage(1) }}
                 />
               </div>
-              <Select value={statusFilter || "ALL"} onValueChange={(v) => setStatusFilter(v === "ALL" ? "" : v)}>
+              <Select value={statusFilter || 'ALL'} onValueChange={(v) => { setStatusFilter(v === 'ALL' ? '' : v); setPage(1) }}>
                 <SelectTrigger className="h-8 text-sm">
                   <SelectValue placeholder="All statuses" />
                 </SelectTrigger>
@@ -153,8 +228,7 @@ export default function DisputesPage() {
               </Select>
             </div>
 
-            {/* List */}
-            {/* <div className="flex-1 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto">
               {listLoading ? (
                 <div className="p-4 space-y-3">
                   {Array.from({ length: 6 }).map((_, i) => (
@@ -171,17 +245,17 @@ export default function DisputesPage() {
                 </div>
               ) : (
                 disputes.map((d) => (
-                  <DisputeListItem
+                  <DisputeListItemRow
                     key={d.id}
                     dispute={d}
                     selected={selectedId === d.id}
                     onClick={() => setSelectedId(d.id)}
+                    unreadCount={unreadCounts[d.id] ?? d.unread_count}
                   />
                 ))
               )}
-            </div> */}
+            </div>
 
-            {/* Pagination */}
             {data?.meta && (
               <div className="flex items-center justify-between px-3 py-2 border-t text-xs text-muted-foreground">
                 <span>{data.meta.total} total</span>
@@ -211,20 +285,22 @@ export default function DisputesPage() {
                 ) : detail && (
                   <div className="px-4 py-3 border-b flex items-center gap-3 shrink-0">
                     <div>
-                      {/* <p className="font-semibold text-sm">{detail.raised_by?.full_name || 'Unknown'}</p> */}
+                      <p className="font-semibold text-sm">
+                        {detail.initiator?.full_name || 'Unknown'} vs {detail.respondent?.full_name || 'Unknown'}
+                      </p>
                       <p className="text-xs text-muted-foreground">
-                        {detail.order_type} · {detail.initiator_id ? `#${detail.initiator_id}` : detail.order_id}
+                        {detail.order_type} · #{detail.order_id?.slice(0, 8)}
                       </p>
                     </div>
                     <div className="ml-auto flex items-center gap-2">
-                      <Badge variant="secondary" className={cn('text-xs', statusColor(detail.status))}>
-                        {detail.status}
+                      <Badge variant="secondary" className={cn('text-xs', statusColor(detailStatus ?? detail.status))}>
+                        {detailStatus ?? detail.status}
                       </Badge>
                     </div>
                   </div>
                 )}
 
-                {/* Dispute Info */}
+                {/* Reason banner */}
                 {detail?.reason && (
                   <div className="px-4 py-2 bg-yellow-500/10 border-b text-xs text-yellow-700 dark:text-yellow-400 flex items-start gap-2">
                     <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
@@ -234,7 +310,7 @@ export default function DisputesPage() {
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-                  {detailLoading ? (
+                  {messagesLoading ? (
                     <div className="space-y-4">
                       {Array.from({ length: 4 }).map((_, i) => (
                         <div key={i} className={cn('flex gap-2', i % 2 === 0 ? '' : 'flex-row-reverse')}>
@@ -243,32 +319,32 @@ export default function DisputesPage() {
                         </div>
                       ))}
                     </div>
-                  ) : detail?.messages?.length === 0 ? (
+                  ) : allMessages.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm gap-2">
                       <MessageSquare className="w-6 h-6 opacity-30" />
                       No messages yet
                     </div>
                   ) : (
-                    detail?.messages?.map((msg) => {
-                      const isAdmin = msg.sender_id === ADMIN_SENDER_ID
+                    allMessages.map((msg) => {
+                      const isAdmin = msg.sender?.user_type === 'ADMIN' || msg.sender?.user_type === 'SUPER_ADMIN'
                       return (
                         <div key={msg.id} className={cn('flex gap-2 items-end', isAdmin && 'flex-row-reverse')}>
-                          {/* <Avatar className="w-7 h-7 shrink-0">
-                            <AvatarImage src={msg.sender_image_url ?? undefined} />
+                          <Avatar className="w-7 h-7 shrink-0">
+                            <AvatarImage src={msg.sender?.profile_image_url ?? undefined} />
                             <AvatarFallback className="text-xs">
-                              {msg.sender_name?.[0]?.toUpperCase() || '?'}
+                              {msg.sender?.full_name?.[0]?.toUpperCase() || '?'}
                             </AvatarFallback>
-                          </Avatar> */}
+                          </Avatar>
                           <div className={cn('max-w-[70%] space-y-1', isAdmin && 'items-end flex flex-col')}>
-                            {/* <p className="text-xs text-muted-foreground px-1">{msg.sender_name || 'Unknown'}</p>
+                            <p className="text-xs text-muted-foreground px-1">{msg.sender?.full_name || 'Unknown'}</p>
                             <div className={cn(
                               'px-3 py-2 rounded-2xl text-sm',
                               isAdmin
                                 ? 'bg-orange-500 text-white rounded-br-sm'
                                 : 'bg-muted rounded-bl-sm'
                             )}>
-                              {msg.message}
-                            </div> */}
+                              {msg.message_text}
+                            </div>
                             <p className="text-xs text-muted-foreground px-1">
                               {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </p>
