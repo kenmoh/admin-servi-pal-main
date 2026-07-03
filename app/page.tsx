@@ -216,16 +216,14 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="relative w-full lg:w-[380px] shrink-0">
-                <div className="relative aspect-[9/16] max-h-[70vh] overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl shadow-black/30">
-                  <Image
-                    src="/delivery.png"
-                    alt="ServiPal Delivery App"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 380px"
-                  />
-                </div>
+              <div className="relative w-full lg:w-[340px] shrink-0">
+                <Image
+                  src="/delivery.png"
+                  alt="ServiPal Delivery App"
+                  width={340}
+                  height={600}
+                  className="w-full h-auto drop-shadow-2xl"
+                />
               </div>
             </div>
           </FlowSection>
@@ -259,16 +257,14 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="relative w-full lg:w-[380px] shrink-0">
-                <div className="relative aspect-[9/16] max-h-[70vh] overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl shadow-black/30">
-                  <Image
-                    src="/food.png"
-                    alt="ServiPal Food Ordering App"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 380px"
-                  />
-                </div>
+              <div className="relative w-full lg:w-[340px] shrink-0">
+                <Image
+                  src="/food.png"
+                  alt="ServiPal Food Ordering App"
+                  width={340}
+                  height={600}
+                  className="w-full h-auto drop-shadow-2xl"
+                />
               </div>
             </div>
           </FlowSection>
@@ -302,16 +298,14 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="relative w-full lg:w-[380px] shrink-0">
-                <div className="relative aspect-[9/16] max-h-[70vh] overflow-hidden rounded-3xl border-4 border-black/10 shadow-2xl shadow-black/20">
-                  <Image
-                    src="/laundry.png"
-                    alt="ServiPal Laundry App"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 380px"
-                  />
-                </div>
+              <div className="relative w-full lg:w-[340px] shrink-0">
+                <Image
+                  src="/laundry.png"
+                  alt="ServiPal Laundry App"
+                  width={340}
+                  height={600}
+                  className="w-full h-auto drop-shadow-2xl"
+                />
               </div>
             </div>
           </FlowSection>
@@ -345,16 +339,14 @@ export default function LandingPage() {
                   ))}
                 </ul>
               </div>
-              <div className="relative w-full lg:w-[380px] shrink-0">
-                <div className="relative aspect-[9/16] max-h-[70vh] overflow-hidden rounded-3xl border-4 border-white/10 shadow-2xl shadow-black/30">
-                  <Image
-                    src="/marketplace.png"
-                    alt="ServiPal Marketplace App"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 380px"
-                  />
-                </div>
+              <div className="relative w-full lg:w-[340px] shrink-0">
+                <Image
+                  src="/marketplace.png"
+                  alt="ServiPal Marketplace App"
+                  width={340}
+                  height={600}
+                  className="w-full h-auto drop-shadow-2xl"
+                />
               </div>
             </div>
           </FlowSection>
