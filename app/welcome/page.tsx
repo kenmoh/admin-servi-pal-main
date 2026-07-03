@@ -92,9 +92,7 @@ export default function WelcomePage() {
             <div className="p-4 rounded-xl bg-card border border-border/50 space-y-2">
               <p className="text-sm text-muted-foreground">
                 Button not working? Open the{" "}
-                <span className="font-semibold text-foreground">
-                  ServiPal
-                </span>{" "}
+                <span className="font-semibold text-foreground">ServiPal</span>{" "}
                 app manually on your device and sign in with your email.
               </p>
             </div>

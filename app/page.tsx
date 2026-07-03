@@ -21,6 +21,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
+import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
@@ -59,68 +60,6 @@ export default function LandingPage() {
       setIsSubmitting(false);
     }
   };
-
-  const features = [
-    {
-      icon: Bike,
-      image: "/delivery.png",
-      title: "Swift Delivery",
-      description:
-        "From documents to gifts, our registered dispatch riders deliver it all with lightning speed.",
-      points: [
-        "Real-time tracking",
-        "Registered professional riders",
-        "Instant package insurance",
-        "Door-to-door fulfillment"
-      ]
-    },
-    {
-      icon: Utensils,
-      image: "/food.png",
-      title: "Food on Demand",
-      description:
-        "Craving Jollof rice or Pizza? Your favourite restaurants are just a tap away.",
-      points: [
-        "Wide variety of cuisines",
-        "Fast and reliable order fulfillment",
-        "Flexible pickup or delivery options (based on vendor availability)",
-        "Seamless ordering experience from start to finish"
-      ]
-    },
-    {
-      icon: Shirt,
-      image: "/laundry.png",
-      title: "Pristine Laundry",
-      description:
-        "Say goodbye to laundry day stress. Our providers will keep your wardrobe fresh.",
-      points: [
-        "Pickup and delivery",
-        "Premium dry cleaning",
-        "Eco-friendly detergents",
-        "Stain removal experts"
-      ]
-    },
-    {
-      icon: ShoppingBag,
-      image: "/marketplace.png",
-      title: "Secure Shopping",
-      description:
-        "Shop with peace of mind. Our escrow service ensures your money is safe until you're satisfied.",
-      points: [
-        "Access to multiple sellers across categories",
-        "Secure escrow payment",
-        "Multi-category catalog",
-        "Easy return policy"
-      ]
-    },
-  ];
-
-  const stats = [
-    { label: "Active Users", value: "50K+" },
-    { label: "Daily Transactions", value: "100K+" },
-    { label: "Platform Coverage", value: "4 Services" },
-    { label: "Uptime", value: "99.9%" },
-  ];
 
   return (
     <div className="min-h-screen bg-linear-to-b from-background via-background to-accent/5">
@@ -236,69 +175,178 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Features Section */}
+      {/* Services You Control - FlowArt Scroll Section */}
       <section className="py-24 px-6 bg-linear-to-b from-card/30 to-background border-y border-border/50">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-20 space-y-4">
+          <div className="text-center mb-12 space-y-4">
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight">Services You Control</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               One app. Four powerful services. Total convenience at your fingertips.
             </p>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-            {features.map((feature, i) => {
-              const Icon = feature.icon;
-              return (
-                <div
-                  key={i}
-                  className="group relative flex flex-col md:flex-row gap-8 p-4 rounded-3xl border border-border/50 bg-background/50 hover:bg-card transition-all duration-500 hover:shadow-2xl hover:shadow-accent/5 overflow-hidden"
-                >
-                  <div className="md:w-1/2 relative overflow-hidden rounded-2xl aspect-4/3 md:aspect-auto h-64 md:h-full min-h-75">
-                    <Image
-                      src={feature.image}
-                      alt={feature.title}
-                      fill
-                      className="object-contain transform transition-transform duration-700 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <div className="flex-1 py-4 md:py-6 pr-4 space-y-6">
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center border border-accent/20">
-                          <Icon className="w-5 h-5 text-accent" />
-                        </div>
-                        <h3 className="font-bold text-2xl tracking-tight">
-                          {feature.title}
-                        </h3>
-                      </div>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {feature.description}
-                      </p>
-                    </div>
-                    
-                    <ul className="grid grid-cols-1 gap-3 pt-2">
-                      {feature.points.map((point, idx) => (
-                        <li key={idx} className="flex items-start gap-3 text-sm text-foreground/80">
-                          <CheckCircle2 className="w-4 h-4 text-accent mt-0.5 shrink-0" />
-                          <span>{point}</span>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* <div className="pt-2">
-                      <Button variant="outline" size="sm" className="group/btn rounded-full border-accent/20 hover:bg-accent/10 hover:border-accent">
-                        Learn More
-                        <ArrowRight className="w-4 h-4 ml-2 transform group-hover/btn:translate-x-1 transition-transform" />
-                      </Button>
-                    </div> */}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </div>
+
+        <FlowArt aria-label="ServiPal Services">
+          <FlowSection aria-label="Swift Delivery" style={{ backgroundColor: '#ff8c00', color: '#fff' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.2em]">01 — Swift Delivery</p>
+            <hr className="my-[2vw] border-none border-t border-black opacity-100" />
+            <div className="flex items-center gap-4">
+              <Bike className="w-12 h-12" />
+              <h1 className="text-[clamp(3rem,10vw,12rem)] font-bold leading-[0.85] uppercase tracking-tight">
+                Fast
+                <br />
+                & Reliable
+              </h1>
+            </div>
+            <hr className="my-[2vw] border-none border-t border-black opacity-100" />
+            <p className="mt-auto max-w-[50ch] text-[clamp(1rem,2.5vw,2rem)] font-normal leading-relaxed">
+              From documents to gifts, our registered dispatch riders deliver it all with lightning speed across the city.
+            </p>
+            <hr className="my-[2vw] border-none border-t border-black opacity-100" />
+            <div className="flex flex-wrap gap-[3vw]">
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Real-time Tracking</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Follow your package every step of the way with live GPS updates.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Professional Riders</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Registered and verified dispatch riders you can trust.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Instant Insurance</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Every package is automatically insured for your peace of mind.
+                </p>
+              </div>
+            </div>
+          </FlowSection>
+
+          <FlowSection aria-label="Food on Demand" style={{ backgroundColor: '#000', color: '#fff' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.2em]">02 — Food on Demand</p>
+            <hr className="my-[2vw] border-none border-t border-white/60" />
+            <div className="flex items-center gap-4">
+              <Utensils className="w-12 h-12" />
+              <h2 className="text-[clamp(3rem,10vw,12rem)] font-bold leading-[0.85] uppercase tracking-tight">
+                Crave
+                <br />
+                & Order
+              </h2>
+            </div>
+            <hr className="my-[2vw] border-none border-t border-white/60" />
+            <p className="max-w-[50ch] text-[clamp(1rem,2.5vw,2rem)] font-normal leading-relaxed">
+              Craving Jollof rice or Pizza? Your favourite restaurants are just a tap away.
+            </p>
+            <hr className="my-[2vw] border-none border-t border-white/60" />
+            <div className="flex flex-wrap gap-[3vw]">
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Wide Variety</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Multiple cuisines from local favourites to international dishes.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Fast Delivery</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Quick and reliable order fulfillment to your doorstep.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Flexible Options</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Choose pickup or delivery based on vendor availability.
+                </p>
+              </div>
+            </div>
+            <hr className="my-[2vw] border-none border-t border-white/60" />
+            <p className="mt-auto ml-auto max-w-[50ch] text-right text-[clamp(1rem,2.5vw,2rem)] font-normal leading-relaxed">
+              Seamless ordering experience from start to finish. Your food, your way.
+            </p>
+          </FlowSection>
+
+          <FlowSection aria-label="Pristine Laundry" style={{ backgroundColor: '#F5F0E8', color: '#000' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.2em]">03 — Pristine Laundry</p>
+            <hr className="my-[2vw] border-none border-t border-black/60" />
+            <div className="flex items-center gap-4">
+              <Shirt className="w-12 h-12" />
+              <h2 className="text-[clamp(3rem,10vw,12rem)] font-bold leading-[0.85] uppercase tracking-tight">
+                Fresh
+                <br />
+                & Clean
+              </h2>
+            </div>
+            <hr className="my-[2vw] border-none border-t border-black/60" />
+            <p className="max-w-[50ch] text-[clamp(1rem,2.5vw,2rem)] font-normal leading-relaxed">
+              Say goodbye to laundry day stress. Our providers will keep your wardrobe fresh.
+            </p>
+            <hr className="my-[2vw] border-none border-t border-black/60" />
+            <div className="flex flex-wrap gap-[3vw]">
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Pickup & Delivery</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  We collect and return your laundry at your convenience.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Premium Dry Cleaning</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Professional care for your delicate fabrics and special garments.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Eco-Friendly</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Using environmentally safe detergents that are gentle on clothes.
+                </p>
+              </div>
+            </div>
+          </FlowSection>
+
+          <FlowSection aria-label="Secure Shopping" style={{ backgroundColor: '#1A3DE8', color: '#fff' }}>
+            <p className="text-xs font-bold uppercase tracking-[0.2em]">04 — Secure Shopping</p>
+            <hr className="my-[2vw] border-none border-t border-white/50" />
+            <div className="flex items-center gap-4">
+              <ShoppingBag className="w-12 h-12" />
+              <h2 className="text-[clamp(3rem,10vw,12rem)] font-bold leading-[0.85] uppercase tracking-tight">
+                Shop
+                <br />
+                & Save
+              </h2>
+            </div>
+            <hr className="my-[2vw] border-none border-t border-white/50" />
+            <p className="max-w-[50ch] text-[clamp(1rem,2.5vw,2rem)] font-normal leading-relaxed">
+              Shop with peace of mind. Our escrow service ensures your money is safe until you&apos;re satisfied.
+            </p>
+            <hr className="my-[2vw] border-none border-t border-white/50" />
+            <div className="flex flex-wrap gap-[3vw]">
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Secure Escrow</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Your payment is held safely until you confirm delivery.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Multiple Sellers</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Access to a wide range of sellers across various categories.
+                </p>
+              </div>
+              <div className="min-w-[180px] flex-1">
+                <p className="mb-2 text-sm font-bold uppercase tracking-wider">Easy Returns</p>
+                <p className="text-[clamp(0.85rem,1.3vw,1.05rem)] leading-relaxed opacity-75">
+                  Hassle-free return policy if you&apos;re not completely satisfied.
+                </p>
+              </div>
+            </div>
+            <hr className="my-[2vw] border-none border-t border-white/50" />
+            <p className="mt-auto ml-auto max-w-[50ch] text-right text-[clamp(1rem,2.5vw,2rem)] font-normal leading-relaxed">
+              Buy and sell with confidence. Your transactions, protected.
+            </p>
+          </FlowSection>
+        </FlowArt>
       </section>
 
       {/* Stay Updated Section */}
