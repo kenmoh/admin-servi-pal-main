@@ -27,6 +27,7 @@ import {
   subscribeToDisputeMessages,
   subscribeToDisputeUpdates,
   getDisputeUnreadCount,
+  updateDisputeStatus,
 } from '@/lib/dispute-service'
 import { useState, useRef, useEffect } from 'react'
 import React from 'react'
@@ -93,6 +94,7 @@ export default function DisputesPage() {
   const [realtimeMessages, setRealtimeMessages] = useState<DisputeMessage[]>([])
   const [detailStatus, setDetailStatus] = useState<DisputeStatus | null>(null)
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
+  const [statusUpdating, setStatusUpdating] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const queryClient = useQueryClient()
 
@@ -108,15 +110,22 @@ export default function DisputesPage() {
 
   const disputes = data?.data ?? []
 
-  // Fetch unread counts for all disputes
   useEffect(() => {
-    disputes.forEach((d) => {
-      getDisputeUnreadCount(d.id)
-        .then((res) => setUnreadCounts((prev) => ({ ...prev, [d.id]: res.unread_count })))
-        .catch(() => {})
-    })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+    if (!disputes.length) return
+
+    const loadUnreadCounts = async () => {
+      const nextCounts: Record<string, number> = {}
+      await Promise.allSettled(
+        disputes.map(async (d) => {
+          const res = await getDisputeUnreadCount(d.id)
+          nextCounts[d.id] = res.unread_count
+        }),
+      )
+      setUnreadCounts(nextCounts)
+    }
+
+    loadUnreadCounts()
+  }, [disputes])
 
   const { data: detail, isLoading: detailLoading } = useQuery<DisputeDetails>({
     queryKey: ['dispute-detail', selectedId],
@@ -141,7 +150,10 @@ export default function DisputesPage() {
   useEffect(() => {
     setRealtimeMessages([])
     setDetailStatus(null)
-  }, [selectedId])
+    if (detail?.status) {
+      setDetailStatus(detail.status)
+    }
+  }, [selectedId, detail?.status])
 
   // Realtime subscriptions
   useEffect(() => {
@@ -188,6 +200,19 @@ export default function DisputesPage() {
   const handleSend = () => {
     if (!message.trim() || !selectedId) return
     sendMutation.mutate(message.trim())
+  }
+
+  const handleStatusChange = async (status: DisputeStatus) => {
+    if (!selectedId) return
+    setStatusUpdating(true)
+    try {
+      const updated = await updateDisputeStatus(selectedId, status)
+      setDetailStatus(updated.status)
+      queryClient.invalidateQueries({ queryKey: ['disputes'] })
+      queryClient.invalidateQueries({ queryKey: ['dispute-detail', selectedId] })
+    } finally {
+      setStatusUpdating(false)
+    }
   }
 
   return (
@@ -293,6 +318,21 @@ export default function DisputesPage() {
                       </p>
                     </div>
                     <div className="ml-auto flex items-center gap-2">
+                      <Select
+                        value={(detailStatus ?? detail.status) as string}
+                        onValueChange={(value) => handleStatusChange(value as DisputeStatus)}
+                        disabled={statusUpdating}
+                      >
+                        <SelectTrigger className="h-8 w-32 text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="OPEN">Open</SelectItem>
+                          <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                          <SelectItem value="RESOLVED">Resolved</SelectItem>
+                          <SelectItem value="CLOSED">Closed</SelectItem>
+                        </SelectContent>
+                      </Select>
                       <Badge variant="secondary" className={cn('text-xs', statusColor(detailStatus ?? detail.status))}>
                         {detailStatus ?? detail.status}
                       </Badge>

@@ -11,32 +11,71 @@ import {
 } from '@/types/dispute-types'
 import { RealtimeChannel } from '@supabase/supabase-js'
 
+async function requestJson(path: string, init?: RequestInit) {
+  const response = await fetch(path, {
+    ...init,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(init?.headers || {}),
+    },
+  })
+
+  if (!response.ok) {
+    const errorText = await response.text()
+    throw new Error(errorText || `Request failed with status ${response.status}`)
+  }
+
+  const text = await response.text()
+  if (!text) return null
+
+  try {
+    return JSON.parse(text)
+  } catch {
+    return text
+  }
+}
+
 export const getDisputes = async (params: {
   page?: number
   limit?: number
   status?: DisputeStatus | null
   search?: string
 }): Promise<DisputeListResponse> => {
-  const { data, error } = await supabase.rpc('get_disputes', {
-    p_page: params.page ?? 1,
-    p_limit: params.limit ?? 20,
-    p_status: params.status || null,
-    p_search: params.search || null
+  const searchParams = new URLSearchParams({
+    page: String(params.page ?? 1),
+    limit: String(params.limit ?? 20),
+    ...(params.status ? { status: params.status } : {}),
+    ...(params.search ? { search: params.search } : {}),
   })
 
-  if (error) throw new Error(error.message)
-  // RPC returns a single jsonb — supabase wraps it as array[0] with the value under the function name key
-  const raw = Array.isArray(data) ? data[0] : data
-  const result = raw?.get_disputes ?? raw
- 
-  return result as DisputeListResponse
+  const data = await requestJson(`/api/disputes?${searchParams.toString()}`)
+  const normalized = data?.data ?? data?.results ?? data
+
+  if (Array.isArray(normalized)) {
+    return {
+      data: normalized,
+      meta: {
+        total: normalized.length,
+        page: params.page ?? 1,
+        page_size: params.limit ?? 20,
+        total_pages: 1,
+      },
+    } as DisputeListResponse
+  }
+
+  return {
+    data: normalized?.data ?? normalized?.results ?? [],
+    meta: normalized?.meta ?? {
+      total: normalized?.total ?? 0,
+      page: params.page ?? 1,
+      page_size: params.limit ?? 20,
+      total_pages: 1,
+    },
+  } as DisputeListResponse
 }
 
 export const getDisputeDetails = async (disputeId: string): Promise<DisputeDetails> => {
-  const { data, error } = await supabase.rpc('get_dispute_details', {
-    p_dispute_id: disputeId,
-  })
-  if (error) throw new Error(error.message)
+  const data = await requestJson(`/api/disputes/${disputeId}`)
   return data as DisputeDetails
 }
 
@@ -45,55 +84,47 @@ export const getDisputeMessages = async (
   limit = 50,
   offset = 0,
 ): Promise<DisputeMessagesResponse> => {
-  const { data, error } = await supabase.rpc('get_dispute_messages', {
-    p_dispute_id: disputeId,
-    p_limit: limit,
-    p_offset: offset,
-  })
-  if (error) throw new Error(error.message)
-  return data as DisputeMessagesResponse
+  const data = await requestJson(`/api/disputes/${disputeId}/messages?limit=${limit}&offset=${offset}`)
+  return {
+    messages: data?.messages ?? data?.data ?? [],
+    total_count: data?.total_count ?? data?.total ?? 0,
+  } as DisputeMessagesResponse
 }
 
 export const sendDisputeMessage = async (
   request: SendMessageRequest,
 ): Promise<{ message_id: string }> => {
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-  if (sessionError || !session) throw new Error('User not authenticated')
-
-  const { data, error } = await supabase.rpc('send_dispute_message', {
-    p_dispute_id: request.dispute_id,
-    p_sender_id: session.user.id,
-    p_message_text: request.message_text,
+  const data = await requestJson(`/api/disputes/${request.dispute_id}/messages`, {
+    method: 'POST',
+    body: JSON.stringify({
+      message_text: request.message_text,
+      attachments: request.attachments ?? null,
+    }),
   })
-  if (error) throw new Error(error.message || 'Failed to send message')
-  return data
+  return data as { message_id: string }
 }
 
 export const getDisputeUnreadCount = async (
   disputeId: string,
   userId?: string,
 ): Promise<DisputeUnreadCount> => {
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-  if (sessionError || !session) throw new Error('User not authenticated')
-
-  const targetUserId = userId || session.user.id
-  const { data, error } = await supabase.rpc('get_dispute_unread_count', {
-    p_dispute_id: disputeId,
-    p_user_id: targetUserId,
-  })
-  if (error) throw new Error(error.message)
+  const data = await requestJson(`/api/disputes/${disputeId}/read?userId=${encodeURIComponent(userId ?? '')}`)
   return data as DisputeUnreadCount
 }
 
 export const markDisputeAsRead = async (disputeId: string): Promise<void> => {
-  const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-  if (sessionError || !session) throw new Error('User not authenticated')
+  await requestJson(`/api/disputes/${disputeId}/read`, { method: 'POST' })
+}
 
-  const { error } = await supabase.rpc('mark_dispute_read', {
-    p_dispute_id: disputeId,
-    p_user_id: session.user.id,
+export const updateDisputeStatus = async (
+  disputeId: string,
+  status: DisputeStatus,
+): Promise<Dispute> => {
+  const data = await requestJson(`/api/disputes/${disputeId}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
   })
-  if (error) throw new Error(error.message)
+  return data as Dispute
 }
 
 export const subscribeToDisputeMessages = (

@@ -27,10 +27,16 @@ export async function GET(request: NextRequest) {
         "X-User-Role": userRole,
       },
     });
-    if (!response.ok) throw new Error(`${response.status}`);
-    console.log(await response.json());
-    return NextResponse.json(await response.json());
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || `${response.status}`);
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
   } catch (error) {
+    console.error("Error fetching disputes:", error);
     return NextResponse.json({ error: "Failed to fetch disputes" }, { status: 500 });
   }
 }
