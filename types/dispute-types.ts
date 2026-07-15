@@ -100,7 +100,7 @@ export interface CreateDisputeRequest {
 export interface SendMessageRequest {
   dispute_id: string;
   message_text: string;
-
+  attachments?: string[];
 }
 
 /**
