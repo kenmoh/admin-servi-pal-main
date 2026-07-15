@@ -48,6 +48,10 @@ function statusColor(status: DisputeStatus | string) {
   }
 }
 
+function formatStatusLabel(status: DisputeStatus | string) {
+  return status?.replace(/_/g, ' ') ?? ''
+}
+
 function DisputeListItemRow({ dispute, selected, onClick, unreadCount }: {
   dispute: DisputeListItem
   selected: boolean
@@ -66,8 +70,8 @@ function DisputeListItemRow({ dispute, selected, onClick, unreadCount }: {
         <span className="font-medium text-sm truncate">
           {dispute.other_party_name || dispute.order_type || 'Dispute'}
         </span>
-        <Badge variant="secondary" className={cn('text-xs shrink-0 ml-2', statusColor(dispute.status))}>
-          {dispute.status}
+          <Badge variant="secondary" className={cn('text-xs shrink-0 ml-2', statusColor(dispute.status))}>
+          {formatStatusLabel(dispute.status)}
         </Badge>
       </div>
       <p className="text-xs text-muted-foreground truncate">{dispute.reason || 'No reason provided'}</p>
@@ -196,10 +200,13 @@ export default function DisputesPage() {
   const sendMutation = useMutation({
     mutationFn: (msg: string) =>
       sendDisputeMessage({ dispute_id: selectedId!, message_text: msg }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['dispute-messages', selectedId] })
-      queryClient.invalidateQueries({ queryKey: ['disputes'] })
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['dispute-messages', selectedId] }),
+        queryClient.invalidateQueries({ queryKey: ['disputes'] }),
+      ])
       setRealtimeMessages([])
+      setOptimisticMessages([])
     },
     onError: () => {
       setOptimisticMessages([])
@@ -364,7 +371,7 @@ export default function DisputesPage() {
                         </SelectContent>
                       </Select>
                       <Badge variant="secondary" className={cn('text-xs', statusColor(detailStatus ?? detail.status))}>
-                        {detailStatus ?? detail.status}
+                        {formatStatusLabel(detailStatus ?? detail.status)}
                       </Badge>
                     </div>
                   </div>
