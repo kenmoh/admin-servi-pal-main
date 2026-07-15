@@ -19,7 +19,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const searchParams = request.nextUrl.searchParams;
     const limit = searchParams.get("limit") || "50";
     const offset = searchParams.get("offset") || "0";
-    const response = await fetch(`${process.env.API_URL}/disputes/${id}/messages?limit=${limit}&offset=${offset}`, {
+    const url = `${process.env.API_URL}/disputes/${id}/messages?limit=${limit}&offset=${offset}`;
+    console.log("[disputes] GET messages", url);
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
@@ -29,12 +31,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("[disputes] Backend error:", response.status, errorText);
       throw new Error(errorText || `${response.status}`);
     }
 
     return NextResponse.json(await response.json());
   } catch (error) {
-    console.error("Error fetching dispute messages:", error);
+    console.error("[disputes] Error fetching dispute messages:", error);
     return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
   }
 }
@@ -46,7 +49,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   try {
     const body = await request.json();
-    const response = await fetch(`${process.env.API_URL}/disputes/${id}/messages`, {
+    const url = `${process.env.API_URL}/disputes/${id}/messages`;
+    console.log("[disputes] POST message", url, JSON.stringify(body));
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -58,12 +63,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("[disputes] Backend error:", response.status, errorText);
       throw new Error(errorText || `${response.status}`);
     }
 
     return NextResponse.json(await response.json());
   } catch (error) {
-    console.error("Error sending dispute message:", error);
+    console.error("[disputes] Error sending dispute message:", error);
     return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
   }
 }

@@ -16,7 +16,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   if (!accessToken) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    const response = await fetch(`${process.env.API_URL}/disputes/${id}`, {
+    const url = `${process.env.API_URL}/disputes/${id}`;
+    console.log("[disputes] GET detail", url);
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
@@ -26,12 +28,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("[disputes] Backend error:", response.status, errorText);
       throw new Error(errorText || `${response.status}`);
     }
 
     return NextResponse.json(await response.json());
   } catch (error) {
-    console.error("Error fetching dispute:", error);
+    console.error("[disputes] Error fetching dispute:", error);
     return NextResponse.json({ error: "Failed to fetch dispute" }, { status: 500 });
   }
 }
@@ -43,7 +46,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
   try {
     const body = await request.json();
-    const response = await fetch(`${process.env.API_URL}/disputes/${id}`, {
+    const url = `${process.env.API_URL}/disputes/${id}`;
+    console.log("[disputes] PATCH", url, JSON.stringify(body));
+    const response = await fetch(url, {
       method: "PATCH",
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -55,12 +60,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("[disputes] Backend error:", response.status, errorText);
       throw new Error(errorText || `${response.status}`);
     }
 
     return NextResponse.json(await response.json());
   } catch (error) {
-    console.error("Error updating dispute:", error);
+    console.error("[disputes] Error updating dispute:", error);
     return NextResponse.json({ error: "Failed to update dispute" }, { status: 500 });
   }
 }

@@ -20,7 +20,9 @@ export async function GET(request: NextRequest) {
   });
 
   try {
-    const response = await fetch(`${process.env.API_URL}/disputes?${params}`, {
+    const url = `${process.env.API_URL}/disputes?${params}`;
+    console.log("[disputes] GET", url);
+    const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
@@ -30,13 +32,14 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("[disputes] Backend error:", response.status, errorText);
       throw new Error(errorText || `${response.status}`);
     }
 
     const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Error fetching disputes:", error);
+    console.error("[disputes] Error fetching disputes:", error);
     return NextResponse.json({ error: "Failed to fetch disputes" }, { status: 500 });
   }
 }
