@@ -1,4 +1,4 @@
-export const BASE_URL = "https://servipal-backend.onrender.com/api/v1";
+export const BASE_URL = "https://api.servi-pal.com/api/v1";
 
 import { cookies } from "next/headers";
 

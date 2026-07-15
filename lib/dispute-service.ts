@@ -43,30 +43,17 @@ export const getDisputes = async (params: {
 }): Promise<DisputeListResponse> => {
   const searchParams = new URLSearchParams({
     page: String(params.page ?? 1),
-    limit: String(params.limit ?? 20),
+    page_size: String(params.limit ?? 20),
     ...(params.status ? { status: params.status } : {}),
     ...(params.search ? { search: params.search } : {}),
   })
 
   const data = await requestJson(`/api/disputes?${searchParams.toString()}`)
-  const normalized = data?.data ?? data?.results ?? data
-
-  if (Array.isArray(normalized)) {
-    return {
-      data: normalized,
-      meta: {
-        total: normalized.length,
-        page: params.page ?? 1,
-        page_size: params.limit ?? 20,
-        total_pages: 1,
-      },
-    } as DisputeListResponse
-  }
 
   return {
-    data: normalized?.data ?? normalized?.results ?? [],
-    meta: normalized?.meta ?? {
-      total: normalized?.total ?? 0,
+    data: data?.data ?? [],
+    meta: data?.meta ?? {
+      total: 0,
       page: params.page ?? 1,
       page_size: params.limit ?? 20,
       total_pages: 1,
@@ -93,7 +80,7 @@ export const getDisputeMessages = async (
 
 export const sendDisputeMessage = async (
   request: SendMessageRequest,
-): Promise<{ message_id: string }> => {
+): Promise<{ id: string }> => {
   const data = await requestJson(`/api/disputes/${request.dispute_id}/messages`, {
     method: 'POST',
     body: JSON.stringify({
@@ -101,7 +88,7 @@ export const sendDisputeMessage = async (
       attachments: request.attachments ?? null,
     }),
   })
-  return data as { message_id: string }
+  return data as { id: string }
 }
 
 export const getDisputeUnreadCount = async (

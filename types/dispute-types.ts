@@ -4,7 +4,7 @@
  */
 
 // Dispute status enum
-export type DisputeStatus = "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED";
+export type DisputeStatus = "OPEN" | "RESOLVED" | "CLOSED" | "CANCELLED" | "UNDER_REVIEW" | "ESCALATED";
 
 // Order type for disputes
 export type DisputeOrderType =

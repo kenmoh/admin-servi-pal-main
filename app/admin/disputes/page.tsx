@@ -38,9 +38,11 @@ import { cn } from '@/lib/utils'
 function statusColor(status: DisputeStatus | string) {
   switch (status?.toUpperCase()) {
     case 'OPEN': return 'bg-red-500/15 text-red-600'
-    case 'IN_PROGRESS': return 'bg-yellow-500/15 text-yellow-600'
+    case 'UNDER_REVIEW': return 'bg-yellow-500/15 text-yellow-600'
+    case 'ESCALATED': return 'bg-orange-500/15 text-orange-600'
     case 'RESOLVED': return 'bg-green-500/15 text-green-600'
-    case 'CLOSED': return 'bg-gray-500/15 text-gray-600'
+    case 'CLOSED':
+    case 'CANCELLED': return 'bg-gray-500/15 text-gray-600'
     default: return 'bg-gray-500/15 text-gray-600'
   }
 }
@@ -246,9 +248,11 @@ export default function DisputesPage() {
                 <SelectContent>
                   <SelectItem value="ALL">All</SelectItem>
                   <SelectItem value="OPEN">Open</SelectItem>
-                  <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                  <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
+                  <SelectItem value="ESCALATED">Escalated</SelectItem>
                   <SelectItem value="RESOLVED">Resolved</SelectItem>
                   <SelectItem value="CLOSED">Closed</SelectItem>
+                  <SelectItem value="CANCELLED">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -328,9 +332,11 @@ export default function DisputesPage() {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="OPEN">Open</SelectItem>
-                          <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                          <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
+                          <SelectItem value="ESCALATED">Escalated</SelectItem>
                           <SelectItem value="RESOLVED">Resolved</SelectItem>
                           <SelectItem value="CLOSED">Closed</SelectItem>
+                          <SelectItem value="CANCELLED">Cancelled</SelectItem>
                         </SelectContent>
                       </Select>
                       <Badge variant="secondary" className={cn('text-xs', statusColor(detailStatus ?? detail.status))}>

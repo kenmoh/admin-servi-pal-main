@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const params = new URLSearchParams({
     page: searchParams.get("page") || "1",
-    limit: searchParams.get("limit") || "20",
+    page_size: searchParams.get("page_size") || "20",
     ...(searchParams.get("status") && { status: searchParams.get("status")! }),
     ...(searchParams.get("search") && { search: searchParams.get("search")! }),
   });
