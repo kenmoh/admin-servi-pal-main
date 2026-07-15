@@ -30,6 +30,7 @@ import {
   updateDisputeStatus,
 } from '@/lib/dispute-service'
 import { useState, useRef, useEffect } from 'react'
+import { useAppContext } from '@/lib/context'
 import React from 'react'
 import { Search, Send, AlertTriangle, MessageSquare } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -94,11 +95,13 @@ export default function DisputesPage() {
   const [message, setMessage] = useState('')
   const [page, setPage] = useState(1)
   const [realtimeMessages, setRealtimeMessages] = useState<DisputeMessage[]>([])
+  const [optimisticMessages, setOptimisticMessages] = useState<DisputeMessage[]>([])
   const [detailStatus, setDetailStatus] = useState<DisputeStatus | null>(null)
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
   const [statusUpdating, setStatusUpdating] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
   const queryClient = useQueryClient()
+  const { currentUser } = useAppContext()
 
   const { data, isLoading: listLoading } = useQuery<DisputeListResponse>({
     queryKey: ['disputes', page, statusFilter, search],
@@ -147,10 +150,12 @@ export default function DisputesPage() {
   const allMessages = [
     ...messages,
     ...realtimeMessages.filter((r) => !messages.some((m) => m.id === r.id)),
+    ...optimisticMessages.filter((o) => !messages.some((m) => m.id === o.id)),
   ]
 
   useEffect(() => {
     setRealtimeMessages([])
+    setOptimisticMessages([])
     setDetailStatus(null)
     if (detail?.status) {
       setDetailStatus(detail.status)
@@ -195,13 +200,32 @@ export default function DisputesPage() {
       queryClient.invalidateQueries({ queryKey: ['dispute-messages', selectedId] })
       queryClient.invalidateQueries({ queryKey: ['disputes'] })
       setRealtimeMessages([])
-      setMessage('')
+    },
+    onError: () => {
+      setOptimisticMessages([])
     },
   })
 
   const handleSend = () => {
     if (!message.trim() || !selectedId) return
-    sendMutation.mutate(message.trim())
+    const text = message.trim()
+    const optimisticMessage: DisputeMessage = {
+      id: `temp-${Date.now()}`,
+      dispute_id: selectedId,
+      sender_id: currentUser?.id ?? '',
+      message_text: text,
+      attachments: null,
+      created_at: new Date().toISOString(),
+      sender: {
+        id: currentUser?.id ?? '',
+        full_name: currentUser?.name ?? 'You',
+        profile_image_url: currentUser?.avatar ?? null,
+        user_type: 'ADMIN',
+      },
+    }
+    setOptimisticMessages((prev) => [...prev, optimisticMessage])
+    setMessage('')
+    sendMutation.mutate(text)
   }
 
   const handleStatusChange = async (status: DisputeStatus) => {
