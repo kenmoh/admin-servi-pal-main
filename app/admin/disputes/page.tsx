@@ -99,7 +99,6 @@ export default function DisputesPage() {
   const [message, setMessage] = useState('')
   const [page, setPage] = useState(1)
   const [realtimeMessages, setRealtimeMessages] = useState<DisputeMessage[]>([])
-  const [optimisticMessages, setOptimisticMessages] = useState<DisputeMessage[]>([])
   const [detailStatus, setDetailStatus] = useState<DisputeStatus | null>(null)
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
   const [statusUpdating, setStatusUpdating] = useState(false)
@@ -154,12 +153,10 @@ export default function DisputesPage() {
   const allMessages = [
     ...messages,
     ...realtimeMessages.filter((r) => !messages.some((m) => m.id === r.id)),
-    ...optimisticMessages.filter((o) => !messages.some((m) => m.id === o.id)),
   ]
 
   useEffect(() => {
     setRealtimeMessages([])
-    setOptimisticMessages([])
     setDetailStatus(null)
     if (detail?.status) {
       setDetailStatus(detail.status)
@@ -200,39 +197,45 @@ export default function DisputesPage() {
   const sendMutation = useMutation({
     mutationFn: (msg: string) =>
       sendDisputeMessage({ dispute_id: selectedId!, message_text: msg }),
-    onSuccess: async () => {
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['dispute-messages', selectedId] }),
-        queryClient.invalidateQueries({ queryKey: ['disputes'] }),
-      ])
-      setRealtimeMessages([])
-      setOptimisticMessages([])
+    onMutate: async (msgText) => {
+      await queryClient.cancelQueries({ queryKey: ['dispute-messages', selectedId] })
+      const previousData = queryClient.getQueryData<DisputeMessagesResponse>(['dispute-messages', selectedId])
+      const optimisticMessage: DisputeMessage = {
+        id: `temp-${Date.now()}`,
+        dispute_id: selectedId!,
+        sender_id: currentUser?.id ?? '',
+        message_text: msgText,
+        attachments: null,
+        created_at: new Date().toISOString(),
+        sender: {
+          id: currentUser?.id ?? '',
+          full_name: currentUser?.name ?? 'You',
+          profile_image_url: currentUser?.avatar ?? null,
+          user_type: 'ADMIN',
+        },
+      }
+      queryClient.setQueryData(['dispute-messages', selectedId], (old: DisputeMessagesResponse | undefined) => ({
+        messages: [...(old?.messages ?? []), optimisticMessage],
+        total_count: (old?.total_count ?? 0) + 1,
+      }))
+      return { previousData }
     },
-    onError: () => {
-      setOptimisticMessages([])
+    onError: (_err, _msg, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(['dispute-messages', selectedId], context.previousData)
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['dispute-messages', selectedId] })
+      queryClient.invalidateQueries({ queryKey: ['disputes'] })
+      setRealtimeMessages([])
     },
   })
 
   const handleSend = () => {
     if (!message.trim() || !selectedId) return
-    const text = message.trim()
-    const optimisticMessage: DisputeMessage = {
-      id: `temp-${Date.now()}`,
-      dispute_id: selectedId,
-      sender_id: currentUser?.id ?? '',
-      message_text: text,
-      attachments: null,
-      created_at: new Date().toISOString(),
-      sender: {
-        id: currentUser?.id ?? '',
-        full_name: currentUser?.name ?? 'You',
-        profile_image_url: currentUser?.avatar ?? null,
-        user_type: 'ADMIN',
-      },
-    }
-    setOptimisticMessages((prev) => [...prev, optimisticMessage])
     setMessage('')
-    sendMutation.mutate(text)
+    sendMutation.mutate(message.trim())
   }
 
   const handleStatusChange = async (status: DisputeStatus) => {
