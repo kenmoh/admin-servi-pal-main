@@ -84,12 +84,18 @@ interface WebhookLog {
 // ───────────────────────────────────────────────
 function ReceiptsTab() {
   const [searchTxRef, setSearchTxRef] = useState('')
+  const [verifyTriggered, setVerifyTriggered] = useState(false)
 
-  const { data: receiptData, isLoading, refetch } = useQuery({
+  const { data: receiptData, isLoading, error, refetch } = useQuery({
     queryKey: ['receipt', searchTxRef],
     queryFn: () => fetchApi(`/api/payments?endpoint=verify/${searchTxRef}`),
-    enabled: !!searchTxRef,
+    enabled: false,
   })
+
+  const handleVerify = () => {
+    if (!searchTxRef) return
+    refetch()
+  }
 
   return (
     <div className="space-y-4">
@@ -100,15 +106,30 @@ function ReceiptsTab() {
             placeholder="Enter tx_ref to verify..."
             className="pl-10"
             value={searchTxRef}
-            onChange={(e) => setSearchTxRef(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && refetch()}
+            onChange={(e) => { setSearchTxRef(e.target.value); setVerifyTriggered(false) }}
+            onKeyDown={(e) => e.key === 'Enter' && handleVerify()}
           />
         </div>
-        <Button onClick={() => refetch()} disabled={!searchTxRef}>
-          <Search className="w-4 h-4 mr-2" />
+        <Button onClick={handleVerify} disabled={!searchTxRef || isLoading}>
+          {isLoading ? (
+            <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Search className="w-4 h-4 mr-2" />
+          )}
           Verify
         </Button>
       </div>
+
+      {error && (
+        <Card className="border-red-500/50 bg-red-500/5">
+          <CardContent className="py-4">
+            <div className="flex items-center gap-2 text-red-600">
+              <XCircle className="w-4 h-4" />
+              <p className="text-sm">Charge not found or verification failed</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {receiptData && (
         <Card>

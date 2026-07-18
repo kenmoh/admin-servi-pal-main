@@ -47,8 +47,8 @@ interface PaymentMetrics {
     success_rate: number
   }
   circuit_breakers: {
-    api_breaker: CircuitBreakerStats
-    transfer_breaker: CircuitBreakerStats
+    api: CircuitBreakerStats
+    transfer: CircuitBreakerStats
   }
   timestamp: string
 }
@@ -128,7 +128,8 @@ function KpiSkeleton() {
   )
 }
 
-function CircuitBreakerCard({ breaker }: { breaker: CircuitBreakerStats }) {
+function CircuitBreakerCard({ breaker }: { breaker?: CircuitBreakerStats }) {
+  if (!breaker) return null
   const isHealthy = breaker.state === 'CLOSED'
   const isOpen = breaker.state === 'OPEN'
 
@@ -387,11 +388,11 @@ export default function PaymentHealthPage() {
                     <Skeleton className="h-24 w-full" />
                     <Skeleton className="h-24 w-full" />
                   </>
-                ) : metrics?.circuit_breakers ? (
+                ) : metrics?.circuit_breakers?.api && metrics?.circuit_breakers?.transfer ? (
                   <>
                     <div className="space-y-2">
-                      <CircuitBreakerCard breaker={metrics.circuit_breakers.api_breaker} />
-                      {metrics.circuit_breakers.api_breaker.state !== 'CLOSED' && (
+                      <CircuitBreakerCard breaker={metrics.circuit_breakers.api} />
+                      {metrics.circuit_breakers.api.state !== 'CLOSED' && (
                         <Button
                           variant="outline"
                           size="sm"
@@ -405,8 +406,8 @@ export default function PaymentHealthPage() {
                       )}
                     </div>
                     <div className="space-y-2">
-                      <CircuitBreakerCard breaker={metrics.circuit_breakers.transfer_breaker} />
-                      {metrics.circuit_breakers.transfer_breaker.state !== 'CLOSED' && (
+                      <CircuitBreakerCard breaker={metrics.circuit_breakers.transfer} />
+                      {metrics.circuit_breakers.transfer.state !== 'CLOSED' && (
                         <Button
                           variant="outline"
                           size="sm"
