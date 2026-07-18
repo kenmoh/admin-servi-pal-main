@@ -456,7 +456,7 @@ export default function PaymentSafetyPage() {
       <SidebarInset>
         <SiteHeader title="Payment Safety" />
 
-        <div className="px-6 py-6 space-y-6">
+        <div className="px-6 py-6 space-y-6 w-full">
 
           {/* Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -484,8 +484,8 @@ export default function PaymentSafetyPage() {
 
           {/* Tabs */}
           <Tabs defaultValue="receipts" className="space-y-4">
-            <div className="flex gap-6">
-              <TabsList className="flex flex-col h-auto items-stretch justify-start gap-1 bg-muted p-1">
+            <div className="flex gap-6 w-full">
+              <TabsList className="flex flex-col h-auto items-stretch justify-start gap-1 bg-muted p-1 shrink-0">
                 <TabsTrigger value="receipts" className="gap-2 justify-start">
                   <Search className="w-4 h-4" />
                   Verify Charge
@@ -508,7 +508,7 @@ export default function PaymentSafetyPage() {
                 </TabsTrigger>
               </TabsList>
 
-              <div className="flex-1 min-w-0">
+              <div className="flex-1">
                 <TabsContent value="receipts">
                   <ReceiptsTab />
                 </TabsContent>
