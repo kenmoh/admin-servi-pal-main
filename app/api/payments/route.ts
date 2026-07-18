@@ -23,7 +23,7 @@ async function proxyPaymentEndpoint(
       "Content-Type": "application/json",
       "X-User-Role": userRole,
     },
-    ...(body && { body: JSON.stringify(body) }),
+    ...(body ? { body: JSON.stringify(body) } : {}),
   });
 
   if (!res.ok) throw new Error(`${res.status}`);
