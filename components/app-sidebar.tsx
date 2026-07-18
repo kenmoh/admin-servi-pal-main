@@ -15,7 +15,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon } from "lucide-react"
+import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon } from "lucide-react"
 import Image from "next/image"
 
 const data = {
@@ -89,6 +89,11 @@ const data = {
       name: "Payment Health",
       url: "/admin/payment-health",
       icon: <ActivityIcon />,
+    },
+    {
+      name: "Payment Safety",
+      url: "/admin/payment-safety",
+      icon: <ShieldCheckIcon />,
     },
   ],
   orders: [

@@ -381,38 +381,48 @@ export default function PaymentHealthPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {metrics?.circuit_breakers?.api_breaker && (
-                  <div className="space-y-2">
-                    <CircuitBreakerCard breaker={metrics.circuit_breakers.api_breaker} />
-                    {metrics.circuit_breakers.api_breaker.state !== 'CLOSED' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => resetMutation.mutate('api')}
-                        disabled={resetMutation.isPending}
-                      >
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Reset API Breaker
-                      </Button>
-                    )}
-                  </div>
-                )}
-                {metrics?.circuit_breakers?.transfer_breaker && (
-                  <div className="space-y-2">
-                    <CircuitBreakerCard breaker={metrics.circuit_breakers.transfer_breaker} />
-                    {metrics.circuit_breakers.transfer_breaker.state !== 'CLOSED' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="w-full"
-                        onClick={() => resetMutation.mutate('transfer')}
-                        disabled={resetMutation.isPending}
-                      >
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Reset Transfer Breaker
-                      </Button>
-                    )}
+                {metricsLoading ? (
+                  <>
+                    <Skeleton className="h-24 w-full" />
+                    <Skeleton className="h-24 w-full" />
+                  </>
+                ) : metrics?.circuit_breakers ? (
+                  <>
+                    <div className="space-y-2">
+                      <CircuitBreakerCard breaker={metrics.circuit_breakers.api_breaker} />
+                      {metrics.circuit_breakers.api_breaker.state !== 'CLOSED' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => resetMutation.mutate('api')}
+                          disabled={resetMutation.isPending}
+                        >
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          Reset API Breaker
+                        </Button>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <CircuitBreakerCard breaker={metrics.circuit_breakers.transfer_breaker} />
+                      {metrics.circuit_breakers.transfer_breaker.state !== 'CLOSED' && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="w-full"
+                          onClick={() => resetMutation.mutate('transfer')}
+                          disabled={resetMutation.isPending}
+                        >
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          Reset Transfer Breaker
+                        </Button>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-center py-6">
+                    <Wifi className="w-8 h-8 mx-auto mb-2 text-muted-foreground/40" />
+                    <p className="text-sm text-muted-foreground">Unable to load circuit breaker status</p>
                   </div>
                 )}
               </CardContent>
