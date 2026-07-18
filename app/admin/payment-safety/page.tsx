@@ -483,49 +483,45 @@ export default function PaymentSafetyPage() {
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="receipts" className="space-y-4">
-            <div className="flex gap-6 w-full">
-              <TabsList className="flex flex-col h-auto items-stretch justify-start gap-1 bg-muted p-1 shrink-0">
-                <TabsTrigger value="receipts" className="gap-2 justify-start">
-                  <Search className="w-4 h-4" />
-                  Verify Charge
-                </TabsTrigger>
-                <TabsTrigger value="duplicates" className="gap-2 justify-start">
-                  <AlertTriangle className="w-4 h-4" />
-                  Duplicates
-                </TabsTrigger>
-                <TabsTrigger value="suspicious" className="gap-2 justify-start">
-                  <Shield className="w-4 h-4" />
-                  Suspicious
-                </TabsTrigger>
-                <TabsTrigger value="reversals" className="gap-2 justify-start">
-                  <RotateCcw className="w-4 h-4" />
-                  Reversals
-                </TabsTrigger>
-                <TabsTrigger value="webhooks" className="gap-2 justify-start">
-                  <FileText className="w-4 h-4" />
-                  Webhook Audit
-                </TabsTrigger>
-              </TabsList>
+          <Tabs defaultValue="receipts" orientation="vertical" className="space-y-4">
+            <TabsList>
+              <TabsTrigger value="receipts" className="gap-2">
+                <Search className="w-4 h-4" />
+                Verify Charge
+              </TabsTrigger>
+              <TabsTrigger value="duplicates" className="gap-2">
+                <AlertTriangle className="w-4 h-4" />
+                Duplicates
+              </TabsTrigger>
+              <TabsTrigger value="suspicious" className="gap-2">
+                <Shield className="w-4 h-4" />
+                Suspicious
+              </TabsTrigger>
+              <TabsTrigger value="reversals" className="gap-2">
+                <RotateCcw className="w-4 h-4" />
+                Reversals
+              </TabsTrigger>
+              <TabsTrigger value="webhooks" className="gap-2">
+                <FileText className="w-4 h-4" />
+                Webhook Audit
+              </TabsTrigger>
+            </TabsList>
 
-              <div className="flex-1">
-                <TabsContent value="receipts">
-                  <ReceiptsTab />
-                </TabsContent>
-                <TabsContent value="duplicates">
-                  <DuplicatesTab />
-                </TabsContent>
-                <TabsContent value="suspicious">
-                  <SuspiciousTab />
-                </TabsContent>
-                <TabsContent value="reversals">
-                  <ReversalsTab />
-                </TabsContent>
-                <TabsContent value="webhooks">
-                  <WebhookAuditTab />
-                </TabsContent>
-              </div>
-            </div>
+            <TabsContent value="receipts">
+              <ReceiptsTab />
+            </TabsContent>
+            <TabsContent value="duplicates">
+              <DuplicatesTab />
+            </TabsContent>
+            <TabsContent value="suspicious">
+              <SuspiciousTab />
+            </TabsContent>
+            <TabsContent value="reversals">
+              <ReversalsTab />
+            </TabsContent>
+            <TabsContent value="webhooks">
+              <WebhookAuditTab />
+            </TabsContent>
           </Tabs>
         </div>
       </SidebarInset>
