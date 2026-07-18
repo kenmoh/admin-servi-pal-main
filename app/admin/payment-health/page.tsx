@@ -257,6 +257,7 @@ export default function PaymentHealthPage() {
       const res = await fetch(`/api/payments?endpoint=circuit-breakers/${service}/reset`, {
         method: 'POST',
       })
+      if (!res.ok) throw new Error(`${res.status}`)
       return res.json()
     },
     onSuccess: () => {
