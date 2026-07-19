@@ -485,7 +485,7 @@ export default function DisputesPage() {
       </SidebarInset>
 
       <Dialog open={notesDialogOpen} onOpenChange={setNotesDialogOpen}>
-        <DialogContent>
+        <DialogContent onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle>Update to {pendingStatus?.replace(/_/g, ' ')}</DialogTitle>
             <DialogDescription>
