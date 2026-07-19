@@ -106,10 +106,11 @@ export const markDisputeAsRead = async (disputeId: string): Promise<void> => {
 export const updateDisputeStatus = async (
   disputeId: string,
   status: DisputeStatus,
+  resolutionNotes?: string,
 ): Promise<Dispute> => {
   const data = await requestJson(`/api/disputes/${disputeId}`, {
     method: 'PATCH',
-    body: JSON.stringify({ status }),
+    body: JSON.stringify({ status, ...(resolutionNotes ? { resolution_notes: resolutionNotes } : {}) }),
   })
   return data as Dispute
 }

@@ -34,6 +34,8 @@ import { useAppContext } from '@/lib/context'
 import React from 'react'
 import { Search, Send, AlertTriangle, MessageSquare } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog'
+import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 
 function statusColor(status: DisputeStatus | string) {
@@ -103,6 +105,9 @@ export default function DisputesPage() {
   const [detailStatus, setDetailStatus] = useState<DisputeStatus | null>(null)
   const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({})
   const [statusUpdating, setStatusUpdating] = useState(false)
+  const [notesDialogOpen, setNotesDialogOpen] = useState(false)
+  const [pendingStatus, setPendingStatus] = useState<DisputeStatus | null>(null)
+  const [resolutionNotes, setResolutionNotes] = useState('')
   const bottomRef = useRef<HTMLDivElement>(null)
   const queryClient = useQueryClient()
   const { currentUser } = useAppContext()
@@ -236,6 +241,13 @@ export default function DisputesPage() {
 
   const handleStatusChange = async (status: DisputeStatus) => {
     if (!selectedId) return
+    const terminalStatuses: DisputeStatus[] = ['RESOLVED', 'CLOSED']
+    if (terminalStatuses.includes(status)) {
+      setPendingStatus(status)
+      setResolutionNotes('')
+      setNotesDialogOpen(true)
+      return
+    }
     setStatusUpdating(true)
     try {
       const updated = await updateDisputeStatus(selectedId, status)
@@ -244,6 +256,22 @@ export default function DisputesPage() {
       queryClient.invalidateQueries({ queryKey: ['dispute-detail', selectedId] })
     } finally {
       setStatusUpdating(false)
+    }
+  }
+
+  const confirmStatusChange = async () => {
+    if (!selectedId || !pendingStatus) return
+    setNotesDialogOpen(false)
+    setStatusUpdating(true)
+    try {
+      const updated = await updateDisputeStatus(selectedId, pendingStatus, resolutionNotes || undefined)
+      setDetailStatus(updated.status)
+      queryClient.invalidateQueries({ queryKey: ['disputes'] })
+      queryClient.invalidateQueries({ queryKey: ['dispute-detail', selectedId] })
+    } finally {
+      setStatusUpdating(false)
+      setPendingStatus(null)
+      setResolutionNotes('')
     }
   }
 
@@ -455,6 +483,33 @@ export default function DisputesPage() {
           </div>
         </div>
       </SidebarInset>
+
+      <Dialog open={notesDialogOpen} onOpenChange={setNotesDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Update to {pendingStatus?.replace(/_/g, ' ')}</DialogTitle>
+            <DialogDescription>
+              Provide resolution notes for this dispute.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Describe how the dispute was resolved..."
+            value={resolutionNotes}
+            onChange={(e) => setResolutionNotes(e.target.value)}
+            rows={4}
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setNotesDialogOpen(false)}>Cancel</Button>
+            <Button
+              className="bg-orange-500 hover:bg-orange-600 text-white"
+              onClick={confirmStatusChange}
+              disabled={statusUpdating}
+            >
+              {statusUpdating ? 'Updating...' : 'Confirm'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </SidebarProvider>
   )
 }
