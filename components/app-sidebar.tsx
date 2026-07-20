@@ -6,6 +6,7 @@ import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
+import { useAppContext } from "@/lib/context"
 import {
   Sidebar,
   SidebarContent,
@@ -19,11 +20,6 @@ import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, Ci
 import Image from "next/image"
 
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "Dashboard",
@@ -121,6 +117,8 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { currentUser } = useAppContext()
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -148,7 +146,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        {currentUser && (
+          <NavUser user={{
+            name: currentUser.name,
+            email: currentUser.email,
+            avatar: currentUser.avatar || '',
+          }} />
+        )}
       </SidebarFooter>
     </Sidebar>
   )

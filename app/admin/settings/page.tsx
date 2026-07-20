@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Bell, Lock, Palette, ReceiptText, User } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import { useAppContext } from "@/lib/context";
 
 interface ChargesResponse {
   id: string;
@@ -337,6 +338,14 @@ export default function SettingsPage() {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [orderAlerts, setOrderAlerts] = useState(true);
   const [complaintNotifications, setComplaintNotifications] = useState(true);
+  const { currentUser } = useAppContext();
+
+  const roleLabel: Record<string, string> = {
+    super_admin: "Super Admin",
+    service_manager: "Service Manager",
+    vendor: "Vendor",
+    support_staff: "Support Staff",
+  };
 
   return (
     <SidebarProvider
@@ -389,22 +398,22 @@ export default function SettingsPage() {
                           <label className="text-sm font-medium">
                             Full Name
                           </label>
-                          <Input defaultValue="Alex Admin" />
+                          <Input defaultValue={currentUser?.name ?? ""} />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Email</label>
                           <Input
                             type="email"
-                            defaultValue="admin@servipal.com"
+                            defaultValue={currentUser?.email ?? ""}
                           />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Phone</label>
-                          <Input defaultValue="+234-800-0000" />
+                          <Input defaultValue={currentUser?.phone ?? ""} />
                         </div>
                         <div className="space-y-2">
                           <label className="text-sm font-medium">Role</label>
-                          <Input defaultValue="Super Admin" disabled />
+                          <Input defaultValue={roleLabel[currentUser?.role ?? ""] ?? currentUser?.role ?? ""} disabled />
                         </div>
                       </div>
                       <Button>Save Changes</Button>

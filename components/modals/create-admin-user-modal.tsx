@@ -116,7 +116,7 @@ export function CreateAdminUserModal() {
             </DialogDescription>
           </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="space-y-4 mt-2">
+          <form onSubmit={handleSubmit} className="space-y-4 mt-2" autoComplete="off">
             {serverError && (
               <div className="text-sm text-red-500 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 p-3 rounded-lg">
                 {serverError}
@@ -128,6 +128,7 @@ export function CreateAdminUserModal() {
               <Input
                 id="full_name"
                 placeholder="John Doe"
+                autoComplete="off"
                 value={form.full_name}
                 onChange={(e) => handleChange("full_name", e.target.value)}
                 className={errors.full_name ? "border-red-500" : ""}
@@ -141,6 +142,7 @@ export function CreateAdminUserModal() {
                 id="email"
                 type="email"
                 placeholder="admin@example.com"
+                autoComplete="off"
                 value={form.email}
                 onChange={(e) => handleChange("email", e.target.value)}
                 className={errors.email ? "border-red-500" : ""}
@@ -153,6 +155,7 @@ export function CreateAdminUserModal() {
               <Input
                 id="phone_number"
                 placeholder="+2348012345678"
+                autoComplete="off"
                 value={form.phone_number}
                 onChange={(e) => handleChange("phone_number", e.target.value)}
                 className={errors.phone_number ? "border-red-500" : ""}
@@ -197,6 +200,7 @@ export function CreateAdminUserModal() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Min. 8 characters"
+                  autoComplete="new-password"
                   value={form.password}
                   onChange={(e) => handleChange("password", e.target.value)}
                   className={errors.password ? "border-red-500 pr-10" : "pr-10"}

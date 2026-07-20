@@ -504,7 +504,7 @@ export default function PaymentSafetyPage() {
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="receipts" orientation="vertical" className="space-y-4">
+          <Tabs defaultValue="receipts" className="space-y-4">
             <TabsList>
               <TabsTrigger value="receipts" className="gap-2">
                 <Search className="w-4 h-4" />
