@@ -13,6 +13,9 @@ import {
   AlertCircle,
 } from "lucide-react";
 import React, { useState } from "react";
+import { MetadataUpdater } from "@/components/seo/metadata-updater";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -126,6 +129,11 @@ const SupportPage = () => {
 
   return (
     <div className="p-4 md:p-8">
+      <MetadataUpdater
+        title="Support"
+        description="Get help and support for ServiPal - contact our team for assistance with delivery, food ordering, laundry, and marketplace services."
+        canonical={`${siteUrl}/support`}
+      />
       <BackButton />
       <Card className="text-card-foreground px-2 shadow-none border-none mt-4">
         <CardHeader>

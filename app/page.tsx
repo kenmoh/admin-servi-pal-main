@@ -22,6 +22,9 @@ import {
 } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
 import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
+import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/json-ld";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");
@@ -63,6 +66,23 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-b from-background via-background to-accent/5">
+      <OrganizationJsonLd
+        name="ServiPal"
+        description="Multi-vendor lifestyle application for delivery, food ordering, laundry services, and P2P marketplace."
+        url={siteUrl}
+        image={`${siteUrl}/mainicon.png`}
+        sameAs={[
+          "https://twitter.com/servipal",
+          "https://linkedin.com/company/servipal",
+          "https://github.com/servipal",
+        ]}
+      />
+      <WebSiteJsonLd
+        name="ServiPal"
+        description="Multi-vendor lifestyle application for delivery, food ordering, laundry services, and P2P marketplace."
+        url={siteUrl}
+        image={`${siteUrl}/mainicon.png`}
+      />
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">

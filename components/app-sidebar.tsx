@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon } from "lucide-react"
+import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon } from "lucide-react"
 import Image from "next/image"
 
 const data = {
@@ -80,6 +80,18 @@ const data = {
     },
    
   ],
+  payouts: [
+    {
+      name: "Beneficiaries",
+      url: "/admin/beneficiaries",
+      icon: <HandCoins />,
+    },
+    {
+      name: "Transfers",
+      url: "/admin/transfers",
+      icon: <ArrowLeftRightIcon />,
+    },
+  ],
   monitoring: [
     {
       name: "Payment Health",
@@ -142,6 +154,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavDocuments items={data.disputes} label="Disputes" />
         <NavDocuments items={data.logs} label="Logs" />
         <NavDocuments items={data.contacts} label="Support" />
+        <NavDocuments items={data.payouts} label="Payouts" />
         <NavDocuments items={data.monitoring} label="Monitoring" />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>

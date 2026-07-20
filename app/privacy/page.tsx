@@ -7,6 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import Link from "next/link";
 import { BackButton } from "@/components/back-button";
+import { MetadataUpdater } from "@/components/seo/metadata-updater";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
 
 const sections = [
   { id: "interpretation", title: "Interpretation & Definitions" },
@@ -89,6 +92,11 @@ const PrivacyPolicy = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <MetadataUpdater
+        title="Privacy Policy"
+        description="ServiPal Privacy Policy - Learn how we collect, use, and protect your personal data."
+        canonical={`${siteUrl}/privacy`}
+      />
       <BackButton />
       <Card className="bg-card text-card-foreground mt-4">
         <CardHeader>

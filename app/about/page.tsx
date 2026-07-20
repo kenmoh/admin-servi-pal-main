@@ -4,6 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Building2, Target, Sparkles, Shield, Users, Zap } from "lucide-react";
 import React from "react";
 import { BackButton } from "@/components/back-button";
+import { MetadataUpdater } from "@/components/seo/metadata-updater";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
 
 const AboutPage = () => {
   const FeatureCard = ({
@@ -48,6 +51,11 @@ const AboutPage = () => {
 
   return (
     <div className="p-4 md:p-8">
+      <MetadataUpdater
+        title="About ServiPal"
+        description="Learn about ServiPal - Multi-vendor lifestyle application for delivery, food ordering, laundry services, and P2P marketplace."
+        canonical={`${siteUrl}/about`}
+      />
       <BackButton />
       <Card className="text-card-foreground px-2 shadow-none border-none mt-4">
         <CardHeader>

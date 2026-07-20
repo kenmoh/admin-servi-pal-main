@@ -5,6 +5,9 @@ import { ChevronDown, Search } from "lucide-react";
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { BackButton } from "@/components/back-button";
+import { MetadataUpdater } from "@/components/seo/metadata-updater";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
 
 const FAQPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -277,6 +280,11 @@ const FAQPage = () => {
 
   return (
     <div className="p-4 md:p-8">
+      <MetadataUpdater
+        title="FAQs"
+        description="Frequently asked questions about ServiPal - delivery, food ordering, laundry services, and P2P marketplace."
+        canonical={`${siteUrl}/faqs`}
+      />
       <BackButton />
       <Card className="text-card-foreground px-2 shadow-none border-none mt-4">
         <CardHeader>

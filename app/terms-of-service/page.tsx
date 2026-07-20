@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { BackButton } from "@/components/back-button";
+import { MetadataUpdater } from "@/components/seo/metadata-updater";
+
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
 
 const sections = [
   { id: "eligibility", title: "Eligibility" },
@@ -88,6 +91,11 @@ const TermsAndConditions = () => {
 
   return (
     <div className="p-4 md:p-8">
+      <MetadataUpdater
+        title="Terms of Service"
+        description="ServiPal Terms of Service - Read our terms and conditions for using the platform."
+        canonical={`${siteUrl}/terms-of-service`}
+      />
       <BackButton />
       <Card className="text-card-foreground px-2 shadow-none border-none mt-4">
         <CardHeader>

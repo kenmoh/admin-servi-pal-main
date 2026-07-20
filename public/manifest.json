@@ -1,0 +1,21 @@
+{
+  "name": "ServiPal Admin Dashboard",
+  "short_name": "ServiPal Admin",
+  "description": "Comprehensive admin dashboard for managing delivery, food ordering, laundry services, and P2P marketplace operations.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#f97316",
+  "icons": [
+    {
+      "src": "/mainicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/mainicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

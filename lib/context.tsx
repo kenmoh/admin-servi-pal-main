@@ -8,6 +8,7 @@ import { FoodOrderSummary } from "@/types/restaurant-types"
 import { LaundryOrderSummary } from "@/types/laundry-types"
 import { ProductOrderSummary } from "@/types/product-types"
 import { ProfileDetail, ProfileSummary } from "@/types/user-types"
+import { BeneficiaryData, TransferData } from "@/types/beneficiary-types"
 
 
 interface AppContextType {
@@ -38,6 +39,10 @@ interface AppContextType {
   setSelectedWallet: (wallet: Wallet | null) => void
   selectedProfile: ProfileDetail | null
   setSelectedProfile: (profile: ProfileDetail | null) => void
+  selectedBeneficiary: BeneficiaryData | null
+  setSelectedBeneficiary: (beneficiary: BeneficiaryData | null) => void
+  selectedTransfer: TransferData | null
+  setSelectedTransfer: (transfer: TransferData | null) => void
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined)
@@ -56,6 +61,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null)
   const [selectedProfile, setSelectedProfile] = useState<ProfileDetail | null>(null)
+  const [selectedBeneficiary, setSelectedBeneficiary] = useState<BeneficiaryData | null>(null)
+  const [selectedTransfer, setSelectedTransfer] = useState<TransferData | null>(null)
 
   useEffect(() => {
     const savedTheme = localStorage?.getItem("theme") as "light" | "dark" | null
@@ -107,6 +114,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setSelectedWallet,
         selectedProfile,
         setSelectedProfile,
+        selectedBeneficiary,
+        setSelectedBeneficiary,
+        selectedTransfer,
+        setSelectedTransfer,
       }}
     >
       {children}

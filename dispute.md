@@ -72,4 +72,10 @@ Notes & risks
 Next immediate step for me
 - Implement the minimal admin service adapters that call the same RPCs while accepting `actor_id`, then wire them to the existing backend HTTP routes used by the admin frontend.
 
+<!-- on the terms-of-service page add a new section Commission with the following:
+ - Delivery Commission: 12.5%
+ - Laundry Commision: 0.8%
+ - Food Commission: 0.8%
+ - Marketplace Commisiion: 0.8%
+ - Reservation Commission: NGN(use naira sign) 5000 -->
 
