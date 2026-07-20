@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bell, Lock, Palette, ReceiptText, User, Eye, EyeOff } from "lucide-react";
+import { Bell, Lock, Palette, ReceiptText, User, Eye, EyeOff, Monitor, Smartphone, Globe, LogOut } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { useAppContext } from "@/lib/context";
@@ -42,6 +42,46 @@ interface ChargesResponse {
   product_commission_rate: string;
   created_at: string;
   updated_at: string | null;
+}
+
+interface SessionInfo {
+  id: string;
+  user_id: string;
+  created_at: string;
+  updated_at: string;
+  user_agent: string | null;
+  ip: string | null;
+  factor_id: string | null;
+  aal: string | null;
+  tag: string | null;
+}
+
+interface SessionsResponse {
+  sessions: SessionInfo[];
+  current_session_id: string | null;
+}
+
+function parseUserAgent(ua: string | null): { browser: string; os: string; device: string } {
+  if (!ua) return { browser: "Unknown", os: "Unknown", device: "Desktop" };
+
+  let browser = "Unknown";
+  if (ua.includes("Firefox")) browser = "Firefox";
+  else if (ua.includes("Edg")) browser = "Edge";
+  else if (ua.includes("Chrome")) browser = "Chrome";
+  else if (ua.includes("Safari")) browser = "Safari";
+
+  let os = "Unknown";
+  if (ua.includes("Windows")) os = "Windows";
+  else if (ua.includes("Mac OS")) os = "macOS";
+  else if (ua.includes("Linux")) os = "Linux";
+  else if (ua.includes("Android")) os = "Android";
+  else if (ua.includes("iPhone") || ua.includes("iPad")) os = "iOS";
+
+  let device = "Desktop";
+  if (ua.includes("Mobile") || ua.includes("Android")) device = "Mobile";
+  else if (ua.includes("iPad") || ua.includes("Tablet")) device = "Tablet";
+
+  return { browser, os, device };
 }
 
 const TABS = [
@@ -387,6 +427,52 @@ export default function SettingsPage() {
     }
     changePasswordMutation.mutate();
   };
+
+  // Sessions
+  const { data: sessionsData, isLoading: sessionsLoading } = useQuery<SessionsResponse>({
+    queryKey: ["sessions"],
+    queryFn: async () => {
+      const res = await fetch("/api/auth/sessions");
+      if (!res.ok) throw new Error("Failed to fetch sessions");
+      return res.json();
+    },
+  });
+
+  const revokeSessionMutation = useMutation({
+    mutationFn: async (sessionId: string) => {
+      const res = await fetch(`/api/auth/sessions/${sessionId}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to revoke session");
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Session revoked");
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message);
+    },
+  });
+
+  const revokeAllSessionsMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/auth/sessions", {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to revoke sessions");
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Other sessions revoked");
+      queryClient.invalidateQueries({ queryKey: ["sessions"] });
+    },
+    onError: (err: Error) => {
+      toast.error(err.message);
+    },
+  });
 
   const roleLabel: Record<string, string> = {
     super_admin: "Super Admin",
@@ -765,20 +851,72 @@ export default function SettingsPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="flex items-center justify-between p-3 border rounded-lg">
-                        <div>
-                          <p className="font-medium text-sm">Current Session</p>
-                          <p className="text-xs text-muted-foreground">
-                            Last active: Just now
-                          </p>
+                      {sessionsLoading ? (
+                        <div className="space-y-3">
+                          {Array.from({ length: 2 }).map((_, i) => (
+                            <Skeleton key={i} className="h-16 w-full" />
+                          ))}
                         </div>
-                        <span className="text-xs font-medium text-green-500">
-                          Active
-                        </span>
-                      </div>
-                      <Button variant="outline" className="w-full">
-                        Sign Out All Sessions
-                      </Button>
+                      ) : sessionsData?.sessions && sessionsData.sessions.length > 0 ? (
+                        <>
+                          <div className="space-y-3">
+                            {sessionsData.sessions.map((session) => {
+                              const { browser, os, device } = parseUserAgent(session.user_agent);
+                              const isCurrent = session.id === sessionsData.current_session_id;
+                              const deviceIcon = device === "Mobile" || device === "Tablet" ? Smartphone : device === "Desktop" ? Monitor : Globe;
+                              const DeviceIcon = deviceIcon;
+
+                              return (
+                                <div
+                                  key={session.id}
+                                  className={`flex items-center justify-between p-3 border rounded-lg ${isCurrent ? "border-green-500/50 bg-green-500/5" : ""}`}
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className={`p-2 rounded-lg ${isCurrent ? "bg-green-500/10" : "bg-muted"}`}>
+                                      <DeviceIcon className={`w-4 h-4 ${isCurrent ? "text-green-500" : "text-muted-foreground"}`} />
+                                    </div>
+                                    <div>
+                                      <p className="font-medium text-sm">{browser} on {os}</p>
+                                      <p className="text-xs text-muted-foreground">
+                                        {device} • {new Date(session.created_at).toLocaleDateString()}
+                                        {session.ip && ` • ${session.ip}`}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {isCurrent ? (
+                                      <span className="text-xs font-medium text-green-500">Current</span>
+                                    ) : (
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                                        onClick={() => revokeSessionMutation.mutate(session.id)}
+                                        disabled={revokeSessionMutation.isPending}
+                                      >
+                                        <LogOut className="w-4 h-4 mr-1" />
+                                        Revoke
+                                      </Button>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                          {sessionsData.sessions.length > 1 && (
+                            <Button
+                              variant="outline"
+                              className="w-full text-red-500 hover:text-red-600 hover:bg-red-500/10 border-red-500/50"
+                              onClick={() => revokeAllSessionsMutation.mutate()}
+                              disabled={revokeAllSessionsMutation.isPending}
+                            >
+                              {revokeAllSessionsMutation.isPending ? "Signing out..." : "Sign Out All Other Sessions"}
+                            </Button>
+                          )}
+                        </>
+                      ) : (
+                        <p className="text-sm text-muted-foreground text-center py-4">No active sessions found</p>
+                      )}
                     </CardContent>
                   </Card>
                 </>
