@@ -16,10 +16,11 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bell, Lock, Palette, ReceiptText, User } from "lucide-react";
+import { Bell, Lock, Palette, ReceiptText, User, Eye, EyeOff } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { useAppContext } from "@/lib/context";
+import { toast } from "sonner";
 
 interface ChargesResponse {
   id: string;
@@ -339,6 +340,53 @@ export default function SettingsPage() {
   const [orderAlerts, setOrderAlerts] = useState(true);
   const [complaintNotifications, setComplaintNotifications] = useState(true);
   const { currentUser } = useAppContext();
+  const queryClient = useQueryClient();
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  const changePasswordMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/auth/change-password", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          current_password: currentPassword,
+          new_password: newPassword,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to change password");
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Password changed successfully");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordError(null);
+    },
+    onError: (err: Error) => {
+      setPasswordError(err.message);
+    },
+  });
+
+  const handlePasswordChange = () => {
+    setPasswordError(null);
+    if (newPassword !== confirmPassword) {
+      setPasswordError("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters");
+      return;
+    }
+    changePasswordMutation.mutate();
+  };
 
   const roleLabel: Record<string, string> = {
     super_admin: "Super Admin",
@@ -625,23 +673,52 @@ export default function SettingsPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
+                      {passwordError && (
+                        <p className="text-sm text-red-500 bg-red-500/10 px-3 py-2 rounded">
+                          {passwordError}
+                        </p>
+                      )}
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
                           Current Password
                         </label>
-                        <Input
-                          type="password"
-                          placeholder="Enter current password"
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showCurrentPassword ? "text" : "password"}
+                            placeholder="Enter current password"
+                            autoComplete="current-password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowCurrentPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          >
+                            {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
                           New Password
                         </label>
-                        <Input
-                          type="password"
-                          placeholder="Enter new password"
-                        />
+                        <div className="relative">
+                          <Input
+                            type={showNewPassword ? "text" : "password"}
+                            placeholder="Enter new password"
+                            autoComplete="new-password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowNewPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          >
+                            {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
@@ -650,9 +727,17 @@ export default function SettingsPage() {
                         <Input
                           type="password"
                           placeholder="Confirm new password"
+                          autoComplete="new-password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                       </div>
-                      <Button>Update Password</Button>
+                      <Button
+                        onClick={handlePasswordChange}
+                        disabled={changePasswordMutation.isPending || !currentPassword || !newPassword || !confirmPassword}
+                      >
+                        {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                      </Button>
                     </CardContent>
                   </Card>
 
