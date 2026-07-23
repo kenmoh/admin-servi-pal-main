@@ -74,8 +74,10 @@ interface WebhookLog {
   signature_valid: boolean
   event_type: string
   tx_ref: string
+  tx_id: number | null
   processed: boolean
   skip_reason: string
+  error_message: string | null
   created_at: string
 }
 
@@ -428,8 +430,9 @@ function WebhookAuditTab() {
                 <th className="py-2 px-3">Signature</th>
                 <th className="py-2 px-3">Event</th>
                 <th className="py-2 px-3">TX Ref</th>
+                <th className="py-2 px-3">TX ID</th>
                 <th className="py-2 px-3">Processed</th>
-                <th className="py-2 px-3">Skip Reason</th>
+                <th className="py-2 px-3">Skip Reason / Error</th>
                 <th className="py-2 px-3">Time</th>
               </tr>
             </thead>
@@ -446,6 +449,7 @@ function WebhookAuditTab() {
                   </td>
                   <td className="py-2 px-3 text-sm">{log.event_type || '—'}</td>
                   <td className="py-2 px-3 font-mono text-xs">{log.tx_ref || '—'}</td>
+                  <td className="py-2 px-3 font-mono text-xs text-muted-foreground">{log.tx_id ?? '—'}</td>
                   <td className="py-2 px-3">
                     {log.processed ? (
                       <Badge variant="default">Yes</Badge>
@@ -453,7 +457,9 @@ function WebhookAuditTab() {
                       <Badge variant="secondary">No</Badge>
                     )}
                   </td>
-                  <td className="py-2 px-3 text-xs text-muted-foreground">{log.skip_reason || '—'}</td>
+                  <td className="py-2 px-3 text-xs text-muted-foreground">
+                    {log.skip_reason || log.error_message || '—'}
+                  </td>
                   <td className="py-2 px-3 text-xs text-muted-foreground">
                     {new Date(log.created_at).toLocaleString()}
                   </td>
