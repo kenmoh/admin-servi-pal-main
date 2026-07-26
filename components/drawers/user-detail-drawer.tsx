@@ -8,18 +8,19 @@ import {
   DrawerClose,
 } from "@/components/ui/drawer";
 import { useAppContext } from "@/lib/context";
-import { X, User, Star } from "lucide-react";
+import { X, User, Star, ArrowLeftRightIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { safeToFixed } from "@/lib/utils";
-import { ProfileDetail } from "@/types/user-types";
+import { ProfileDetail, TransactionItem } from "@/types/user-types";
 import Image from "next/image";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ShieldAlert, ShieldCheck, Loader2, BadgeCheck } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -67,6 +68,7 @@ export function UserDetailDrawer() {
   const { selectedProfile, setSelectedProfile } = useAppContext();
 
   const queryClient = useQueryClient();
+  const router = useRouter();
   const [blockReason, setBlockReason] = useState("Administrative action");
 
   const {
@@ -79,6 +81,18 @@ export function UserDetailDrawer() {
       const response = await fetch(`/api/users/${selectedProfile!.id}`);
       if (!response.ok) throw new Error("Failed to fetch user details");
       return response.json();
+    },
+    enabled: !!selectedProfile,
+  });
+
+  const { data: txData } = useQuery({
+    queryKey: ["user-transactions-preview", selectedProfile?.id],
+    queryFn: async () => {
+      const res = await fetch(
+        `/api/users/${selectedProfile!.id}/transactions?page=1&page_size=5`,
+      );
+      if (!res.ok) throw new Error("Failed to fetch transactions");
+      return res.json();
     },
     enabled: !!selectedProfile,
   });
@@ -323,6 +337,44 @@ export function UserDetailDrawer() {
                   </div>
                 </>
               )}
+
+              <Separator />
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <ArrowLeftRightIcon className="w-4 h-4" /> Recent Transactions
+                  </h3>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => router.push(`/admin/users/${selectedProfile.id}/transactions`)}
+                  >
+                    View All →
+                  </Button>
+                </div>
+                {!txData ? (
+                  <Skeleton className="h-20 w-full" />
+                ) : txData.data.length === 0 ? (
+                  <p className="text-sm text-muted-foreground py-2">No transactions</p>
+                ) : (
+                  txData.data.map((tx: TransactionItem) => (
+                    <div key={tx.id} className="flex items-center justify-between text-sm py-1.5 border-b last:border-0">
+                      <div>
+                        <p className="font-medium">{tx.transaction_type}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {tx.from_name || tx.to_name || "—"} · {new Date(tx.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold">₦{tx.amount.toLocaleString()}</p>
+                        <Badge variant="secondary" className={statusColor(tx.payment_status || "")}>
+                          {tx.payment_status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </>
           ) : null}
         </div>

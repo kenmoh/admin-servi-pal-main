@@ -143,6 +143,8 @@ export interface TransactionItem {
   payment_method: string | null;
   from_user_id: string | null;
   to_user_id: string | null;
+  from_name: string | null;
+  to_name: string | null;
   order_id: string | null;
   order_type: string | null;
   details: AnyDict;
@@ -166,5 +168,10 @@ export interface WalletWithTransactions extends WalletSummary {
 
 export interface WalletListResponse {
   data: WalletWithTransactions[];
+  meta: PaginationMeta;
+}
+
+export interface TransactionListResponse {
+  data: TransactionItem[];
   meta: PaginationMeta;
 }
