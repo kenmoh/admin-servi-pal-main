@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { safeToFixed } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { FoodOrderDetail } from "@/types/restaurant-types";
+import { CreateTransferButton } from "@/components/transfers/create-transfer-button";
 import Image from "next/image";
 
 function DetailRow({
@@ -335,6 +336,10 @@ export function RestaurantDetailDrawer() {
               )}
             </>
           ) : null}
+        </div>
+
+        <div className="p-4 border-t mt-auto bg-muted/30">
+          <CreateTransferButton orderId={selectedFoodOrder.id} orderType="FOOD_ORDER" />
         </div>
       </DrawerContent>
     </Drawer>

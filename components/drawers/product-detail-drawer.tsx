@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
 import { ProductOrderDetail } from "@/types/product-types";
+import { CreateTransferButton } from "@/components/transfers/create-transfer-button";
 import Image from "next/image";
 
 function DetailRow({
@@ -335,6 +336,10 @@ export function ProductDetailDrawer() {
               )}
             </>
           ) : null}
+        </div>
+
+        <div className="p-4 border-t mt-auto bg-muted/30">
+          <CreateTransferButton orderId={selectedProductOrder.id} orderType="PRODUCT_ORDER" />
         </div>
       </DrawerContent>
     </Drawer>
