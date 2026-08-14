@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { fetchApi } from '@/lib/utils'
+import { TransactionResponse } from '@/types/transaction-types'
 import {
   Receipt, Search, AlertTriangle, Shield, RotateCcw,
   CheckCircle, XCircle, Clock, Eye, Ban, FileText,
@@ -88,11 +89,20 @@ function ReceiptsTab() {
   const [searchTxRef, setSearchTxRef] = useState('')
   const [verifyTriggered, setVerifyTriggered] = useState(false)
 
-  const { data: receiptData, isLoading, error, refetch } = useQuery({
+  const { data: result, isLoading, error, refetch } = useQuery<TransactionResponse>({
     queryKey: ['receipt', searchTxRef],
-    queryFn: () => fetchApi(`/api/payments?endpoint=verify/${searchTxRef}`),
+    queryFn: async () => {
+      const res = await fetch(`/api/transactions/${searchTxRef}/verify`)
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.error || 'Verification failed')
+      }
+      return res.json()
+    },
     enabled: false,
   })
+
+  const receiptData = result?.data
 
   const handleVerify = () => {
     if (!searchTxRef) return
@@ -154,7 +164,13 @@ function ReceiptsTab() {
             </div>
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-sm text-muted-foreground">Amount</span>
-              <span className="font-bold text-green-600">₦{receiptData.amount?.toLocaleString()}</span>
+              <span className="font-bold text-green-600">
+                {receiptData.amount ? `₦${Number(receiptData.amount).toLocaleString()}` : '—'}
+              </span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b">
+              <span className="text-sm text-muted-foreground">Currency</span>
+              <span className="text-sm">{receiptData.currency || 'NGN'}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b">
               <span className="text-sm text-muted-foreground">Payment Type</span>
@@ -168,9 +184,11 @@ function ReceiptsTab() {
               <span className="text-sm text-muted-foreground">Created</span>
               <span className="text-sm">{new Date(receiptData.created_at).toLocaleString()}</span>
             </div>
-            {receiptData.receipt && (
+            {receiptData.customer && (
               <div className="mt-4 p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
-                <p className="text-sm font-medium text-green-600">Receipt: {receiptData.receipt.receipt_number}</p>
+                <p className="text-sm font-medium text-green-600">
+                  Customer: {receiptData.customer.name} ({receiptData.customer.email})
+                </p>
               </div>
             )}
           </CardContent>
