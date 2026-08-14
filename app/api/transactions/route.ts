@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     if (value) query.set(key, value);
   }
 
-  const url = `${process.env.API_URL}/analytics/transactions?${query}`;
+  const url = `${process.env.API_URL}/analytics/all-transactions?${query}`;
 
   try {
     const response = await fetch(url, {
