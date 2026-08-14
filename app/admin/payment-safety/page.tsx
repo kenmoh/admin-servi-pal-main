@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AppSidebar } from '@/components/app-sidebar'
 import { SiteHeader } from '@/components/site-header'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -15,8 +14,8 @@ import { fetchApi } from '@/lib/utils'
 import { TransactionResponse } from '@/types/transaction-types'
 import {
   Receipt, Search, AlertTriangle, Shield, RotateCcw,
-  CheckCircle, XCircle, Clock, Eye, Ban, FileText,
-  RefreshCw, User, DollarSign,
+  CheckCircle, XCircle, Clock, Ban, FileText,
+  RefreshCw, DollarSign, Loader2,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { toast } from 'sonner'
@@ -85,7 +84,7 @@ interface WebhookLog {
 // ───────────────────────────────────────────────
 // Tab: Receipts
 // ───────────────────────────────────────────────
-function ReceiptsTab() {
+function ReceiptsTab({ onLoadingChange }: { onLoadingChange?: (loading: boolean) => void }) {
   const [searchTxRef, setSearchTxRef] = useState('')
   const [verifyTriggered, setVerifyTriggered] = useState(false)
 
@@ -101,6 +100,8 @@ function ReceiptsTab() {
     },
     enabled: false,
   })
+
+  useEffect(() => { onLoadingChange?.(isLoading) }, [isLoading, onLoadingChange])
 
   const receiptData = result?.data
 
@@ -131,6 +132,10 @@ function ReceiptsTab() {
           Verify
         </Button>
       </div>
+
+      {isLoading && (
+        <LoadingState label="Verifying charge..." />
+      )}
 
       {error && (
         <Card className="border-red-500/50 bg-red-500/5">
@@ -208,13 +213,15 @@ function ReceiptsTab() {
 // ───────────────────────────────────────────────
 // Tab: Duplicates
 // ───────────────────────────────────────────────
-function DuplicatesTab() {
+function DuplicatesTab({ onLoadingChange }: { onLoadingChange?: (loading: boolean) => void }) {
   const queryClient = useQueryClient()
 
   const { data, isLoading } = useQuery<{ count: number; alerts: DuplicateAlert[] }>({
     queryKey: ['duplicates'],
     queryFn: () => fetchApi('/api/payments?endpoint=duplicates'),
   })
+
+  useEffect(() => { onLoadingChange?.(isLoading) }, [isLoading, onLoadingChange])
 
   const reviewMutation = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
@@ -232,6 +239,8 @@ function DuplicatesTab() {
   })
 
   const alerts = data?.alerts ?? []
+
+  if (isLoading) return <LoadingState label="Loading duplicates..." />
 
   return (
     <div className="space-y-4">
@@ -300,11 +309,13 @@ function DuplicatesTab() {
 // ───────────────────────────────────────────────
 // Tab: Suspicious Patterns
 // ───────────────────────────────────────────────
-function SuspiciousTab() {
+function SuspiciousTab({ onLoadingChange }: { onLoadingChange?: (loading: boolean) => void }) {
   const { data, isLoading } = useQuery<{ count: number; patterns: SuspiciousPattern[] }>({
     queryKey: ['suspicious'],
     queryFn: () => fetchApi('/api/payments?endpoint=suspicious'),
   })
+
+  useEffect(() => { onLoadingChange?.(isLoading) }, [isLoading, onLoadingChange])
 
   const patterns = data?.patterns ?? []
 
@@ -320,6 +331,8 @@ function SuspiciousTab() {
     if (score >= 50) return 'text-orange-500 bg-orange-500/10'
     return 'text-amber-500 bg-amber-500/10'
   }
+
+  if (isLoading) return <LoadingState label="Loading suspicious patterns..." />
 
   return (
     <div className="space-y-4">
@@ -368,13 +381,17 @@ function SuspiciousTab() {
 // ───────────────────────────────────────────────
 // Tab: Reversals
 // ───────────────────────────────────────────────
-function ReversalsTab() {
+function ReversalsTab({ onLoadingChange }: { onLoadingChange?: (loading: boolean) => void }) {
   const { data, isLoading } = useQuery<{ count: number; reversals: Reversal[] }>({
     queryKey: ['reversals'],
     queryFn: () => fetchApi('/api/payments?endpoint=reversals'),
   })
 
+  useEffect(() => { onLoadingChange?.(isLoading) }, [isLoading, onLoadingChange])
+
   const reversals = data?.reversals ?? []
+
+  if (isLoading) return <LoadingState label="Loading reversals..." />
 
   return (
     <div className="space-y-4">
@@ -424,13 +441,17 @@ function ReversalsTab() {
 // ───────────────────────────────────────────────
 // Tab: Webhook Audit
 // ───────────────────────────────────────────────
-function WebhookAuditTab() {
+function WebhookAuditTab({ onLoadingChange }: { onLoadingChange?: (loading: boolean) => void }) {
   const { data, isLoading } = useQuery<{ count: number; logs: WebhookLog[] }>({
     queryKey: ['webhook-audit'],
     queryFn: () => fetchApi('/api/payments?endpoint=webhook-audit'),
   })
 
+  useEffect(() => { onLoadingChange?.(isLoading) }, [isLoading, onLoadingChange])
+
   const logs = data?.logs ?? []
+
+  if (isLoading) return <LoadingState label="Loading webhook logs..." />
 
   return (
     <div className="space-y-4">
@@ -495,6 +516,20 @@ function WebhookAuditTab() {
 // Main Page
 // ───────────────────────────────────────────────
 export default function PaymentSafetyPage() {
+  const [activeTab, setActiveTab] = useState('receipts')
+  const [tabLoading, setTabLoading] = useState<Record<string, boolean>>({})
+
+  const setTabLoadingFor = (tab: string) => (loading: boolean) =>
+    setTabLoading((prev) => (prev[tab] === loading ? prev : { ...prev, [tab]: loading }))
+
+  const renderTrigger = (value: string, icon: React.ReactNode, label: string) => (
+    <TabsTrigger value={value} className="gap-2">
+      {icon}
+      {label}
+      {tabLoading[value] && <Loader2 className="w-3 h-3 animate-spin" />}
+    </TabsTrigger>
+  )
+
   return (
     <SidebarProvider style={{ '--sidebar-width': 'calc(var(--spacing) * 72)', '--header-height': 'calc(var(--spacing) * 12)' } as React.CSSProperties}>
       <AppSidebar variant="inset" />
@@ -528,44 +563,29 @@ export default function PaymentSafetyPage() {
           </div>
 
           {/* Tabs */}
-          <Tabs defaultValue="receipts" className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
             <TabsList>
-              <TabsTrigger value="receipts" className="gap-2">
-                <Search className="w-4 h-4" />
-                Verify Charge
-              </TabsTrigger>
-              <TabsTrigger value="duplicates" className="gap-2">
-                <AlertTriangle className="w-4 h-4" />
-                Duplicates
-              </TabsTrigger>
-              <TabsTrigger value="suspicious" className="gap-2">
-                <Shield className="w-4 h-4" />
-                Suspicious
-              </TabsTrigger>
-              <TabsTrigger value="reversals" className="gap-2">
-                <RotateCcw className="w-4 h-4" />
-                Reversals
-              </TabsTrigger>
-              <TabsTrigger value="webhooks" className="gap-2">
-                <FileText className="w-4 h-4" />
-                Webhook Audit
-              </TabsTrigger>
+              {renderTrigger('receipts', <Search className="w-4 h-4" />, 'Verify Charge')}
+              {renderTrigger('duplicates', <AlertTriangle className="w-4 h-4" />, 'Duplicates')}
+              {renderTrigger('suspicious', <Shield className="w-4 h-4" />, 'Suspicious')}
+              {renderTrigger('reversals', <RotateCcw className="w-4 h-4" />, 'Reversals')}
+              {renderTrigger('webhooks', <FileText className="w-4 h-4" />, 'Webhook Audit')}
             </TabsList>
 
             <TabsContent value="receipts">
-              <ReceiptsTab />
+              <ReceiptsTab onLoadingChange={setTabLoadingFor('receipts')} />
             </TabsContent>
             <TabsContent value="duplicates">
-              <DuplicatesTab />
+              <DuplicatesTab onLoadingChange={setTabLoadingFor('duplicates')} />
             </TabsContent>
             <TabsContent value="suspicious">
-              <SuspiciousTab />
+              <SuspiciousTab onLoadingChange={setTabLoadingFor('suspicious')} />
             </TabsContent>
             <TabsContent value="reversals">
-              <ReversalsTab />
+              <ReversalsTab onLoadingChange={setTabLoadingFor('reversals')} />
             </TabsContent>
             <TabsContent value="webhooks">
-              <WebhookAuditTab />
+              <WebhookAuditTab onLoadingChange={setTabLoadingFor('webhooks')} />
             </TabsContent>
           </Tabs>
         </div>
@@ -590,6 +610,15 @@ function SummaryCard({ title, description, icon: Icon }: {
       <CardContent>
         <p className="text-xs text-muted-foreground">{description}</p>
       </CardContent>
+    </Card>
+  )
+}
+
+function LoadingState({ label }: { label: string }) {
+  return (
+    <Card className="p-12 text-center">
+      <Loader2 className="w-8 h-8 mx-auto mb-4 animate-spin text-muted-foreground/60" />
+      <p className="text-muted-foreground">{label}</p>
     </Card>
   )
 }
