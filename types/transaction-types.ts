@@ -109,3 +109,64 @@ export interface TransactionResponse {
   message: string;
   data: TransactionData;
 }
+
+export interface FlutterwaveAccount {
+  nuban: string;
+  bank: string;
+}
+
+export interface FlutterwaveTransactionListItem {
+  id: string;
+  tx_ref: string;
+  flw_ref: string | null;
+  device_fingerprint: string | null;
+  amount: string; // Decimal
+  currency: string;
+  charged_amount: string; // Decimal
+  app_fee: string | null; // Decimal
+  merchant_fee: string | null; // Decimal
+  processor_response: string | null;
+  auth_model: string | null;
+  ip: string | null;
+  narration: string | null;
+  status: string;
+  payment_type: string;
+  created_at: string; // ISO 8601 datetime
+  amount_settled: string | null; // Decimal
+  account: FlutterwaveAccount | null;
+  customer_name: string | null;
+  customer_email: string | null;
+  account_id: string;
+}
+
+export interface FlutterwavePageInfo {
+  total: number;
+  current_page: number;
+  total_pages: number;
+}
+
+export interface FlutterwaveTransactionListMeta {
+  page_info: FlutterwavePageInfo;
+}
+
+export interface FlutterwaveTransactionListResponse {
+  status: string;
+  message: string;
+  meta: FlutterwaveTransactionListMeta;
+  data: FlutterwaveTransactionListItem[];
+}
+
+export interface FlutterwaveTransactionEvent {
+  note: string;
+  actor: string;
+  object: string;
+  action: string;
+  context: string;
+  created_at: string; // ISO 8601 datetime
+}
+
+export interface FlutterwaveTransactionEventsResponse {
+  status: string;
+  message: string;
+  data: FlutterwaveTransactionEvent[];
+}

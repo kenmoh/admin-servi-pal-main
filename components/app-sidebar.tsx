@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon, ReceiptText } from "lucide-react"
+import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon, ReceiptText, Landmark } from "lucide-react"
 import Image from "next/image"
 
 const data = {
@@ -131,6 +131,11 @@ const data = {
       name: "Transactions",
       url: "/admin/transactions",
       icon: <ReceiptText />,
+    },
+    {
+      name: "Flutterwave Transactions",
+      url: "/admin/flutterwave-transactions",
+      icon: <Landmark />,
     },
   ],
 }
