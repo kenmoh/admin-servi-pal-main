@@ -16,7 +16,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon } from "lucide-react"
+import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon, ReceiptText } from "lucide-react"
 import Image from "next/image"
 
 const data = {
@@ -126,6 +126,13 @@ const data = {
       icon: <StoreIcon />,
     },
   ],
+  transactions: [
+    {
+      name: "Transactions",
+      url: "/admin/transactions",
+      icon: <ReceiptText />,
+    },
+  ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -151,6 +158,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavDocuments items={data.orders} />
+        <NavDocuments items={data.transactions} label="Transactions" />
         <NavDocuments items={data.disputes} label="Disputes" />
         <NavDocuments items={data.logs} label="Logs" />
         <NavDocuments items={data.contacts} label="Support" />
