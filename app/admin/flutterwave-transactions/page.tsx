@@ -40,7 +40,7 @@ export default function FlutterwaveTransactionsPage() {
     },
   });
 
-  const transactions = data?.data ?? [];
+  const transactions = Array.isArray(data?.data) ? data.data : [];
   const pageInfo = data?.meta?.page_info;
 
   return (
