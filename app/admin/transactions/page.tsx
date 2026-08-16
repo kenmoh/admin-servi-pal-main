@@ -49,6 +49,8 @@ export default function TransactionsPage() {
   const [dateTo, setDateTo] = useState<Date>(yesterday());
   const [appliedFrom, setAppliedFrom] = useState<Date>(yesterday());
   const [appliedTo, setAppliedTo] = useState<Date>(yesterday());
+  const [dateFromOpen, setDateFromOpen] = useState(false);
+  const [dateToOpen, setDateToOpen] = useState(false);
   const [selected, setSelected] = useState<Transaction | null>(null);
 
   const { data, isLoading } = useQuery<TransactionListResponse>({
@@ -120,7 +122,7 @@ export default function TransactionsPage() {
                 </SelectContent>
               </Select>
 
-              <Popover>
+              <Popover open={dateFromOpen} onOpenChange={setDateFromOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -134,12 +136,17 @@ export default function TransactionsPage() {
                   <Calendar
                     mode="single"
                     selected={dateFrom}
-                    onSelect={(day) => day && setDateFrom(day)}
+                    onSelect={(day) => {
+                      if (day) {
+                        setDateFrom(day);
+                        setDateFromOpen(false);
+                      }
+                    }}
                   />
                 </PopoverContent>
               </Popover>
 
-              <Popover>
+              <Popover open={dateToOpen} onOpenChange={setDateToOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -153,7 +160,12 @@ export default function TransactionsPage() {
                   <Calendar
                     mode="single"
                     selected={dateTo}
-                    onSelect={(day) => day && setDateTo(day)}
+                    onSelect={(day) => {
+                      if (day) {
+                        setDateTo(day);
+                        setDateToOpen(false);
+                      }
+                    }}
                   />
                 </PopoverContent>
               </Popover>

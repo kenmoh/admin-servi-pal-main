@@ -50,6 +50,8 @@ export default function FlutterwaveTransactionsPage() {
   const [dateTo, setDateTo] = useState<Date>(yesterday());
   const [appliedFrom, setAppliedFrom] = useState<Date>(yesterday());
   const [appliedTo, setAppliedTo] = useState<Date>(yesterday());
+  const [dateFromOpen, setDateFromOpen] = useState(false);
+  const [dateToOpen, setDateToOpen] = useState(false);
   const [selected, setSelected] = useState<FlutterwaveTransactionListItem | null>(null);
 
   const { data, isLoading } = useQuery<FlutterwaveTransactionListResponse>({
@@ -121,7 +123,7 @@ export default function FlutterwaveTransactionsPage() {
                 </SelectContent>
               </Select>
 
-              <Popover>
+              <Popover open={dateFromOpen} onOpenChange={setDateFromOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -135,12 +137,17 @@ export default function FlutterwaveTransactionsPage() {
                   <Calendar
                     mode="single"
                     selected={dateFrom}
-                    onSelect={(day) => day && setDateFrom(day)}
+                    onSelect={(day) => {
+                      if (day) {
+                        setDateFrom(day);
+                        setDateFromOpen(false);
+                      }
+                    }}
                   />
                 </PopoverContent>
               </Popover>
 
-              <Popover>
+              <Popover open={dateToOpen} onOpenChange={setDateToOpen}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -154,7 +161,12 @@ export default function FlutterwaveTransactionsPage() {
                   <Calendar
                     mode="single"
                     selected={dateTo}
-                    onSelect={(day) => day && setDateTo(day)}
+                    onSelect={(day) => {
+                      if (day) {
+                        setDateTo(day);
+                        setDateToOpen(false);
+                      }
+                    }}
                   />
                 </PopoverContent>
               </Popover>
