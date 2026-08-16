@@ -40,13 +40,19 @@ function yesterday(): Date {
   return d;
 }
 
+function today(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
 export default function TransactionsPage() {
   const [page, setPage] = useState(1);
   const [paymentStatus, setPaymentStatus] = useState("");
   const [dateFrom, setDateFrom] = useState<Date>(yesterday());
-  const [dateTo, setDateTo] = useState<Date>(yesterday());
+  const [dateTo, setDateTo] = useState<Date>(today());
   const [appliedFrom, setAppliedFrom] = useState<Date>(yesterday());
-  const [appliedTo, setAppliedTo] = useState<Date>(yesterday());
+  const [appliedTo, setAppliedTo] = useState<Date>(today());
   const [dateFromOpen, setDateFromOpen] = useState(false);
   const [dateToOpen, setDateToOpen] = useState(false);
   const [selected, setSelected] = useState<Transaction | null>(null);
@@ -76,9 +82,9 @@ export default function TransactionsPage() {
   function clearAll() {
     setPaymentStatus("");
     setDateFrom(yesterday());
-    setDateTo(yesterday());
+    setDateTo(today());
     setAppliedFrom(yesterday());
-    setAppliedTo(yesterday());
+    setAppliedTo(today());
     setPage(1);
   }
 

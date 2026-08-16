@@ -41,13 +41,19 @@ function yesterday(): Date {
   return d;
 }
 
+function today(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
 export default function FlutterwaveTransactionsPage() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("");
   const [dateFrom, setDateFrom] = useState<Date>(yesterday());
-  const [dateTo, setDateTo] = useState<Date>(yesterday());
+  const [dateTo, setDateTo] = useState<Date>(today());
   const [appliedFrom, setAppliedFrom] = useState<Date>(yesterday());
-  const [appliedTo, setAppliedTo] = useState<Date>(yesterday());
+  const [appliedTo, setAppliedTo] = useState<Date>(today());
   const [dateFromOpen, setDateFromOpen] = useState(false);
   const [dateToOpen, setDateToOpen] = useState(false);
   const [selected, setSelected] = useState<FlutterwaveTransactionListItem | null>(null);
@@ -77,9 +83,9 @@ export default function FlutterwaveTransactionsPage() {
   function clearAll() {
     setStatus("");
     setDateFrom(yesterday());
-    setDateTo(yesterday());
+    setDateTo(today());
     setAppliedFrom(yesterday());
-    setAppliedTo(yesterday());
+    setAppliedTo(today());
     setPage(1);
   }
 
