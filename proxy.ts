@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server'
 
 const ALLOWED_USER_TYPES = ['MODERATOR', 'ADMIN', 'SUPER_ADMIN']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const accessToken = request.cookies.get('access_token')?.value
   const pathname = request.nextUrl.pathname
 
