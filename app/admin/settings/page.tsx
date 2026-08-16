@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
   Card,
   CardContent,
@@ -482,449 +480,439 @@ export default function SettingsPage() {
   };
 
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="Settings" />
+    <>
+      <SiteHeader title="Settings" />
 
-        <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
-          {/* Vertical tab nav */}
-          <aside className="w-48 shrink-0 border-r py-4 flex flex-col gap-1 px-2">
-            {TABS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setActiveTab(id)}
-                className={cn(
-                  "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-left",
-                  activeTab === id
-                    ? "bg-orange-500/15 text-orange-600"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                )}
-              >
-                <Icon className="w-4 h-4 shrink-0" />
-                {label}
-              </button>
-            ))}
-          </aside>
+      <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
+        {/* Vertical tab nav */}
+        <aside className="w-48 shrink-0 border-r py-4 flex flex-col gap-1 px-2">
+          {TABS.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={cn(
+                "flex items-center gap-2.5 px-3 py-2 rounded-md text-sm font-medium transition-colors text-left",
+                activeTab === id
+                  ? "bg-orange-500/15 text-orange-600"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              )}
+            >
+              <Icon className="w-4 h-4 shrink-0" />
+              {label}
+            </button>
+          ))}
+        </aside>
 
-          {/* Tab content */}
-          <div className="flex-1 overflow-y-auto px-6 py-6">
-            <div className="max-w-3xl space-y-6">
-              {activeTab === "general" && (
-                <>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Account Information</CardTitle>
-                      <CardDescription>
-                        Update your account details
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            Full Name
-                          </label>
-                          <Input defaultValue={currentUser?.name ?? ""} />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Email</label>
-                          <Input
-                            type="email"
-                            defaultValue={currentUser?.email ?? ""}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Phone</label>
-                          <Input defaultValue={currentUser?.phone ?? ""} />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">Role</label>
-                          <Input defaultValue={roleLabel[currentUser?.role ?? ""] ?? currentUser?.role ?? ""} disabled />
-                        </div>
-                      </div>
-                      <Button>Save Changes</Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Business Information</CardTitle>
-                      <CardDescription>
-                        Configure your platform details
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
+        {/* Tab content */}
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="max-w-3xl space-y-6">
+            {activeTab === "general" && (
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Account Information</CardTitle>
+                    <CardDescription>
+                      Update your account details
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
-                          Platform Name
+                          Full Name
                         </label>
-                        <Input defaultValue="ServiPal" />
+                        <Input defaultValue={currentUser?.name ?? ""} />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                          Support Email
-                        </label>
+                        <label className="text-sm font-medium">Email</label>
                         <Input
                           type="email"
-                          defaultValue="support@servipal.com"
+                          defaultValue={currentUser?.email ?? ""}
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                          Support Phone
-                        </label>
-                        <Input defaultValue="+234-800-0000" />
+                        <label className="text-sm font-medium">Phone</label>
+                        <Input defaultValue={currentUser?.phone ?? ""} />
                       </div>
-                      <Button>Save Changes</Button>
-                    </CardContent>
-                  </Card>
-                </>
-              )}
-
-              {activeTab === "notifications" && (
-                <>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Bell className="w-5 h-5" /> Notification Preferences
-                      </CardTitle>
-                      <CardDescription>
-                        Manage how you receive notifications
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {[
-                        {
-                          label: "Email Notifications",
-                          desc: "Receive notifications via email",
-                          value: emailNotifications,
-                          handler: setEmailNotifications,
-                        },
-                        {
-                          label: "Push Notifications",
-                          desc: "Receive browser push notifications",
-                          value: pushNotifications,
-                          handler: setPushNotifications,
-                        },
-                        {
-                          label: "Order Alerts",
-                          desc: "Get notified on new orders",
-                          value: orderAlerts,
-                          handler: setOrderAlerts,
-                        },
-                        {
-                          label: "Complaint Notifications",
-                          desc: "Get notified on new complaints",
-                          value: complaintNotifications,
-                          handler: setComplaintNotifications,
-                        },
-                      ].map(({ label, desc, value, handler }, i, arr) => (
-                        <React.Fragment key={label}>
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="font-medium">{label}</p>
-                              <p className="text-sm text-muted-foreground">
-                                {desc}
-                              </p>
-                            </div>
-                            <Switch checked={value} onCheckedChange={handler} />
-                          </div>
-                          {i < arr.length - 1 && <Separator />}
-                        </React.Fragment>
-                      ))}
-                      <Button className="w-full mt-2">Save Preferences</Button>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Notification Schedule</CardTitle>
-                      <CardDescription>
-                        Set quiet hours for notifications
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            Quiet Hours Start
-                          </label>
-                          <Input type="time" defaultValue="22:00" />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-sm font-medium">
-                            Quiet Hours End
-                          </label>
-                          <Input type="time" defaultValue="08:00" />
-                        </div>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Role</label>
+                        <Input defaultValue={roleLabel[currentUser?.role ?? ""] ?? currentUser?.role ?? ""} disabled />
                       </div>
-                      <Button>Save Schedule</Button>
-                    </CardContent>
-                  </Card>
-                </>
-              )}
+                    </div>
+                    <Button>Save Changes</Button>
+                  </CardContent>
+                </Card>
 
-              {activeTab === "charges" && <ChargesTab />}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Business Information</CardTitle>
+                    <CardDescription>
+                      Configure your platform details
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Platform Name
+                      </label>
+                      <Input defaultValue="ServiPal" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Support Email
+                      </label>
+                      <Input
+                        type="email"
+                        defaultValue="support@servipal.com"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Support Phone
+                      </label>
+                      <Input defaultValue="+234-800-0000" />
+                    </div>
+                    <Button>Save Changes</Button>
+                  </CardContent>
+                </Card>
+              </>
+            )}
 
-              {activeTab === "appearance" && (
+            {activeTab === "notifications" && (
+              <>
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
-                      <Palette className="w-5 h-5" /> Theme Settings
+                      <Bell className="w-5 h-5" /> Notification Preferences
                     </CardTitle>
                     <CardDescription>
-                      Customize the appearance of your dashboard
+                      Manage how you receive notifications
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-6">
-                    <div>
-                      <p className="font-medium mb-3">Color Scheme</p>
-                      <div className="grid grid-cols-3 gap-4">
-                        {[
-                          {
-                            label: "Light",
-                            bg: "bg-white dark:bg-slate-950",
-                            dot: "bg-gray-900",
-                          },
-                          {
-                            label: "Dark",
-                            bg: "bg-slate-950",
-                            dot: "bg-white",
-                            textClass: "text-white",
-                            active: true,
-                          },
-                          { label: "Auto", bg: "", dot: null },
-                        ].map(({ label, bg, dot, textClass, active }) => (
-                          <button
-                            key={label}
-                            className={`h-24 rounded-lg border-2 ${active ? "border-orange-500" : "border-border hover:border-orange-500"} ${bg} flex flex-col items-center justify-center gap-2 transition-colors`}
-                          >
-                            {dot ? (
-                              <div className={`w-8 h-8 rounded-full ${dot}`} />
-                            ) : (
-                              <div className="flex gap-2">
-                                <div className="w-4 h-4 rounded-full bg-gray-900" />
-                                <div className="w-4 h-4 rounded-full bg-white border border-gray-900" />
-                              </div>
-                            )}
-                            <span
-                              className={`text-xs font-medium ${textClass ?? ""}`}
-                            >
-                              {label}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <Separator />
-                    <div>
-                      <p className="font-medium mb-3">Accent Color</p>
-                      <div className="flex gap-3">
-                        {[
-                          { color: "bg-orange-500", active: true },
-                          { color: "bg-blue-500" },
-                          { color: "bg-green-500" },
-                          { color: "bg-purple-500" },
-                          { color: "bg-red-500" },
-                        ].map(({ color, active }, i) => (
-                          <button
-                            key={i}
-                            className={`w-10 h-10 rounded-lg ${color} border-2 ${active ? "border-white scale-110" : "border-transparent"} transition-transform`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                    <Button className="w-full">Save Preferences</Button>
+                  <CardContent className="space-y-4">
+                    {[
+                      {
+                        label: "Email Notifications",
+                        desc: "Receive notifications via email",
+                        value: emailNotifications,
+                        handler: setEmailNotifications,
+                      },
+                      {
+                        label: "Push Notifications",
+                        desc: "Receive browser push notifications",
+                        value: pushNotifications,
+                        handler: setPushNotifications,
+                      },
+                      {
+                        label: "Order Alerts",
+                        desc: "Get notified on new orders",
+                        value: orderAlerts,
+                        handler: setOrderAlerts,
+                      },
+                      {
+                        label: "Complaint Notifications",
+                        desc: "Get notified on new complaints",
+                        value: complaintNotifications,
+                        handler: setComplaintNotifications,
+                      },
+                    ].map(({ label, desc, value, handler }, i, arr) => (
+                      <React.Fragment key={label}>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="font-medium">{label}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {desc}
+                            </p>
+                          </div>
+                          <Switch checked={value} onCheckedChange={handler} />
+                        </div>
+                        {i < arr.length - 1 && <Separator />}
+                      </React.Fragment>
+                    ))}
+                    <Button className="w-full mt-2">Save Preferences</Button>
                   </CardContent>
                 </Card>
-              )}
 
-              {activeTab === "security" && (
-                <>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Lock className="w-5 h-5" /> Password & Security
-                      </CardTitle>
-                      <CardDescription>
-                        Manage your account security
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {passwordError && (
-                        <p className="text-sm text-red-500 bg-red-500/10 px-3 py-2 rounded">
-                          {passwordError}
-                        </p>
-                      )}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Notification Schedule</CardTitle>
+                    <CardDescription>
+                      Set quiet hours for notifications
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
-                          Current Password
+                          Quiet Hours Start
                         </label>
-                        <div className="relative">
-                          <Input
-                            type={showCurrentPassword ? "text" : "password"}
-                            placeholder="Enter current password"
-                            autoComplete="current-password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowCurrentPassword((v) => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                          >
-                            {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
-                        </div>
+                        <Input type="time" defaultValue="22:00" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-medium">
-                          New Password
+                          Quiet Hours End
                         </label>
-                        <div className="relative">
-                          <Input
-                            type={showNewPassword ? "text" : "password"}
-                            placeholder="Enter new password"
-                            autoComplete="new-password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowNewPassword((v) => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                          >
-                            {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                          </button>
-                        </div>
+                        <Input type="time" defaultValue="08:00" />
                       </div>
-                      <div className="space-y-2">
-                        <label className="text-sm font-medium">
-                          Confirm Password
-                        </label>
-                        <Input
-                          type="password"
-                          placeholder="Confirm new password"
-                          autoComplete="new-password"
-                          value={confirmPassword}
-                          onChange={(e) => setConfirmPassword(e.target.value)}
+                    </div>
+                    <Button>Save Schedule</Button>
+                  </CardContent>
+                </Card>
+              </>
+            )}
+
+            {activeTab === "charges" && <ChargesTab />}
+
+            {activeTab === "appearance" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Palette className="w-5 h-5" /> Theme Settings
+                  </CardTitle>
+                  <CardDescription>
+                    Customize the appearance of your dashboard
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <p className="font-medium mb-3">Color Scheme</p>
+                    <div className="grid grid-cols-3 gap-4">
+                      {[
+                        {
+                          label: "Light",
+                          bg: "bg-white dark:bg-slate-950",
+                          dot: "bg-gray-900",
+                        },
+                        {
+                          label: "Dark",
+                          bg: "bg-slate-950",
+                          dot: "bg-white",
+                          textClass: "text-white",
+                          active: true,
+                        },
+                        { label: "Auto", bg: "", dot: null },
+                      ].map(({ label, bg, dot, textClass, active }) => (
+                        <button
+                          key={label}
+                          className={`h-24 rounded-lg border-2 ${active ? "border-orange-500" : "border-border hover:border-orange-500"} ${bg} flex flex-col items-center justify-center gap-2 transition-colors`}
+                        >
+                          {dot ? (
+                            <div className={`w-8 h-8 rounded-full ${dot}`} />
+                          ) : (
+                            <div className="flex gap-2">
+                              <div className="w-4 h-4 rounded-full bg-gray-900" />
+                              <div className="w-4 h-4 rounded-full bg-white border border-gray-900" />
+                            </div>
+                          )}
+                          <span
+                            className={`text-xs font-medium ${textClass ?? ""}`}
+                          >
+                            {label}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <Separator />
+                  <div>
+                    <p className="font-medium mb-3">Accent Color</p>
+                    <div className="flex gap-3">
+                      {[
+                        { color: "bg-orange-500", active: true },
+                        { color: "bg-blue-500" },
+                        { color: "bg-green-500" },
+                        { color: "bg-purple-500" },
+                        { color: "bg-red-500" },
+                      ].map(({ color, active }, i) => (
+                        <button
+                          key={i}
+                          className={`w-10 h-10 rounded-lg ${color} border-2 ${active ? "border-white scale-110" : "border-transparent"} transition-transform`}
                         />
-                      </div>
-                      <Button
-                        onClick={handlePasswordChange}
-                        disabled={changePasswordMutation.isPending || !currentPassword || !newPassword || !confirmPassword}
-                      >
-                        {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
-                      </Button>
-                    </CardContent>
-                  </Card>
+                      ))}
+                    </div>
+                  </div>
+                  <Button className="w-full">Save Preferences</Button>
+                </CardContent>
+              </Card>
+            )}
 
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Two-Factor Authentication</CardTitle>
-                      <CardDescription>
-                        Add an extra layer of security to your account
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-sm text-muted-foreground">
-                        Two-factor authentication is currently disabled. Enable
-                        it to add extra security.
+            {activeTab === "security" && (
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Lock className="w-5 h-5" /> Password & Security
+                    </CardTitle>
+                    <CardDescription>
+                      Manage your account security
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {passwordError && (
+                      <p className="text-sm text-red-500 bg-red-500/10 px-3 py-2 rounded">
+                        {passwordError}
                       </p>
-                      <Button>Enable 2FA</Button>
-                    </CardContent>
-                  </Card>
+                    )}
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Current Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showCurrentPassword ? "text" : "password"}
+                          placeholder="Enter current password"
+                          autoComplete="current-password"
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        New Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type={showNewPassword ? "text" : "password"}
+                          placeholder="Enter new password"
+                          autoComplete="new-password"
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword((v) => !v)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        >
+                          {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">
+                        Confirm Password
+                      </label>
+                      <Input
+                        type="password"
+                        placeholder="Confirm new password"
+                        autoComplete="new-password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                      />
+                    </div>
+                    <Button
+                      onClick={handlePasswordChange}
+                      disabled={changePasswordMutation.isPending || !currentPassword || !newPassword || !confirmPassword}
+                    >
+                      {changePasswordMutation.isPending ? "Updating..." : "Update Password"}
+                    </Button>
+                  </CardContent>
+                </Card>
 
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Active Sessions</CardTitle>
-                      <CardDescription>
-                        Manage your active login sessions
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {sessionsLoading ? (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Two-Factor Authentication</CardTitle>
+                    <CardDescription>
+                      Add an extra layer of security to your account
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <p className="text-sm text-muted-foreground">
+                      Two-factor authentication is currently disabled. Enable
+                      it to add extra security.
+                    </p>
+                    <Button>Enable 2FA</Button>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Active Sessions</CardTitle>
+                    <CardDescription>
+                      Manage your active login sessions
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {sessionsLoading ? (
+                      <div className="space-y-3">
+                        {Array.from({ length: 2 }).map((_, i) => (
+                          <Skeleton key={i} className="h-16 w-full" />
+                        ))}
+                      </div>
+                    ) : sessionsData?.sessions && sessionsData.sessions.length > 0 ? (
+                      <>
                         <div className="space-y-3">
-                          {Array.from({ length: 2 }).map((_, i) => (
-                            <Skeleton key={i} className="h-16 w-full" />
-                          ))}
-                        </div>
-                      ) : sessionsData?.sessions && sessionsData.sessions.length > 0 ? (
-                        <>
-                          <div className="space-y-3">
-                            {sessionsData.sessions.map((session) => {
-                              const { browser, os, device } = parseUserAgent(session.user_agent);
-                              const isCurrent = session.id === sessionsData.current_session_id;
-                              const deviceIcon = device === "Mobile" || device === "Tablet" ? Smartphone : device === "Desktop" ? Monitor : Globe;
-                              const DeviceIcon = deviceIcon;
+                          {sessionsData.sessions.map((session) => {
+                            const { browser, os, device } = parseUserAgent(session.user_agent);
+                            const isCurrent = session.id === sessionsData.current_session_id;
+                            const deviceIcon = device === "Mobile" || device === "Tablet" ? Smartphone : device === "Desktop" ? Monitor : Globe;
+                            const DeviceIcon = deviceIcon;
 
-                              return (
-                                <div
-                                  key={session.id}
-                                  className={`flex items-center justify-between p-3 border rounded-lg ${isCurrent ? "border-green-500/50 bg-green-500/5" : ""}`}
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className={`p-2 rounded-lg ${isCurrent ? "bg-green-500/10" : "bg-muted"}`}>
-                                      <DeviceIcon className={`w-4 h-4 ${isCurrent ? "text-green-500" : "text-muted-foreground"}`} />
-                                    </div>
-                                    <div>
-                                      <p className="font-medium text-sm">{browser} on {os}</p>
-                                      <p className="text-xs text-muted-foreground">
-                                        {device} • {new Date(session.created_at).toLocaleDateString()}
-                                        {session.ip && ` • ${session.ip}`}
-                                      </p>
-                                    </div>
+                            return (
+                              <div
+                                key={session.id}
+                                className={`flex items-center justify-between p-3 border rounded-lg ${isCurrent ? "border-green-500/50 bg-green-500/5" : ""}`}
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className={`p-2 rounded-lg ${isCurrent ? "bg-green-500/10" : "bg-muted"}`}>
+                                    <DeviceIcon className={`w-4 h-4 ${isCurrent ? "text-green-500" : "text-muted-foreground"}`} />
                                   </div>
-                                  <div className="flex items-center gap-2">
-                                    {isCurrent ? (
-                                      <span className="text-xs font-medium text-green-500">Current</span>
-                                    ) : (
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
-                                        onClick={() => revokeSessionMutation.mutate(session.id)}
-                                        disabled={revokeSessionMutation.isPending}
-                                      >
-                                        <LogOut className="w-4 h-4 mr-1" />
-                                        Revoke
-                                      </Button>
-                                    )}
+                                  <div>
+                                    <p className="font-medium text-sm">{browser} on {os}</p>
+                                    <p className="text-xs text-muted-foreground">
+                                      {device} • {new Date(session.created_at).toLocaleDateString()}
+                                      {session.ip && ` • ${session.ip}`}
+                                    </p>
                                   </div>
                                 </div>
-                              );
-                            })}
-                          </div>
-                          {sessionsData.sessions.length > 1 && (
-                            <Button
-                              variant="outline"
-                              className="w-full text-red-500 hover:text-red-600 hover:bg-red-500/10 border-red-500/50"
-                              onClick={() => revokeAllSessionsMutation.mutate()}
-                              disabled={revokeAllSessionsMutation.isPending}
-                            >
-                              {revokeAllSessionsMutation.isPending ? "Signing out..." : "Sign Out All Other Sessions"}
-                            </Button>
-                          )}
-                        </>
-                      ) : (
-                        <p className="text-sm text-muted-foreground text-center py-4">No active sessions found</p>
-                      )}
-                    </CardContent>
-                  </Card>
-                </>
-              )}
-            </div>
+                                <div className="flex items-center gap-2">
+                                  {isCurrent ? (
+                                    <span className="text-xs font-medium text-green-500">Current</span>
+                                  ) : (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                                      onClick={() => revokeSessionMutation.mutate(session.id)}
+                                      disabled={revokeSessionMutation.isPending}
+                                    >
+                                      <LogOut className="w-4 h-4 mr-1" />
+                                      Revoke
+                                    </Button>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        {sessionsData.sessions.length > 1 && (
+                          <Button
+                            variant="outline"
+                            className="w-full text-red-500 hover:text-red-600 hover:bg-red-500/10 border-red-500/50"
+                            onClick={() => revokeAllSessionsMutation.mutate()}
+                            disabled={revokeAllSessionsMutation.isPending}
+                          >
+                            {revokeAllSessionsMutation.isPending ? "Signing out..." : "Sign Out All Other Sessions"}
+                          </Button>
+                        )}
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-4">No active sessions found</p>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
+    </>
   );
 }

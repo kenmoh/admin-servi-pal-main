@@ -2,9 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -33,59 +31,51 @@ export default function UserTransactionsPage() {
   const transactions = data?.data ?? [];
 
   return (
-    <SidebarProvider
-      style={{
-        "--sidebar-width": "calc(var(--spacing) * 72)",
-        "--header-height": "calc(var(--spacing) * 12)",
-      } as React.CSSProperties}
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="User Transactions" />
+    <>
+      <SiteHeader title="User Transactions" />
 
-        <div className="space-y-6 px-6 py-4">
-          <Button variant="ghost" size="sm" onClick={() => router.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" /> Back
-          </Button>
+      <div className="space-y-6 px-6 py-4">
+        <Button variant="ghost" size="sm" onClick={() => router.back()}>
+          <ArrowLeft className="w-4 h-4 mr-2" /> Back
+        </Button>
 
-          {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Loading transactions...
-            </div>
-          ) : (
-            <>
-              <DataTable columns={transactionColumns} data={transactions} />
+        {isLoading ? (
+          <div className="text-center py-8 text-muted-foreground">
+            Loading transactions...
+          </div>
+        ) : (
+          <>
+            <DataTable columns={transactionColumns} data={transactions} />
 
-              {meta && (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Page {meta.page} of {meta.total_pages} &mdash;{" "}
-                    {meta.total} total
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage((p) => p - 1)}
-                      disabled={page === 1}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage((p) => p + 1)}
-                      disabled={page === meta.total_pages}
-                    >
-                      Next
-                    </Button>
-                  </div>
+            {meta && (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Page {meta.page} of {meta.total_pages} &mdash;{" "}
+                  {meta.total} total
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => p - 1)}
+                    disabled={page === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={page === meta.total_pages}
+                  >
+                    Next
+                  </Button>
                 </div>
-              )}
-            </>
-          )}
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 }

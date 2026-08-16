@@ -1,8 +1,6 @@
 'use client'
 
-import { AppSidebar } from '@/components/app-sidebar'
 import { SiteHeader } from '@/components/site-header'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -276,213 +274,205 @@ export default function DisputesPage() {
   }
 
   return (
-    <SidebarProvider
-      style={{
-        '--sidebar-width': 'calc(var(--spacing) * 72)',
-        '--header-height': 'calc(var(--spacing) * 12)',
-      } as React.CSSProperties}
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="Disputes" />
+    <>
+      <SiteHeader title="Disputes" />
 
-        <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
-          {/* Left: Dispute List */}
-          <div className="w-80 shrink-0 flex flex-col border-r">
-            <div className="p-3 space-y-2 border-b">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search disputes..."
-                  className="pl-9 h-8 text-sm"
-                  value={search}
-                  onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-                />
-              </div>
-              <Select value={statusFilter || 'ALL'} onValueChange={(v) => { setStatusFilter(v === 'ALL' ? '' : v); setPage(1) }}>
-                <SelectTrigger className="h-8 text-sm">
-                  <SelectValue placeholder="All statuses" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All</SelectItem>
-                  <SelectItem value="OPEN">Open</SelectItem>
-                  <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
-                  <SelectItem value="ESCALATED">Escalated</SelectItem>
-                  <SelectItem value="RESOLVED">Resolved</SelectItem>
-                  <SelectItem value="CLOSED">Closed</SelectItem>
-                  <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
+      <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
+        {/* Left: Dispute List */}
+        <div className="w-80 shrink-0 flex flex-col border-r">
+          <div className="p-3 space-y-2 border-b">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                placeholder="Search disputes..."
+                className="pl-9 h-8 text-sm"
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+              />
             </div>
-
-            <div className="flex-1 overflow-y-auto">
-              {listLoading ? (
-                <div className="p-4 space-y-3">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="space-y-1">
-                      <Skeleton className="h-4 w-3/4" />
-                      <Skeleton className="h-3 w-full" />
-                    </div>
-                  ))}
-                </div>
-              ) : disputes.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-sm gap-2">
-                  <AlertTriangle className="w-5 h-5" />
-                  No disputes found
-                </div>
-              ) : (
-                disputes.map((d) => (
-                  <DisputeListItemRow
-                    key={d.id}
-                    dispute={d}
-                    selected={selectedId === d.id}
-                    onClick={() => setSelectedId(d.id)}
-                    unreadCount={unreadCounts[d.id] ?? d.unread_count}
-                  />
-                ))
-              )}
-            </div>
-
-            {data?.meta && (
-              <div className="flex items-center justify-between px-3 py-2 border-t text-xs text-muted-foreground">
-                <span>{data.meta.total} total</span>
-                <div className="flex gap-1">
-                  <Button variant="outline" size="sm" className="h-6 px-2 text-xs" onClick={() => setPage(p => p - 1)} disabled={page === 1}>Prev</Button>
-                  <Button variant="outline" size="sm" className="h-6 px-2 text-xs" onClick={() => setPage(p => p + 1)} disabled={page === data.meta.total_pages}>Next</Button>
-                </div>
-              </div>
-            )}
+            <Select value={statusFilter || 'ALL'} onValueChange={(v) => { setStatusFilter(v === 'ALL' ? '' : v); setPage(1) }}>
+              <SelectTrigger className="h-8 text-sm">
+                <SelectValue placeholder="All statuses" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All</SelectItem>
+                <SelectItem value="OPEN">Open</SelectItem>
+                <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
+                <SelectItem value="ESCALATED">Escalated</SelectItem>
+                <SelectItem value="RESOLVED">Resolved</SelectItem>
+                <SelectItem value="CLOSED">Closed</SelectItem>
+                <SelectItem value="CANCELLED">Cancelled</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          {/* Right: Chat UI */}
-          <div className="flex-1 flex flex-col min-w-0">
-            {!selectedId ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-3">
-                <MessageSquare className="w-10 h-10 opacity-30" />
-                <p className="text-sm">Select a dispute to view the conversation</p>
+          <div className="flex-1 overflow-y-auto">
+            {listLoading ? (
+              <div className="p-4 space-y-3">
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="space-y-1">
+                    <Skeleton className="h-4 w-3/4" />
+                    <Skeleton className="h-3 w-full" />
+                  </div>
+                ))}
+              </div>
+            ) : disputes.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-40 text-muted-foreground text-sm gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                No disputes found
               </div>
             ) : (
-              <>
-                {/* Chat Header */}
-                {detailLoading ? (
-                  <div className="px-4 py-3 border-b flex items-center gap-3">
-                    <Skeleton className="h-5 w-40" />
-                    <Skeleton className="h-5 w-20 ml-auto" />
-                  </div>
-                ) : detail && (
-                  <div className="px-4 py-3 border-b flex items-center gap-3 shrink-0">
-                    <div>
-                      <p className="font-semibold text-sm">
-                        {detail.initiator?.full_name || 'Unknown'} vs {detail.respondent?.full_name || 'Unknown'}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {detail.order_type} · #{detail.order_id?.slice(0, 8)}
-                      </p>
-                    </div>
-                    <div className="ml-auto flex items-center gap-2">
-                      <Select
-                        value={(detailStatus ?? detail.status) as string}
-                        onValueChange={(value) => handleStatusChange(value as DisputeStatus)}
-                        disabled={statusUpdating}
-                      >
-                        <SelectTrigger className="h-8 w-32 text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="OPEN">Open</SelectItem>
-                          <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
-                          <SelectItem value="ESCALATED">Escalated</SelectItem>
-                          <SelectItem value="RESOLVED">Resolved</SelectItem>
-                          <SelectItem value="CLOSED">Closed</SelectItem>
-                          <SelectItem value="CANCELLED">Cancelled</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Badge variant="secondary" className={cn('text-xs', statusColor(detailStatus ?? detail.status))}>
-                        {formatStatusLabel(detailStatus ?? detail.status)}
-                      </Badge>
-                    </div>
-                  </div>
-                )}
-
-                {/* Reason banner */}
-                {detail?.reason && (
-                  <div className="px-4 py-2 bg-yellow-500/10 border-b text-xs text-yellow-700 dark:text-yellow-400 flex items-start gap-2">
-                    <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
-                    <span><span className="font-medium">Reason:</span> {detail.reason}</span>
-                  </div>
-                )}
-
-                {/* Messages */}
-                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-                  {messagesLoading ? (
-                    <div className="space-y-4">
-                      {Array.from({ length: 4 }).map((_, i) => (
-                        <div key={i} className={cn('flex gap-2', i % 2 === 0 ? '' : 'flex-row-reverse')}>
-                          <Skeleton className="w-8 h-8 rounded-full shrink-0" />
-                          <Skeleton className="h-10 w-48 rounded-2xl" />
-                        </div>
-                      ))}
-                    </div>
-                  ) : allMessages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm gap-2">
-                      <MessageSquare className="w-6 h-6 opacity-30" />
-                      No messages yet
-                    </div>
-                  ) : (
-                    allMessages.map((msg) => {
-                      const isAdmin = msg.sender?.user_type === 'ADMIN' || msg.sender?.user_type === 'SUPER_ADMIN'
-                      return (
-                        <div key={msg.id} className={cn('flex gap-2 items-end', isAdmin && 'flex-row-reverse')}>
-                          <Avatar className="w-7 h-7 shrink-0">
-                            <AvatarImage src={msg.sender?.profile_image_url ?? undefined} />
-                            <AvatarFallback className="text-xs">
-                              {msg.sender?.full_name?.[0]?.toUpperCase() || '?'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className={cn('max-w-[70%] space-y-1', isAdmin && 'items-end flex flex-col')}>
-                            <p className="text-xs text-muted-foreground px-1">{msg.sender?.full_name || 'Unknown'}</p>
-                            <div className={cn(
-                              'px-3 py-2 rounded-2xl text-sm',
-                              isAdmin
-                                ? 'bg-orange-500 text-white rounded-br-sm'
-                                : 'bg-muted rounded-bl-sm'
-                            )}>
-                              {msg.message_text}
-                            </div>
-                            <p className="text-xs text-muted-foreground px-1">
-                              {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            </p>
-                          </div>
-                        </div>
-                      )
-                    })
-                  )}
-                  <div ref={bottomRef} />
-                </div>
-
-                {/* Message Input */}
-                <div className="px-4 py-3 border-t flex gap-2 shrink-0">
-                  <Input
-                    placeholder="Type a message..."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
-                    disabled={sendMutation.isPending}
-                  />
-                  <Button
-                    size="icon"
-                    onClick={handleSend}
-                    disabled={!message.trim() || sendMutation.isPending}
-                    className="bg-orange-500 hover:bg-orange-600 text-white shrink-0"
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
-                </div>
-              </>
+              disputes.map((d) => (
+                <DisputeListItemRow
+                  key={d.id}
+                  dispute={d}
+                  selected={selectedId === d.id}
+                  onClick={() => setSelectedId(d.id)}
+                  unreadCount={unreadCounts[d.id] ?? d.unread_count}
+                />
+              ))
             )}
           </div>
+
+          {data?.meta && (
+            <div className="flex items-center justify-between px-3 py-2 border-t text-xs text-muted-foreground">
+              <span>{data.meta.total} total</span>
+              <div className="flex gap-1">
+                <Button variant="outline" size="sm" className="h-6 px-2 text-xs" onClick={() => setPage(p => p - 1)} disabled={page === 1}>Prev</Button>
+                <Button variant="outline" size="sm" className="h-6 px-2 text-xs" onClick={() => setPage(p => p + 1)} disabled={page === data.meta.total_pages}>Next</Button>
+              </div>
+            </div>
+          )}
         </div>
-      </SidebarInset>
+
+        {/* Right: Chat UI */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {!selectedId ? (
+            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground gap-3">
+              <MessageSquare className="w-10 h-10 opacity-30" />
+              <p className="text-sm">Select a dispute to view the conversation</p>
+            </div>
+          ) : (
+            <>
+              {/* Chat Header */}
+              {detailLoading ? (
+                <div className="px-4 py-3 border-b flex items-center gap-3">
+                  <Skeleton className="h-5 w-40" />
+                  <Skeleton className="h-5 w-20 ml-auto" />
+                </div>
+              ) : detail && (
+                <div className="px-4 py-3 border-b flex items-center gap-3 shrink-0">
+                  <div>
+                    <p className="font-semibold text-sm">
+                      {detail.initiator?.full_name || 'Unknown'} vs {detail.respondent?.full_name || 'Unknown'}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {detail.order_type} · #{detail.order_id?.slice(0, 8)}
+                    </p>
+                  </div>
+                  <div className="ml-auto flex items-center gap-2">
+                    <Select
+                      value={(detailStatus ?? detail.status) as string}
+                      onValueChange={(value) => handleStatusChange(value as DisputeStatus)}
+                      disabled={statusUpdating}
+                    >
+                      <SelectTrigger className="h-8 w-32 text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="OPEN">Open</SelectItem>
+                        <SelectItem value="UNDER_REVIEW">Under Review</SelectItem>
+                        <SelectItem value="ESCALATED">Escalated</SelectItem>
+                        <SelectItem value="RESOLVED">Resolved</SelectItem>
+                        <SelectItem value="CLOSED">Closed</SelectItem>
+                        <SelectItem value="CANCELLED">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Badge variant="secondary" className={cn('text-xs', statusColor(detailStatus ?? detail.status))}>
+                      {formatStatusLabel(detailStatus ?? detail.status)}
+                    </Badge>
+                  </div>
+                </div>
+              )}
+
+              {/* Reason banner */}
+              {detail?.reason && (
+                <div className="px-4 py-2 bg-yellow-500/10 border-b text-xs text-yellow-700 dark:text-yellow-400 flex items-start gap-2">
+                  <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                  <span><span className="font-medium">Reason:</span> {detail.reason}</span>
+                </div>
+              )}
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+                {messagesLoading ? (
+                  <div className="space-y-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className={cn('flex gap-2', i % 2 === 0 ? '' : 'flex-row-reverse')}>
+                        <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                        <Skeleton className="h-10 w-48 rounded-2xl" />
+                      </div>
+                    ))}
+                  </div>
+                ) : allMessages.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-muted-foreground text-sm gap-2">
+                    <MessageSquare className="w-6 h-6 opacity-30" />
+                    No messages yet
+                  </div>
+                ) : (
+                  allMessages.map((msg) => {
+                    const isAdmin = msg.sender?.user_type === 'ADMIN' || msg.sender?.user_type === 'SUPER_ADMIN'
+                    return (
+                      <div key={msg.id} className={cn('flex gap-2 items-end', isAdmin && 'flex-row-reverse')}>
+                        <Avatar className="w-7 h-7 shrink-0">
+                          <AvatarImage src={msg.sender?.profile_image_url ?? undefined} />
+                          <AvatarFallback className="text-xs">
+                            {msg.sender?.full_name?.[0]?.toUpperCase() || '?'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className={cn('max-w-[70%] space-y-1', isAdmin && 'items-end flex flex-col')}>
+                          <p className="text-xs text-muted-foreground px-1">{msg.sender?.full_name || 'Unknown'}</p>
+                          <div className={cn(
+                            'px-3 py-2 rounded-2xl text-sm',
+                            isAdmin
+                              ? 'bg-orange-500 text-white rounded-br-sm'
+                              : 'bg-muted rounded-bl-sm'
+                          )}>
+                            {msg.message_text}
+                          </div>
+                          <p className="text-xs text-muted-foreground px-1">
+                            {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  })
+                )}
+                <div ref={bottomRef} />
+              </div>
+
+              {/* Message Input */}
+              <div className="px-4 py-3 border-t flex gap-2 shrink-0">
+                <Input
+                  placeholder="Type a message..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleSend()}
+                  disabled={sendMutation.isPending}
+                />
+                <Button
+                  size="icon"
+                  onClick={handleSend}
+                  disabled={!message.trim() || sendMutation.isPending}
+                  className="bg-orange-500 hover:bg-orange-600 text-white shrink-0"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
 
       <Dialog open={notesDialogOpen} onOpenChange={setNotesDialogOpen}>
         <DialogContent onInteractOutside={(e) => e.preventDefault()}>
@@ -510,6 +500,6 @@ export default function DisputesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </SidebarProvider>
+    </>
   )
 }

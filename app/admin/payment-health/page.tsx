@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { AppSidebar } from '@/components/app-sidebar'
 import { SiteHeader } from '@/components/site-header'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
@@ -275,235 +273,232 @@ export default function PaymentHealthPage() {
   const dailyRate = metrics?.daily?.success_rate ?? 100
 
   return (
-    <SidebarProvider style={{ '--sidebar-width': 'calc(var(--spacing) * 72)', '--header-height': 'calc(var(--spacing) * 12)' } as React.CSSProperties}>
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="Payment Health" />
+    <>
+      <SiteHeader title="Payment Health" />
 
-        <div className="px-6 py-6 space-y-6">
+      <div className="px-6 py-6 space-y-6">
 
-          {/* Status Banner */}
-          <Card className={cn(
-            'border-2',
-            isHealthy ? 'border-green-500/50 bg-green-500/5' : 'border-red-500/50 bg-red-500/5'
-          )}>
-            <CardContent className="py-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {isHealthy ? (
-                    <CheckCircle className="w-6 h-6 text-green-500" />
-                  ) : (
-                    <AlertTriangle className="w-6 h-6 text-red-500" />
-                  )}
-                  <div>
-                    <p className="font-semibold">
-                      Payment System {isHealthy ? 'Operational' : 'Issues Detected'}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {health?.alerts?.length ?? 0} active alerts
-                    </p>
-                  </div>
+        {/* Status Banner */}
+        <Card className={cn(
+          'border-2',
+          isHealthy ? 'border-green-500/50 bg-green-500/5' : 'border-red-500/50 bg-red-500/5'
+        )}>
+          <CardContent className="py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {isHealthy ? (
+                  <CheckCircle className="w-6 h-6 text-green-500" />
+                ) : (
+                  <AlertTriangle className="w-6 h-6 text-red-500" />
+                )}
+                <div>
+                  <p className="font-semibold">
+                    Payment System {isHealthy ? 'Operational' : 'Issues Detected'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    {health?.alerts?.length ?? 0} active alerts
+                  </p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    queryClient.invalidateQueries({ queryKey: ['payment-health'] })
-                    queryClient.invalidateQueries({ queryKey: ['payment-metrics'] })
-                    queryClient.invalidateQueries({ queryKey: ['payment-reconciliation'] })
-                  }}
-                >
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh
-                </Button>
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  queryClient.invalidateQueries({ queryKey: ['payment-health'] })
+                  queryClient.invalidateQueries({ queryKey: ['payment-metrics'] })
+                  queryClient.invalidateQueries({ queryKey: ['payment-reconciliation'] })
+                }}
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* KPI Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {metricsLoading ? Array.from({ length: 4 }).map((_, i) => <KpiSkeleton key={i} />) : (
+            <>
+              <KpiCard
+                title="Hourly Success Rate"
+                value={`${safeToFixed(hourlyRate, 1)}%`}
+                sub={`${metrics?.hourly?.completed ?? 0} / ${metrics?.hourly?.total ?? 0} completed`}
+                icon={TrendingUp}
+                variant={hourlyRate >= 95 ? 'success' : hourlyRate >= 80 ? 'warning' : 'danger'}
+              />
+              <KpiCard
+                title="Daily Success Rate"
+                value={`${safeToFixed(dailyRate, 1)}%`}
+                sub={`${metrics?.daily?.completed ?? 0} / ${metrics?.daily?.total ?? 0} completed`}
+                icon={BarChart3}
+                variant={dailyRate >= 95 ? 'success' : dailyRate >= 80 ? 'warning' : 'danger'}
+              />
+              <KpiCard
+                title="Pending (Stuck)"
+                value={reconciliation?.pending_count ?? 0}
+                sub="Payments awaiting processing"
+                icon={Clock}
+                variant={(reconciliation?.pending_count ?? 0) > 0 ? 'warning' : 'success'}
+              />
+              <KpiCard
+                title="Failed Jobs"
+                value={reconciliation?.failed_jobs_count ?? 0}
+                sub="Dead letter queue"
+                icon={XCircle}
+                variant={(reconciliation?.failed_jobs_count ?? 0) > 0 ? 'danger' : 'success'}
+              />
+            </>
+          )}
+        </div>
+
+        {/* Alerts Section */}
+        {health && health.alerts && health.alerts.length > 0 && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-orange-500" />
+                Active Alerts ({health.alerts.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {health.alerts.map((alert, i) => (
+                <AlertCard key={i} alert={alert} />
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Circuit Breakers */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Wifi className="w-4 h-4 text-orange-500" />
+                Circuit Breakers
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {metricsLoading ? (
+                <>
+                  <Skeleton className="h-24 w-full" />
+                  <Skeleton className="h-24 w-full" />
+                </>
+              ) : metrics?.circuit_breakers?.api && metrics?.circuit_breakers?.transfer ? (
+                <>
+                  <div className="space-y-2">
+                    <CircuitBreakerCard breaker={metrics.circuit_breakers.api} />
+                    {metrics.circuit_breakers.api.state !== 'CLOSED' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => resetMutation.mutate('api')}
+                        disabled={resetMutation.isPending}
+                      >
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Reset API Breaker
+                      </Button>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <CircuitBreakerCard breaker={metrics.circuit_breakers.transfer} />
+                    {metrics.circuit_breakers.transfer.state !== 'CLOSED' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full"
+                        onClick={() => resetMutation.mutate('transfer')}
+                        disabled={resetMutation.isPending}
+                      >
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Reset Transfer Breaker
+                      </Button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-6">
+                  <Wifi className="w-8 h-8 mx-auto mb-2 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">Unable to load circuit breaker status</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
-          {/* KPI Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {metricsLoading ? Array.from({ length: 4 }).map((_, i) => <KpiSkeleton key={i} />) : (
-              <>
-                <KpiCard
-                  title="Hourly Success Rate"
-                  value={`${safeToFixed(hourlyRate, 1)}%`}
-                  sub={`${metrics?.hourly?.completed ?? 0} / ${metrics?.hourly?.total ?? 0} completed`}
-                  icon={TrendingUp}
-                  variant={hourlyRate >= 95 ? 'success' : hourlyRate >= 80 ? 'warning' : 'danger'}
-                />
-                <KpiCard
-                  title="Daily Success Rate"
-                  value={`${safeToFixed(dailyRate, 1)}%`}
-                  sub={`${metrics?.daily?.completed ?? 0} / ${metrics?.daily?.total ?? 0} completed`}
-                  icon={BarChart3}
-                  variant={dailyRate >= 95 ? 'success' : dailyRate >= 80 ? 'warning' : 'danger'}
-                />
-                <KpiCard
-                  title="Pending (Stuck)"
-                  value={reconciliation?.pending_count ?? 0}
-                  sub="Payments awaiting processing"
-                  icon={Clock}
-                  variant={(reconciliation?.pending_count ?? 0) > 0 ? 'warning' : 'success'}
-                />
-                <KpiCard
-                  title="Failed Jobs"
-                  value={reconciliation?.failed_jobs_count ?? 0}
-                  sub="Dead letter queue"
-                  icon={XCircle}
-                  variant={(reconciliation?.failed_jobs_count ?? 0) > 0 ? 'danger' : 'success'}
-                />
-              </>
-            )}
-          </div>
-
-          {/* Alerts Section */}
-          {health && health.alerts && health.alerts.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-orange-500" />
-                  Active Alerts ({health.alerts.length})
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {health.alerts.map((alert, i) => (
-                  <AlertCard key={i} alert={alert} />
-                ))}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Circuit Breakers */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <Wifi className="w-4 h-4 text-orange-500" />
-                  Circuit Breakers
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {metricsLoading ? (
-                  <>
-                    <Skeleton className="h-24 w-full" />
-                    <Skeleton className="h-24 w-full" />
-                  </>
-                ) : metrics?.circuit_breakers?.api && metrics?.circuit_breakers?.transfer ? (
-                  <>
-                    <div className="space-y-2">
-                      <CircuitBreakerCard breaker={metrics.circuit_breakers.api} />
-                      {metrics.circuit_breakers.api.state !== 'CLOSED' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                          onClick={() => resetMutation.mutate('api')}
-                          disabled={resetMutation.isPending}
-                        >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Reset API Breaker
-                        </Button>
-                      )}
-                    </div>
-                    <div className="space-y-2">
-                      <CircuitBreakerCard breaker={metrics.circuit_breakers.transfer} />
-                      {metrics.circuit_breakers.transfer.state !== 'CLOSED' && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="w-full"
-                          onClick={() => resetMutation.mutate('transfer')}
-                          disabled={resetMutation.isPending}
-                        >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Reset Transfer Breaker
-                        </Button>
-                      )}
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center py-6">
-                    <Wifi className="w-8 h-8 mx-auto mb-2 text-muted-foreground/40" />
-                    <p className="text-sm text-muted-foreground">Unable to load circuit breaker status</p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Reconciliation Summary */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <Shield className="w-4 h-4 text-orange-500" />
-                  Reconciliation Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">Completed (24h)</span>
-                  <span className="font-bold text-green-600">{reconciliation?.completed_count ?? 0}</span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">Pending</span>
-                  <span className={cn('font-bold', (reconciliation?.pending_count ?? 0) > 0 ? 'text-amber-600' : 'text-green-600')}>
-                    {reconciliation?.pending_count ?? 0}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center py-2 border-b">
-                  <span className="text-sm text-muted-foreground">Failed Jobs</span>
-                  <span className={cn('font-bold', (reconciliation?.failed_jobs_count ?? 0) > 0 ? 'text-red-600' : 'text-green-600')}>
-                    {reconciliation?.failed_jobs_count ?? 0}
-                  </span>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full mt-2"
-                  onClick={() => setShowStuck(!showStuck)}
-                >
-                  {showStuck ? 'Hide' : 'View'} Stuck Payments
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Stuck Payments Table */}
-          {showStuck && stuckData && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-sm font-semibold flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-amber-500" />
-                  Stuck Payments ({stuckData.count})
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {stuckData.payments.length === 0 ? (
-                  <p className="text-center py-4 text-muted-foreground">No stuck payments found</p>
-                ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full">
-                      <thead>
-                        <tr className="border-b text-left text-xs text-muted-foreground">
-                          <th className="py-2 px-3">TX Ref</th>
-                          <th className="py-2 px-3">Type</th>
-                          <th className="py-2 px-3">Amount</th>
-                          <th className="py-2 px-3">Status</th>
-                          <th className="py-2 px-3">Created</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {stuckData.payments.map((payment) => (
-                          <StuckPaymentRow key={payment.tx_ref} payment={payment} />
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )}
+          {/* Reconciliation Summary */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Shield className="w-4 h-4 text-orange-500" />
+                Reconciliation Summary
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex justify-between items-center py-2 border-b">
+                <span className="text-sm text-muted-foreground">Completed (24h)</span>
+                <span className="font-bold text-green-600">{reconciliation?.completed_count ?? 0}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b">
+                <span className="text-sm text-muted-foreground">Pending</span>
+                <span className={cn('font-bold', (reconciliation?.pending_count ?? 0) > 0 ? 'text-amber-600' : 'text-green-600')}>
+                  {reconciliation?.pending_count ?? 0}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b">
+                <span className="text-sm text-muted-foreground">Failed Jobs</span>
+                <span className={cn('font-bold', (reconciliation?.failed_jobs_count ?? 0) > 0 ? 'text-red-600' : 'text-green-600')}>
+                  {reconciliation?.failed_jobs_count ?? 0}
+                </span>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full mt-2"
+                onClick={() => setShowStuck(!showStuck)}
+              >
+                {showStuck ? 'Hide' : 'View'} Stuck Payments
+              </Button>
+            </CardContent>
+          </Card>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+
+        {/* Stuck Payments Table */}
+        {showStuck && stuckData && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                <Clock className="w-4 h-4 text-amber-500" />
+                Stuck Payments ({stuckData.count})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {stuckData.payments.length === 0 ? (
+                <p className="text-center py-4 text-muted-foreground">No stuck payments found</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b text-left text-xs text-muted-foreground">
+                        <th className="py-2 px-3">TX Ref</th>
+                        <th className="py-2 px-3">Type</th>
+                        <th className="py-2 px-3">Amount</th>
+                        <th className="py-2 px-3">Status</th>
+                        <th className="py-2 px-3">Created</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stuckData.payments.map((payment) => (
+                        <StuckPaymentRow key={payment.tx_ref} payment={payment} />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </>
   )
 }

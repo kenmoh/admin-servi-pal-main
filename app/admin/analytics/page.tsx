@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import {
   Card,
   CardContent,
@@ -712,30 +710,20 @@ function TopVendorsSection() {
 // ── Page ──────────────────────────────────────────────────────
 export default function AnalyticsPage() {
   return (
-    <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="Analytics" />
-        <div className="px-6 py-6 space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <OrderTrendsChart />
-            <UserGrowthChart />
-          </div>
-          <StatusBreakdownSection />
-          <TransactionSection />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <TopRidersSection />
-            <TopVendorsSection />
-          </div>
+    <>
+      <SiteHeader title="Analytics" />
+      <div className="px-6 py-6 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <OrderTrendsChart />
+          <UserGrowthChart />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <StatusBreakdownSection />
+        <TransactionSection />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <TopRidersSection />
+          <TopVendorsSection />
+        </div>
+      </div>
+    </>
   );
 }

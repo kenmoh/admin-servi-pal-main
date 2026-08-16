@@ -15,9 +15,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar"
 import { LayoutDashboardIcon, Wallet, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon, ReceiptText, Landmark } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 const data = {
   navMain: [
@@ -144,18 +146,24 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { currentUser } = useAppContext()
 
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
+              size="lg"
               className="data-[slot=sidebar-menu-button]:p-1.5!"
             >
-              <a href="/admin/dashboard">
-                <Image src="/mainicon.png" alt="ServiPal" width={28} height={28} className="rounded-md" />
-                <span className="text-base font-semibold">ServiPal</span>
-              </a>
+              <Link href="/admin/dashboard">
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Image src="/mainicon.png" alt="ServiPal" width={20} height={20} className="rounded-md brightness-0 invert" />
+                </div>
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-semibold">ServiPal</span>
+                  <span className="truncate text-xs text-muted-foreground">Admin</span>
+                </div>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -174,12 +182,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         {currentUser && (
           <NavUser user={{
-            name: currentUser.name,
+            name: currentUser.name || currentUser.email || "Admin",
             email: currentUser.email,
             avatar: currentUser.avatar || '',
           }} />
         )}
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }

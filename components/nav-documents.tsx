@@ -8,6 +8,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { usePathname } from "next/navigation"
+import Link from "next/link"
 
 export function NavDocuments({
   items,
@@ -32,10 +33,10 @@ export function NavDocuments({
             <SidebarMenuItem key={item.name}>
               <SidebarMenuButton asChild isActive={isActive}
                 className={isActive ? "bg-orange-500/15 text-orange-600 hover:bg-orange-500/20 hover:text-orange-600" : ""}>
-                <a href={item.url}>
+                <Link href={item.url}>
                   {item.icon}
                   <span>{item.name}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           )

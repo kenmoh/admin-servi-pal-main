@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
-import { AppSidebar } from '@/components/app-sidebar'
 import { SiteHeader } from '@/components/site-header'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -186,134 +184,126 @@ export default function AuditLogsPage() {
   }
 
   return (
-    <SidebarProvider
-      style={{
-        '--sidebar-width': 'calc(var(--spacing) * 72)',
-        '--header-height': 'calc(var(--spacing) * 12)',
-      } as React.CSSProperties}
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="Audit Logs" />
+    <>
+      <SiteHeader title="Audit Logs" />
 
-        <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
-          {/* Main log list */}
-          <div className="flex-1 flex flex-col min-w-0">
-            {/* Filters */}
-            <div className="px-4 py-3 border-b flex flex-wrap items-center gap-2">
-              <div className="relative flex-1 min-w-40">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search action, entity, actor..."
-                  className="pl-9 h-8 text-sm"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-
-              <Select value={entityType || 'ALL'} onValueChange={(v) => { setEntityType(v === 'ALL' ? '' : v); setPage(1) }}>
-                <SelectTrigger className="h-8 text-sm w-40">
-                  <SelectValue placeholder="Entity type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All entities</SelectItem>
-                  {ENTITY_TYPES.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
-                </SelectContent>
-              </Select>
-
+      <div className="flex h-[calc(100vh-var(--header-height))] overflow-hidden">
+        {/* Main log list */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Filters */}
+          <div className="px-4 py-3 border-b flex flex-wrap items-center gap-2">
+            <div className="relative flex-1 min-w-40">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                type="text"
-                placeholder="Action (e.g. BLOCK_USER)"
-                className="h-8 text-sm w-44"
-                value={action}
-                onChange={(e) => { setAction(e.target.value); setPage(1) }}
+                placeholder="Search action, entity, actor..."
+                className="pl-9 h-8 text-sm"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
-
-              <Input type="date" className="h-8 text-sm w-36" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1) }} />
-              <Input type="date" className="h-8 text-sm w-36" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1) }} />
-
-              {hasFilters && (
-                <Button variant="ghost" size="sm" className="h-8" onClick={clearFilters}>
-                  <X className="w-3.5 h-3.5 mr-1" /> Clear
-                </Button>
-              )}
             </div>
 
-            {/* Table */}
-            <div className="flex-1 overflow-auto">
-              <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-background border-b">
-                  <tr className="text-xs text-muted-foreground">
-                    <th className="px-4 py-2 text-left font-medium">Timestamp</th>
-                    <th className="px-4 py-2 text-left font-medium">Action</th>
-                    <th className="px-4 py-2 text-left font-medium">Entity Type</th>
-                    <th className="px-4 py-2 text-left font-medium">Entity ID</th>
-                    <th className="px-4 py-2 text-left font-medium">Actor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {isLoading ? (
-                    Array.from({ length: 10 }).map((_, i) => (
-                      <tr key={i} className="border-b">
-                        {Array.from({ length: 5 }).map((_, j) => (
-                          <td key={j} className="px-4 py-3">
-                            <Skeleton className="h-4 w-full" />
-                          </td>
-                        ))}
-                      </tr>
-                    ))
-                  ) : logs.length === 0 ? (
-                    <tr>
-                      <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground text-sm">
-                        No audit logs found
-                      </td>
-                    </tr>
-                  ) : (
-                    logs.map((log) => (
-                      <LogRow
-                        key={log.id}
-                        log={log}
-                        selected={selected?.id === log.id}
-                        onClick={() => setSelected(selected?.id === log.id ? null : log)}
-                      />
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <Select value={entityType || 'ALL'} onValueChange={(v) => { setEntityType(v === 'ALL' ? '' : v); setPage(1) }}>
+              <SelectTrigger className="h-8 text-sm w-40">
+                <SelectValue placeholder="Entity type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All entities</SelectItem>
+                {ENTITY_TYPES.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+              </SelectContent>
+            </Select>
 
-            {/* Pagination */}
-            {data?.meta && (
-              <div className="flex items-center justify-between px-4 py-2 border-t text-xs text-muted-foreground">
-                <span>
-                  Page {data.meta.page} of {data.meta.total_pages} — {data.meta.total} total
-                </span>
-                <div className="flex gap-1">
-                  <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setPage((p) => p - 1)} disabled={page === 1}>
-                    Previous
-                  </Button>
-                  <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setPage((p) => p + 1)} disabled={page === data.meta.total_pages}>
-                    Next
-                  </Button>
-                </div>
-              </div>
+            <Input
+              type="text"
+              placeholder="Action (e.g. BLOCK_USER)"
+              className="h-8 text-sm w-44"
+              value={action}
+              onChange={(e) => { setAction(e.target.value); setPage(1) }}
+            />
+
+            <Input type="date" className="h-8 text-sm w-36" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setPage(1) }} />
+            <Input type="date" className="h-8 text-sm w-36" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setPage(1) }} />
+
+            {hasFilters && (
+              <Button variant="ghost" size="sm" className="h-8" onClick={clearFilters}>
+                <X className="w-3.5 h-3.5 mr-1" /> Clear
+              </Button>
             )}
           </div>
 
-          {/* Detail panel */}
-          {selected && (
-            <div className="w-80 shrink-0 border-l overflow-y-auto">
-              <div className="flex items-center justify-between px-4 py-3 border-b">
-                <p className="font-semibold text-sm">Log Detail</p>
-                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSelected(null)}>
-                  <X className="w-4 h-4" />
+          {/* Table */}
+          <div className="flex-1 overflow-auto">
+            <table className="w-full text-sm">
+              <thead className="sticky top-0 bg-background border-b">
+                <tr className="text-xs text-muted-foreground">
+                  <th className="px-4 py-2 text-left font-medium">Timestamp</th>
+                  <th className="px-4 py-2 text-left font-medium">Action</th>
+                  <th className="px-4 py-2 text-left font-medium">Entity Type</th>
+                  <th className="px-4 py-2 text-left font-medium">Entity ID</th>
+                  <th className="px-4 py-2 text-left font-medium">Actor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  Array.from({ length: 10 }).map((_, i) => (
+                    <tr key={i} className="border-b">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <td key={j} className="px-4 py-3">
+                          <Skeleton className="h-4 w-full" />
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : logs.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="px-4 py-12 text-center text-muted-foreground text-sm">
+                      No audit logs found
+                    </td>
+                  </tr>
+                ) : (
+                  logs.map((log) => (
+                    <LogRow
+                      key={log.id}
+                      log={log}
+                      selected={selected?.id === log.id}
+                      onClick={() => setSelected(selected?.id === log.id ? null : log)}
+                    />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination */}
+          {data?.meta && (
+            <div className="flex items-center justify-between px-4 py-2 border-t text-xs text-muted-foreground">
+              <span>
+                Page {data.meta.page} of {data.meta.total_pages} — {data.meta.total} total
+              </span>
+              <div className="flex gap-1">
+                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setPage((p) => p - 1)} disabled={page === 1}>
+                  Previous
+                </Button>
+                <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => setPage((p) => p + 1)} disabled={page === data.meta.total_pages}>
+                  Next
                 </Button>
               </div>
-              <LogDetail log={selected} />
             </div>
           )}
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+
+        {/* Detail panel */}
+        {selected && (
+          <div className="w-80 shrink-0 border-l overflow-y-auto">
+            <div className="flex items-center justify-between px-4 py-3 border-b">
+              <p className="font-semibold text-sm">Log Detail</p>
+              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setSelected(null)}>
+                <X className="w-4 h-4" />
+              </Button>
+            </div>
+            <LogDetail log={selected} />
+          </div>
+        )}
+      </div>
+    </>
   )
 }

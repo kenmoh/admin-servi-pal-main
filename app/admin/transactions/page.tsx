@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 import { CalendarIcon, Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -85,158 +83,150 @@ export default function TransactionsPage() {
   }
 
   return (
-    <SidebarProvider
-      style={{
-        "--sidebar-width": "calc(var(--spacing) * 72)",
-        "--header-height": "calc(var(--spacing) * 12)",
-      } as React.CSSProperties}
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="Transactions" />
+    <>
+      <SiteHeader title="Transactions" />
 
-        <div className="space-y-6 px-6 py-4">
-          <div className="flex items-center justify-between gap-2 flex-wrap">
-            <p className="text-muted-foreground">
-              List all transactions and verify them against the payment
-              provider.
-            </p>
-            <div className="flex items-center gap-2">
-              <Select
-                value={paymentStatus || "ALL"}
-                onValueChange={(v) => {
-                  setPaymentStatus(v === "ALL" ? "" : v);
-                  setPage(1);
-                }}
-              >
-                <SelectTrigger className="h-8 text-sm w-40">
-                  <SelectValue placeholder="Payment status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All statuses</SelectItem>
-                  {PAYMENT_STATUSES.map((s) => (
-                    <SelectItem key={s} value={s}>
-                      {s}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+      <div className="space-y-6 px-6 py-4">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <p className="text-muted-foreground">
+            List all transactions and verify them against the payment
+            provider.
+          </p>
+          <div className="flex items-center gap-2">
+            <Select
+              value={paymentStatus || "ALL"}
+              onValueChange={(v) => {
+                setPaymentStatus(v === "ALL" ? "" : v);
+                setPage(1);
+              }}
+            >
+              <SelectTrigger className="h-8 text-sm w-40">
+                <SelectValue placeholder="Payment status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">All statuses</SelectItem>
+                {PAYMENT_STATUSES.map((s) => (
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
-              <Popover open={dateFromOpen} onOpenChange={setDateFromOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="h-8 text-sm w-36 justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                    {format(dateFrom, "MMM d, yyyy")}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={dateFrom}
-                    onSelect={(day) => {
-                      if (day) {
-                        setDateFrom(day);
-                        setDateFromOpen(false);
-                      }
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
+            <Popover open={dateFromOpen} onOpenChange={setDateFromOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-8 text-sm w-36 justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {format(dateFrom, "MMM d, yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateFrom}
+                  onSelect={(day) => {
+                    if (day) {
+                      setDateFrom(day);
+                      setDateFromOpen(false);
+                    }
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
 
-              <Popover open={dateToOpen} onOpenChange={setDateToOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    className="h-8 text-sm w-36 justify-start text-left font-normal"
-                  >
-                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                    {format(dateTo, "MMM d, yyyy")}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={dateTo}
-                    onSelect={(day) => {
-                      if (day) {
-                        setDateTo(day);
-                        setDateToOpen(false);
-                      }
-                    }}
-                  />
-                </PopoverContent>
-              </Popover>
+            <Popover open={dateToOpen} onOpenChange={setDateToOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="h-8 text-sm w-36 justify-start text-left font-normal"
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {format(dateTo, "MMM d, yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={dateTo}
+                  onSelect={(day) => {
+                    if (day) {
+                      setDateTo(day);
+                      setDateToOpen(false);
+                    }
+                  }}
+                />
+              </PopoverContent>
+            </Popover>
 
-              <Button
-                size="sm"
-                className="h-8"
-                onClick={applyFilter}
-              >
-                <Search className="w-3.5 h-3.5 mr-1" /> Filter
-              </Button>
+            <Button
+              size="sm"
+              className="h-8"
+              onClick={applyFilter}
+            >
+              <Search className="w-3.5 h-3.5 mr-1" /> Filter
+            </Button>
 
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8"
-                onClick={clearAll}
-              >
-                <X className="w-3.5 h-3.5 mr-1" /> Clear
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8"
+              onClick={clearAll}
+            >
+              <X className="w-3.5 h-3.5 mr-1" /> Clear
+            </Button>
           </div>
-
-          {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">
-              Loading transactions...
-            </div>
-          ) : (
-            <>
-              <DataTable
-                columns={transactionsColumns((transaction) =>
-                  setSelected(transaction),
-                )}
-                data={transactions}
-              />
-
-              {pageInfo && (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Page {pageInfo.current_page} of {pageInfo.total_pages}
-                    &mdash; {pageInfo.total} total
-                  </p>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage((p) => p - 1)}
-                      disabled={page === 1}
-                    >
-                      Previous
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPage((p) => p + 1)}
-                      disabled={page === pageInfo.total_pages}
-                    >
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
         </div>
 
-        <TransactionVerifyDialog
-          transaction={selected}
-          onClose={() => setSelected(null)}
-        />
-      </SidebarInset>
-    </SidebarProvider>
+        {isLoading ? (
+          <div className="text-center py-8 text-muted-foreground">
+            Loading transactions...
+          </div>
+        ) : (
+          <>
+            <DataTable
+              columns={transactionsColumns((transaction) =>
+                setSelected(transaction),
+              )}
+              data={transactions}
+            />
+
+            {pageInfo && (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Page {pageInfo.current_page} of {pageInfo.total_pages}
+                  &mdash; {pageInfo.total} total
+                </p>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => p - 1)}
+                    disabled={page === 1}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => p + 1)}
+                    disabled={page === pageInfo.total_pages}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      <TransactionVerifyDialog
+        transaction={selected}
+        onClose={() => setSelected(null)}
+      />
+    </>
   );
 }

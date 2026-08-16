@@ -1,9 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { AppSidebar } from '@/components/app-sidebar'
 import { SiteHeader } from '@/components/site-header'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -531,66 +529,63 @@ export default function PaymentSafetyPage() {
   )
 
   return (
-    <SidebarProvider style={{ '--sidebar-width': 'calc(var(--spacing) * 72)', '--header-height': 'calc(var(--spacing) * 12)' } as React.CSSProperties}>
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title="Payment Safety" />
+    <>
+      <SiteHeader title="Payment Safety" />
 
-        <div className="px-6 py-6 space-y-6 w-full">
+      <div className="px-6 py-6 space-y-6 w-full">
 
-          {/* Summary Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <SummaryCard
-              title="Charge Verification"
-              description="Verify any charge by TX Ref"
-              icon={Search}
-            />
-            <SummaryCard
-              title="Duplicate Detection"
-              description="Monitor duplicate charges"
-              icon={AlertTriangle}
-            />
-            <SummaryCard
-              title="Suspicious Patterns"
-              description="AI-powered fraud detection"
-              icon={Shield}
-            />
-            <SummaryCard
-              title="Webhook Audit"
-              description="Full webhook audit trail"
-              icon={FileText}
-            />
-          </div>
-
-          {/* Tabs */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-            <TabsList>
-              {renderTrigger('receipts', <Search className="w-4 h-4" />, 'Verify Charge')}
-              {renderTrigger('duplicates', <AlertTriangle className="w-4 h-4" />, 'Duplicates')}
-              {renderTrigger('suspicious', <Shield className="w-4 h-4" />, 'Suspicious')}
-              {renderTrigger('reversals', <RotateCcw className="w-4 h-4" />, 'Reversals')}
-              {renderTrigger('webhooks', <FileText className="w-4 h-4" />, 'Webhook Audit')}
-            </TabsList>
-
-            <TabsContent value="receipts">
-              <ReceiptsTab onLoadingChange={setTabLoadingFor('receipts')} />
-            </TabsContent>
-            <TabsContent value="duplicates">
-              <DuplicatesTab onLoadingChange={setTabLoadingFor('duplicates')} />
-            </TabsContent>
-            <TabsContent value="suspicious">
-              <SuspiciousTab onLoadingChange={setTabLoadingFor('suspicious')} />
-            </TabsContent>
-            <TabsContent value="reversals">
-              <ReversalsTab onLoadingChange={setTabLoadingFor('reversals')} />
-            </TabsContent>
-            <TabsContent value="webhooks">
-              <WebhookAuditTab onLoadingChange={setTabLoadingFor('webhooks')} />
-            </TabsContent>
-          </Tabs>
+        {/* Summary Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <SummaryCard
+            title="Charge Verification"
+            description="Verify any charge by TX Ref"
+            icon={Search}
+          />
+          <SummaryCard
+            title="Duplicate Detection"
+            description="Monitor duplicate charges"
+            icon={AlertTriangle}
+          />
+          <SummaryCard
+            title="Suspicious Patterns"
+            description="AI-powered fraud detection"
+            icon={Shield}
+          />
+          <SummaryCard
+            title="Webhook Audit"
+            description="Full webhook audit trail"
+            icon={FileText}
+          />
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            {renderTrigger('receipts', <Search className="w-4 h-4" />, 'Verify Charge')}
+            {renderTrigger('duplicates', <AlertTriangle className="w-4 h-4" />, 'Duplicates')}
+            {renderTrigger('suspicious', <Shield className="w-4 h-4" />, 'Suspicious')}
+            {renderTrigger('reversals', <RotateCcw className="w-4 h-4" />, 'Reversals')}
+            {renderTrigger('webhooks', <FileText className="w-4 h-4" />, 'Webhook Audit')}
+          </TabsList>
+
+          <TabsContent value="receipts">
+            <ReceiptsTab onLoadingChange={setTabLoadingFor('receipts')} />
+          </TabsContent>
+          <TabsContent value="duplicates">
+            <DuplicatesTab onLoadingChange={setTabLoadingFor('duplicates')} />
+          </TabsContent>
+          <TabsContent value="suspicious">
+            <SuspiciousTab onLoadingChange={setTabLoadingFor('suspicious')} />
+          </TabsContent>
+          <TabsContent value="reversals">
+            <ReversalsTab onLoadingChange={setTabLoadingFor('reversals')} />
+          </TabsContent>
+          <TabsContent value="webhooks">
+            <WebhookAuditTab onLoadingChange={setTabLoadingFor('webhooks')} />
+          </TabsContent>
+        </Tabs>
+      </div>
+    </>
   )
 }
 

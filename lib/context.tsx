@@ -72,6 +72,17 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data?.user) {
+          setCurrentUser(data.user)
+        }
+      })
+      .catch(() => {})
+  }, [])
+
   const unreadCount = notifications.filter((n) => !n.read).length
 
   const markNotificationAsRead = (id: string) => {

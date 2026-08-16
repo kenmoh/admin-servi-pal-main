@@ -1,7 +1,5 @@
 'use client'
-import { AppSidebar } from '@/components/app-sidebar'
 import { SiteHeader } from '@/components/site-header'
-import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Search, X } from 'lucide-react'
 import React, { useState } from 'react'
 import { useAppContext } from "@/lib/context"
@@ -61,106 +59,98 @@ const deliveryOrder = () => {
   }
 
   return (
-    <SidebarProvider
-      style={{
-        "--sidebar-width": "calc(var(--spacing) * 72)",
-        "--header-height": "calc(var(--spacing) * 12)",
-      } as React.CSSProperties}
-    >
-      <AppSidebar variant="inset" />
-      <SidebarInset>
-        <SiteHeader title='Delivery Management' />
+    <>
+      <SiteHeader title='Delivery Management' />
 
-        <div className="space-y-6 px-6">
-          <div>
-            <p className="text-muted-foreground">Track active and pending deliveries in real-time.</p>
+      <div className="space-y-6 px-6">
+        <div>
+          <p className="text-muted-foreground">Track active and pending deliveries in real-time.</p>
+        </div>
+
+        {/* Filters */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex-1 min-w-48 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by package or order #..."
+              className="pl-10"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
 
-          {/* Filters */}
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="flex-1 min-w-48 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by package or order #..."
-                className="pl-10"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+          <Input
+            type="date"
+            className="w-40"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            placeholder="From"
+          />
+          <Input
+            type="date"
+            className="w-40"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            placeholder="To"
+          />
 
-            <Input
-              type="date"
-              className="w-40"
-              value={dateFrom}
-              onChange={(e) => setDateFrom(e.target.value)}
-              placeholder="From"
-            />
-            <Input
-              type="date"
-              className="w-40"
-              value={dateTo}
-              onChange={(e) => setDateTo(e.target.value)}
-              placeholder="To"
-            />
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              {DELIVERY_STATUSES.map((s) => (
+                <SelectItem key={s} value={s}>{s}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                {DELIVERY_STATUSES.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <Select value={disputeFilter} onValueChange={setDisputeFilter}>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Dispute" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="true">Has Dispute</SelectItem>
+              <SelectItem value="false">No Dispute</SelectItem>
+            </SelectContent>
+          </Select>
 
-            <Select value={disputeFilter} onValueChange={setDisputeFilter}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Dispute" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="true">Has Dispute</SelectItem>
-                <SelectItem value="false">No Dispute</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {hasFilters && (
-              <Button variant="ghost" size="sm" onClick={clearFilters}>
-                <X className="w-4 h-4 mr-1" /> Clear
-              </Button>
-            )}
-          </div>
-
-          {/* Deliveries Table */}
-          {isLoading ? (
-            <div className="text-center py-8 text-muted-foreground">Loading deliveries...</div>
-          ) : (
-            <>
-              <DataTable columns={deliveryColumns} data={deliveries} onRowClick={handleRowClick} />
-
-              {/* Pagination */}
-              {meta && (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-muted-foreground">
-                    Page {meta.page} of {meta.total_pages} &mdash; {meta.total} total
-                  </p>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setPage((p) => p - 1)} disabled={page === 1}>
-                      Previous
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => setPage((p) => p + 1)} disabled={page === meta.total_pages}>
-                      Next
-                    </Button>
-                  </div>
-                </div>
-              )}
-
-              <DeliveryDetailDrawer />
-            </>
+          {hasFilters && (
+            <Button variant="ghost" size="sm" onClick={clearFilters}>
+              <X className="w-4 h-4 mr-1" /> Clear
+            </Button>
           )}
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+
+        {/* Deliveries Table */}
+        {isLoading ? (
+          <div className="text-center py-8 text-muted-foreground">Loading deliveries...</div>
+        ) : (
+          <>
+            <DataTable columns={deliveryColumns} data={deliveries} onRowClick={handleRowClick} />
+
+            {/* Pagination */}
+            {meta && (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Page {meta.page} of {meta.total_pages} &mdash; {meta.total} total
+                </p>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setPage((p) => p - 1)} disabled={page === 1}>
+                    Previous
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => setPage((p) => p + 1)} disabled={page === meta.total_pages}>
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <DeliveryDetailDrawer />
+          </>
+        )}
+      </div>
+    </>
   )
 }
 
