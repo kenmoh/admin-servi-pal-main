@@ -93,6 +93,11 @@ const data = {
       url: "/admin/transfers",
       icon: <ArrowLeftRightIcon />,
     },
+    {
+      name: "Platform Commission",
+      url: "/admin/platform-commission",
+      icon: <ReceiptText />,
+    },
   ],
   monitoring: [
     {
