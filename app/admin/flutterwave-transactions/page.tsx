@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, X } from "lucide-react";
+import { CalendarIcon, Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   FlutterwaveTransactionListItem,
@@ -32,24 +32,32 @@ import { cn } from "@/lib/utils";
 
 const STATUSES = ["SUCCESS", "FAILED", "PENDING"];
 
-function formatDate(date: Date | undefined): string {
-  return date ? format(date, "yyyy-MM-dd") : "";
+function formatDate(date: Date): string {
+  return format(date, "yyyy-MM-dd");
+}
+
+function today(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
 export default function FlutterwaveTransactionsPage() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("");
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const [dateFrom, setDateFrom] = useState<Date>(today());
+  const [dateTo, setDateTo] = useState<Date>(today());
+  const [appliedFrom, setAppliedFrom] = useState<Date>(today());
+  const [appliedTo, setAppliedTo] = useState<Date>(today());
   const [selected, setSelected] = useState<FlutterwaveTransactionListItem | null>(null);
 
   const { data, isLoading } = useQuery<FlutterwaveTransactionListResponse>({
-    queryKey: ["flutterwave-transactions", page, status, dateFrom, dateTo],
+    queryKey: ["flutterwave-transactions", page, status, appliedFrom, appliedTo],
     queryFn: async () => {
       const params = new URLSearchParams({ page: String(page), per_page: "10" });
       if (status) params.set("status", status);
-      if (dateFrom) params.set("from", formatDate(dateFrom));
-      if (dateTo) params.set("to", formatDate(dateTo));
+      params.set("from", formatDate(appliedFrom));
+      params.set("to", formatDate(appliedTo));
       const res = await fetch(`/api/flutterwave-transactions?${params}`);
       if (!res.ok) throw new Error("Failed to fetch flutterwave transactions");
       return res.json();
@@ -58,6 +66,21 @@ export default function FlutterwaveTransactionsPage() {
 
   const transactions = Array.isArray(data?.data) ? data.data : [];
   const pageInfo = data?.meta?.page_info;
+
+  function applyFilter() {
+    setAppliedFrom(dateFrom);
+    setAppliedTo(dateTo);
+    setPage(1);
+  }
+
+  function clearAll() {
+    setStatus("");
+    setDateFrom(today());
+    setDateTo(today());
+    setAppliedFrom(today());
+    setAppliedTo(today());
+    setPage(1);
+  }
 
   return (
     <SidebarProvider
@@ -101,23 +124,17 @@ export default function FlutterwaveTransactionsPage() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn(
-                      "h-8 text-sm w-36 justify-start text-left font-normal",
-                      !dateFrom && "text-muted-foreground"
-                    )}
+                    className="h-8 text-sm w-36 justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                    {dateFrom ? format(dateFrom, "MMM d, yyyy") : "From date"}
+                    {format(dateFrom, "MMM d, yyyy")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={dateFrom}
-                    onSelect={(day) => {
-                      setDateFrom(day);
-                      setPage(1);
-                    }}
+                    onSelect={(day) => day && setDateFrom(day)}
                   />
                 </PopoverContent>
               </Popover>
@@ -126,42 +143,37 @@ export default function FlutterwaveTransactionsPage() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn(
-                      "h-8 text-sm w-36 justify-start text-left font-normal",
-                      !dateTo && "text-muted-foreground"
-                    )}
+                    className="h-8 text-sm w-36 justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                    {dateTo ? format(dateTo, "MMM d, yyyy") : "To date"}
+                    {format(dateTo, "MMM d, yyyy")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={dateTo}
-                    onSelect={(day) => {
-                      setDateTo(day);
-                      setPage(1);
-                    }}
+                    onSelect={(day) => day && setDateTo(day)}
                   />
                 </PopoverContent>
               </Popover>
 
-              {(status || dateFrom || dateTo) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8"
-                  onClick={() => {
-                    setStatus("");
-                    setDateFrom(undefined);
-                    setDateTo(undefined);
-                    setPage(1);
-                  }}
-                >
-                  <X className="w-3.5 h-3.5 mr-1" /> Clear
-                </Button>
-              )}
+              <Button
+                size="sm"
+                className="h-8"
+                onClick={applyFilter}
+              >
+                <Search className="w-3.5 h-3.5 mr-1" /> Filter
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8"
+                onClick={clearAll}
+              >
+                <X className="w-3.5 h-3.5 mr-1" /> Clear
+              </Button>
             </div>
           </div>
 

@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { CalendarIcon, X } from "lucide-react";
+import { CalendarIcon, Search, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Transaction,
@@ -28,28 +28,35 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { format } from "date-fns";
-import { cn } from "@/lib/utils";
 
 const PAYMENT_STATUSES = ["PENDING", "SUCCESS", "FAILED", "COMPLETED"];
 
-function formatDate(date: Date | undefined): string {
-  return date ? format(date, "yyyy-MM-dd") : "";
+function formatDate(date: Date): string {
+  return format(date, "yyyy-MM-dd");
+}
+
+function today(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
 }
 
 export default function TransactionsPage() {
   const [page, setPage] = useState(1);
   const [paymentStatus, setPaymentStatus] = useState("");
-  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
-  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
+  const [dateFrom, setDateFrom] = useState<Date>(today());
+  const [dateTo, setDateTo] = useState<Date>(today());
+  const [appliedFrom, setAppliedFrom] = useState<Date>(today());
+  const [appliedTo, setAppliedTo] = useState<Date>(today());
   const [selected, setSelected] = useState<Transaction | null>(null);
 
   const { data, isLoading } = useQuery<TransactionListResponse>({
-    queryKey: ["transactions", page, paymentStatus, dateFrom, dateTo],
+    queryKey: ["transactions", page, paymentStatus, appliedFrom, appliedTo],
     queryFn: async () => {
       const params = new URLSearchParams({ page: String(page), page_size: "10" });
       if (paymentStatus) params.set("payment_status", paymentStatus);
-      if (dateFrom) params.set("start_date", formatDate(dateFrom));
-      if (dateTo) params.set("end_date", formatDate(dateTo));
+      params.set("start_date", formatDate(appliedFrom));
+      params.set("end_date", formatDate(appliedTo));
       const res = await fetch(`/api/transactions?${params}`);
       if (!res.ok) throw new Error("Failed to fetch transactions");
       return res.json();
@@ -58,6 +65,21 @@ export default function TransactionsPage() {
 
   const transactions = data?.data ?? [];
   const pageInfo = data?.meta;
+
+  function applyFilter() {
+    setAppliedFrom(dateFrom);
+    setAppliedTo(dateTo);
+    setPage(1);
+  }
+
+  function clearAll() {
+    setPaymentStatus("");
+    setDateFrom(today());
+    setDateTo(today());
+    setAppliedFrom(today());
+    setAppliedTo(today());
+    setPage(1);
+  }
 
   return (
     <SidebarProvider
@@ -101,23 +123,17 @@ export default function TransactionsPage() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn(
-                      "h-8 text-sm w-36 justify-start text-left font-normal",
-                      !dateFrom && "text-muted-foreground"
-                    )}
+                    className="h-8 text-sm w-36 justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                    {dateFrom ? format(dateFrom, "MMM d, yyyy") : "From date"}
+                    {format(dateFrom, "MMM d, yyyy")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={dateFrom}
-                    onSelect={(day) => {
-                      setDateFrom(day);
-                      setPage(1);
-                    }}
+                    onSelect={(day) => day && setDateFrom(day)}
                   />
                 </PopoverContent>
               </Popover>
@@ -126,42 +142,37 @@ export default function TransactionsPage() {
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
-                    className={cn(
-                      "h-8 text-sm w-36 justify-start text-left font-normal",
-                      !dateTo && "text-muted-foreground"
-                    )}
+                    className="h-8 text-sm w-36 justify-start text-left font-normal"
                   >
                     <CalendarIcon className="mr-2 h-3.5 w-3.5" />
-                    {dateTo ? format(dateTo, "MMM d, yyyy") : "To date"}
+                    {format(dateTo, "MMM d, yyyy")}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
                   <Calendar
                     mode="single"
                     selected={dateTo}
-                    onSelect={(day) => {
-                      setDateTo(day);
-                      setPage(1);
-                    }}
+                    onSelect={(day) => day && setDateTo(day)}
                   />
                 </PopoverContent>
               </Popover>
 
-              {(paymentStatus || dateFrom || dateTo) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-8"
-                  onClick={() => {
-                    setPaymentStatus("");
-                    setDateFrom(undefined);
-                    setDateTo(undefined);
-                    setPage(1);
-                  }}
-                >
-                  <X className="w-3.5 h-3.5 mr-1" /> Clear
-                </Button>
-              )}
+              <Button
+                size="sm"
+                className="h-8"
+                onClick={applyFilter}
+              >
+                <Search className="w-3.5 h-3.5 mr-1" /> Filter
+              </Button>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8"
+                onClick={clearAll}
+              >
+                <X className="w-3.5 h-3.5 mr-1" /> Clear
+              </Button>
             </div>
           </div>
 
