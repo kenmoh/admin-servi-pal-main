@@ -73,10 +73,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
+    const cached = localStorage?.getItem("currentUser")
+    if (cached) {
+      try {
+        setCurrentUser(JSON.parse(cached))
+      } catch {
+        localStorage.removeItem("currentUser")
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.user) {
+        if (data?.user?.id && (data.user.name || data.user.email)) {
           setCurrentUser(data.user)
         }
       })

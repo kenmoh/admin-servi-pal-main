@@ -7,6 +7,8 @@ export interface User {
   name: string
   role: UserRole
   avatar?: string
+  full_name?: string
+  profile_image_url?: string
   phone?: string
   address?: string
   createdAt: Date

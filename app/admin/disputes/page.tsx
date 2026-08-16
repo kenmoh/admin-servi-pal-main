@@ -227,8 +227,8 @@ export default function DisputesPage() {
       created_at: new Date().toISOString(),
       sender: {
         id: currentUser?.id ?? '',
-        full_name: currentUser?.name ?? 'You',
-        profile_image_url: currentUser?.avatar ?? null,
+        full_name: currentUser?.full_name ?? currentUser?.name ?? 'You',
+        profile_image_url: currentUser?.profile_image_url ?? currentUser?.avatar ?? null,
         user_type: 'ADMIN',
       },
     }

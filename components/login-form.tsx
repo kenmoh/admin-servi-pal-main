@@ -44,6 +44,19 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         return
       }
 
+      const user = data?.user
+      if (user) {
+        const mapped = {
+          id: user.id || user.user_id || '',
+          full_name: user.full_name || user.name || user.email?.split('@')[0] || 'Admin',
+          email: user.email || '',
+          role: user.user_type || user.role || '',
+          profile_image_url: user.profile_image_url || user.avatar || '',
+          phone: user.phone_number || user.phone || '',
+        }
+        localStorage.setItem('currentUser', JSON.stringify(mapped))
+      }
+
       router.push('/admin/dashboard')
     } catch {
       setError('An unexpected error occurred.')

@@ -182,9 +182,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         {currentUser && (
           <NavUser user={{
-            name: currentUser.name || currentUser.email || "Admin",
+            name: currentUser.full_name || currentUser.name || currentUser.email || "Admin",
             email: currentUser.email,
-            avatar: currentUser.avatar || '',
+            avatar: currentUser.profile_image_url || currentUser.avatar || '',
           }} />
         )}
       </SidebarFooter>

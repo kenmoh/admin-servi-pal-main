@@ -521,7 +521,7 @@ export default function SettingsPage() {
                         <label className="text-sm font-medium">
                           Full Name
                         </label>
-                        <Input defaultValue={currentUser?.name ?? ""} />
+                        <Input defaultValue={currentUser?.full_name ?? currentUser?.name ?? ""} />
                       </div>
                       <div className="space-y-2">
                         <label className="text-sm font-medium">Email</label>

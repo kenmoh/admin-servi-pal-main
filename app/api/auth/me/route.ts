@@ -18,13 +18,13 @@ export async function GET(request: NextRequest) {
     const user = {
       id: payload?.sub ?? payload?.user_id ?? profile?.id ?? "",
       email: payload?.email ?? meta?.email ?? profile?.email ?? "",
-      name:
+      full_name:
         meta?.full_name ??
         meta?.name ??
         profile?.full_name ??
         profile?.name ??
         "",
-      avatar:
+      profile_image_url:
         meta?.profile_image_url ??
         meta?.avatar ??
         profile?.profile_image_url ??
