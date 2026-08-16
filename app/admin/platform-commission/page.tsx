@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { SiteHeader } from "@/components/site-header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, Search, X, TrendingUp, ReceiptText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -30,9 +29,44 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+} from "recharts";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  type ChartConfig,
+} from "@/components/ui/chart";
 
 const SERVICE_TYPES: ServiceType[] = ["DELIVERY", "FOOD", "LAUNDRY", "PRODUCT"];
 const PERIODS = ["daily", "weekly", "monthly"] as const;
+
+const chartConfig = {
+  total_commission: {
+    label: "Total Commission",
+    color: "var(--chart-1)",
+  },
+  transaction_count: {
+    label: "Transactions",
+    color: "var(--chart-2)",
+  },
+} satisfies ChartConfig;
+
+function fmt(n: any) {
+  const num = Number(n);
+  if (num >= 1_000_000) return `₦${(num / 1_000_000).toFixed(1)}M`;
+  if (num >= 1_000) return `₦${(num / 1_000).toFixed(1)}K`;
+  return `₦${Number.isNaN(num) ? 0 : num.toFixed(0)}`;
+}
 
 function formatDate(date: Date): string {
   return format(date, "yyyy-MM-dd");
@@ -270,34 +304,31 @@ export default function PlatformCommissionPage() {
           </CardHeader>
           <CardContent>
             {totalsLoading ? (
-              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-64 w-full" />
             ) : totals && totals.data.length > 0 ? (
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b text-left text-xs text-muted-foreground">
-                      <th className="py-2 px-3">Period Start</th>
-                      <th className="py-2 px-3">Total Commission</th>
-                      <th className="py-2 px-3">Transactions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {totals.data.map((row, i) => (
-                      <tr key={i} className="border-b last:border-0">
-                        <td className="py-2 px-3 text-sm">
-                          {new Date(row.period_start).toLocaleString()}
-                        </td>
-                        <td className="py-2 px-3 text-sm font-medium">
-                          {formatAmount(row.total_commission)}
-                        </td>
-                        <td className="py-2 px-3 text-sm">
-                          <Badge variant="outline">{row.transaction_count}</Badge>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <ChartContainer
+                config={chartConfig}
+                className="h-64 w-full"
+              >
+                <BarChart
+                  data={totals.data.map((row) => ({
+                    label: new Date(row.period_start).toLocaleDateString(),
+                    total_commission: Number(row.total_commission),
+                    transaction_count: row.transaction_count,
+                  }))}
+                >
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+                  <XAxis dataKey="label" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                  <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => fmt(v)} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Bar
+                    dataKey="total_commission"
+                    fill="var(--color-commission)"
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ChartContainer>
             ) : (
               <p className="text-center py-6 text-muted-foreground">
                 No commission totals found
