@@ -53,7 +53,7 @@ const PERIODS = ["daily", "weekly", "monthly"] as const;
 const chartConfig = {
   total_commission: {
     label: "Total Commission",
-    color: "var(--chart-1)",
+    color: "#ff8c00",
   },
   transaction_count: {
     label: "Transactions",
@@ -318,13 +318,17 @@ export default function PlatformCommissionPage() {
                   }))}
                 >
                   <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
-                  <XAxis dataKey="label" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="label" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} interval="preserveStartEnd" minTickGap={24} />
                   <YAxis tick={{ fontSize: 11 }} tickLine={false} axisLine={false} tickFormatter={(v) => fmt(v)} />
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <ChartLegend content={<ChartLegendContent />} />
                   <Bar
                     dataKey="total_commission"
-                    fill="var(--color-commission)"
+                    fill="var(--color-total_commission)"
+                    fillOpacity={0.55}
+                    stroke="var(--color-total_commission)"
+                    strokeWidth={1}
+                    maxBarSize={40}
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
