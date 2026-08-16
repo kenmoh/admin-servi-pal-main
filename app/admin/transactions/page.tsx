@@ -118,7 +118,6 @@ export default function TransactionsPage() {
                       setDateFrom(day);
                       setPage(1);
                     }}
-                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
@@ -144,7 +143,6 @@ export default function TransactionsPage() {
                       setDateTo(day);
                       setPage(1);
                     }}
-                    initialFocus
                   />
                 </PopoverContent>
               </Popover>
