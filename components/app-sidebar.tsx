@@ -162,7 +162,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             >
               <Link href="/admin/dashboard">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <Image src="/mainicon.png" alt="ServiPal" width={20} height={20} className="rounded-md brightness-0 invert" />
+                  <Image src="/mainicon.png" alt="ServiPal" width={20} height={20} className="rounded-md" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">ServiPal</span>
