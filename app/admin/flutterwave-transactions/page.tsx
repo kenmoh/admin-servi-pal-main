@@ -36,8 +36,9 @@ function formatDate(date: Date): string {
   return format(date, "yyyy-MM-dd");
 }
 
-function today(): Date {
+function yesterday(): Date {
   const d = new Date();
+  d.setDate(d.getDate() - 1);
   d.setHours(0, 0, 0, 0);
   return d;
 }
@@ -45,10 +46,10 @@ function today(): Date {
 export default function FlutterwaveTransactionsPage() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("");
-  const [dateFrom, setDateFrom] = useState<Date>(today());
-  const [dateTo, setDateTo] = useState<Date>(today());
-  const [appliedFrom, setAppliedFrom] = useState<Date>(today());
-  const [appliedTo, setAppliedTo] = useState<Date>(today());
+  const [dateFrom, setDateFrom] = useState<Date>(yesterday());
+  const [dateTo, setDateTo] = useState<Date>(yesterday());
+  const [appliedFrom, setAppliedFrom] = useState<Date>(yesterday());
+  const [appliedTo, setAppliedTo] = useState<Date>(yesterday());
   const [selected, setSelected] = useState<FlutterwaveTransactionListItem | null>(null);
 
   const { data, isLoading } = useQuery<FlutterwaveTransactionListResponse>({
@@ -75,10 +76,10 @@ export default function FlutterwaveTransactionsPage() {
 
   function clearAll() {
     setStatus("");
-    setDateFrom(today());
-    setDateTo(today());
-    setAppliedFrom(today());
-    setAppliedTo(today());
+    setDateFrom(yesterday());
+    setDateTo(yesterday());
+    setAppliedFrom(yesterday());
+    setAppliedTo(yesterday());
     setPage(1);
   }
 
