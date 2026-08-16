@@ -5,7 +5,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SiteHeader } from "@/components/site-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import {
   FlutterwaveTransactionListItem,
@@ -14,6 +14,12 @@ import {
 import { DataTable } from "@/components/tables/data-table";
 import { flutterwaveTransactionsColumns } from "@/components/tables/flutterwave-transactions-columns";
 import { FlutterwaveTransactionDrawer } from "@/components/drawers/flutterwave-transaction-drawer";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
@@ -21,19 +27,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const STATUSES = ["SUCCESS", "FAILED", "PENDING"];
+
+function formatDate(date: Date | undefined): string {
+  return date ? format(date, "yyyy-MM-dd") : "";
+}
 
 export default function FlutterwaveTransactionsPage() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState("");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(undefined);
+  const [dateTo, setDateTo] = useState<Date | undefined>(undefined);
   const [selected, setSelected] = useState<FlutterwaveTransactionListItem | null>(null);
 
   const { data, isLoading } = useQuery<FlutterwaveTransactionListResponse>({
-    queryKey: ["flutterwave-transactions", page, status],
+    queryKey: ["flutterwave-transactions", page, status, dateFrom, dateTo],
     queryFn: async () => {
       const params = new URLSearchParams({ page: String(page), per_page: "10" });
       if (status) params.set("status", status);
+      if (dateFrom) params.set("from", formatDate(dateFrom));
+      if (dateTo) params.set("to", formatDate(dateTo));
       const res = await fetch(`/api/flutterwave-transactions?${params}`);
       if (!res.ok) throw new Error("Failed to fetch flutterwave transactions");
       return res.json();
@@ -80,13 +96,68 @@ export default function FlutterwaveTransactionsPage() {
                   ))}
                 </SelectContent>
               </Select>
-              {status && (
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "h-8 text-sm w-36 justify-start text-left font-normal",
+                      !dateFrom && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                    {dateFrom ? format(dateFrom, "MMM d, yyyy") : "From date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dateFrom}
+                    onSelect={(day) => {
+                      setDateFrom(day);
+                      setPage(1);
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "h-8 text-sm w-36 justify-start text-left font-normal",
+                      !dateTo && "text-muted-foreground"
+                    )}
+                  >
+                    <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                    {dateTo ? format(dateTo, "MMM d, yyyy") : "To date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={dateTo}
+                    onSelect={(day) => {
+                      setDateTo(day);
+                      setPage(1);
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+
+              {(status || dateFrom || dateTo) && (
                 <Button
                   variant="ghost"
                   size="sm"
                   className="h-8"
                   onClick={() => {
                     setStatus("");
+                    setDateFrom(undefined);
+                    setDateTo(undefined);
                     setPage(1);
                   }}
                 >
