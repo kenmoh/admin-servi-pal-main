@@ -9,6 +9,12 @@ export async function proxy(request: NextRequest) {
 
   if (!accessToken) {
     if (pathname.startsWith('/admin')) {
+      const refreshToken = request.cookies.get('refresh_token')?.value
+      if (refreshToken) {
+        const refreshUrl = new URL('/api/auth/refresh-redirect', request.url)
+        refreshUrl.searchParams.set('redirect', pathname)
+        return NextResponse.redirect(refreshUrl)
+      }
       return NextResponse.redirect(new URL('/login', request.url))
     }
     return NextResponse.next()
