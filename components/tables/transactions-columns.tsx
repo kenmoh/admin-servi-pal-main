@@ -24,6 +24,11 @@ function formatAmount(amount: string | null) {
   return `₦${value.toLocaleString()}`;
 }
 
+function directionLabel(tx: Transaction): "DEBIT" | "CREDIT" | null {
+  const label = tx.details?.label;
+  return label === "DEBIT" || label === "CREDIT" ? label : null;
+}
+
 export function transactionsColumns(
   onVerify: (transaction: Transaction) => void,
 ): ColumnDef<Transaction>[] {
@@ -67,7 +72,22 @@ export function transactionsColumns(
     {
       accessorKey: "amount",
       header: "Amount",
-      cell: ({ row }) => formatAmount(row.original.amount),
+      cell: ({ row }) => {
+        const dir = directionLabel(row.original);
+        const sign = dir === "DEBIT" ? "−" : dir === "CREDIT" ? "+" : "";
+        const cls =
+          dir === "DEBIT"
+            ? "text-red-600"
+            : dir === "CREDIT"
+              ? "text-green-600"
+              : "";
+        return (
+          <span className={`font-semibold tabular-nums ${cls}`}>
+            {sign}
+            {formatAmount(row.original.amount)}
+          </span>
+        );
+      },
     },
     {
       accessorKey: "order_type",

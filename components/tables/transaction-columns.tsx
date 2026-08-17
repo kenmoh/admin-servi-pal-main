@@ -16,12 +16,29 @@ function statusColor(status: string) {
   }
 }
 
+function directionLabel(tx: TransactionItem): "DEBIT" | "CREDIT" | null {
+  const label = tx.details?.label;
+  return label === "DEBIT" || label === "CREDIT" ? label : null;
+}
+
+function description(tx: TransactionItem): string {
+  const dir = directionLabel(tx);
+  if (dir === "DEBIT") return tx.to_name ? `Paid to ${tx.to_name}` : "Payment";
+  if (dir === "CREDIT") return tx.from_name ? `Received from ${tx.from_name}` : "Credit";
+  return tx.transaction_type || "Transaction";
+}
+
 export const transactionColumns: ColumnDef<TransactionItem>[] = [
   {
-    accessorKey: "tx_ref",
-    header: "Reference",
+    id: "description",
+    header: "Description",
     cell: ({ row }) => (
-      <span className="font-mono text-xs">{row.original.tx_ref || "—"}</span>
+      <div>
+        <p className="font-medium">{description(row.original)}</p>
+        <p className="text-xs text-muted-foreground font-mono">
+          {row.original.tx_ref || "—"}
+        </p>
+      </div>
     ),
   },
   {
@@ -32,41 +49,24 @@ export const transactionColumns: ColumnDef<TransactionItem>[] = [
     ),
   },
   {
-    accessorKey: "details",
-    header: "Direction",
-    cell: ({ row }) => {
-      const label = row.original.details?.label;
-      if (label === "DEBIT") {
-        return (
-          <Badge variant="secondary" className="bg-red-500/15 text-red-600">
-            DEBIT
-          </Badge>
-        );
-      }
-      if (label === "CREDIT") {
-        return (
-          <Badge variant="secondary" className="bg-green-500/15 text-green-600">
-            CREDIT
-          </Badge>
-        );
-      }
-      return <span className="text-muted-foreground">—</span>;
-    },
-  },
-  {
-    accessorKey: "from_name",
-    header: "From",
-    cell: ({ row }) => row.original.from_name || "—",
-  },
-  {
-    accessorKey: "to_name",
-    header: "To",
-    cell: ({ row }) => row.original.to_name || "—",
-  },
-  {
     accessorKey: "amount",
     header: "Amount",
-    cell: ({ row }) => `₦${row.original.amount.toLocaleString()}`,
+    cell: ({ row }) => {
+      const tx = row.original;
+      const dir = directionLabel(tx);
+      const sign = dir === "DEBIT" ? "−" : dir === "CREDIT" ? "+" : "";
+      const cls =
+        dir === "DEBIT"
+          ? "text-red-600"
+          : dir === "CREDIT"
+            ? "text-green-600"
+            : "";
+      return (
+        <span className={`font-semibold tabular-nums ${cls}`}>
+          {sign}₦{tx.amount.toLocaleString()}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "payment_status",
