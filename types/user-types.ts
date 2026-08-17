@@ -131,12 +131,11 @@ export interface AuditLogEntry extends AuditLogCreate {
   created_at: string;
 }
 
-// ── Wallet & Transactions ────────────────────────────────────────────────────
+// ── User Transactions ────────────────────────────────────────────────────────
 
 export interface TransactionItem {
   id: string;
   tx_ref: string | null;
-  wallet_id: string | null;
   amount: number;
   transaction_type: string;
   payment_status: string | null;
@@ -151,24 +150,6 @@ export interface TransactionItem {
   released_at: string | null;
   created_at: string;
   updated_at: string | null;
-}
-
-export interface WalletSummary {
-  id: string;
-  user_id: string;
-  balance: number;
-  escrow_balance: number;
-  created_at: string;
-  updated_at: string | null;
-}
-
-export interface WalletWithTransactions extends WalletSummary {
-  transactions: TransactionItem[];
-}
-
-export interface WalletListResponse {
-  data: WalletWithTransactions[];
-  meta: PaginationMeta;
 }
 
 export interface TransactionListResponse {

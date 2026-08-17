@@ -9,7 +9,6 @@ import type {
   LaundryOrder,
   Complaint,
   ActivityLog,
-  WalletTransaction,
 } from "@/lib/types"
 import { Badge } from "@/components/ui/badge"
 import { ArrowUpDown } from "lucide-react"
@@ -381,61 +380,5 @@ export const activityLogColumns: ColumnDef<ActivityLog>[] = [
     accessorKey: "timestamp",
     header: "Timestamp",
     cell: ({ row }) => new Date(row.getValue("timestamp") as Date).toLocaleString(),
-  },
-]
-
-export const walletTransactionColumns: ColumnDef<WalletTransaction>[] = [
-  {
-    accessorKey: "type",
-    header: "Type",
-    cell: ({ row }) => {
-      const type = row.getValue("type") as string
-      return (
-        <Badge variant={type === "credit" ? "default" : "secondary"} className="capitalize">
-          {type}
-        </Badge>
-      )
-    },
-  },
-  {
-    accessorKey: "amount",
-    header: "Amount",
-    cell: ({ row }) => {
-      const amount = row.getValue("amount")
-      const type = row.original.type
-      return (
-        <span className={`font-semibold ${type === "credit" ? "text-green-600" : "text-red-600"}`}>
-          {type === "credit" ? "+" : "-"}₦{safeToFixed((Number(amount) || 0) * 1500, 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-        </span>
-      )
-    },
-  },
-  {
-    accessorKey: "reason",
-    header: "Reason",
-    cell: ({ row }) => {
-      const reason = row.getValue("reason") as string
-      return (
-        <Badge variant="outline" className="capitalize">
-          {reason.replace(/_/g, " ")}
-        </Badge>
-      )
-    },
-  },
-  {
-    accessorKey: "balanceAfter",
-    header: "Balance After",
-    cell: ({ row }) => {
-      const balance = row.getValue("balanceAfter")
-      return <span className="font-semibold text-accent">₦{safeToFixed((Number(balance) || 0) * 1500, 0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
-    },
-  },
-  {
-    accessorKey: "date",
-    header: "Date",
-    cell: ({ row }) => {
-      const date = row.getValue("date") as Date
-      return new Date(date).toLocaleDateString()
-    },
   },
 ]

@@ -56,12 +56,6 @@ export interface RevenueOverview {
   revenue_30d: number
 }
 
-export interface WalletOverview {
-  total_balance: number
-  total_escrow: number
-  total_wallets: number
-}
-
 export interface TransactionOverview {
   total_volume: number
   volume_7d: number
@@ -82,7 +76,6 @@ export interface DashboardOverviewResponse {
   users: UserOverview
   orders: OrderOverview
   revenue: RevenueOverview
-  wallets: WalletOverview
   transactions: TransactionOverview
   reviews: ReviewOverview
 }

@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
-import { Order, User, Vendor, Wallet, Notification } from "./types"
+import { Order, User, Vendor, Notification } from "./types"
 import { DeliveryOrderSummary } from "@/types/delivery-types"
 import { FoodOrderSummary } from "@/types/restaurant-types"
 import { LaundryOrderSummary } from "@/types/laundry-types"
@@ -35,8 +35,6 @@ interface AppContextType {
   setSelectedProductOrder: (order: ProductOrderSummary | null) => void
   selectedUser: User | null
   setSelectedUser: (user: User | null) => void
-  selectedWallet: Wallet | null
-  setSelectedWallet: (wallet: Wallet | null) => void
   selectedProfile: ProfileDetail | null
   setSelectedProfile: (profile: ProfileDetail | null) => void
   selectedBeneficiary: BeneficiaryData | null
@@ -59,7 +57,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [selectedLaundryOrder, setSelectedLaundryOrder] = useState<LaundryOrderSummary | null>(null)
   const [selectedProductOrder, setSelectedProductOrder] = useState<ProductOrderSummary | null>(null)
   const [selectedUser, setSelectedUser] = useState<User | null>(null)
-  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null)
   const [selectedProfile, setSelectedProfile] = useState<ProfileDetail | null>(null)
   const [selectedBeneficiary, setSelectedBeneficiary] = useState<BeneficiaryData | null>(null)
   const [selectedTransfer, setSelectedTransfer] = useState<TransferData | null>(null)
@@ -132,8 +129,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setSelectedProductOrder,
         selectedUser,
         setSelectedUser,
-        selectedWallet,
-        setSelectedWallet,
         selectedProfile,
         setSelectedProfile,
         selectedBeneficiary,

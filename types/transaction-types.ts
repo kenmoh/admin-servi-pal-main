@@ -16,7 +16,6 @@ export type OrderType =
 export interface Transaction {
   id: string; // uuid
   tx_ref: string | null;
-  wallet_id: string | null; // uuid
   amount: string | null; // numeric — decimal string to avoid precision loss
   transaction_type: TransactionType;
   payment_status: PaymentStatus | null;
@@ -44,7 +43,6 @@ export interface TransactionListParams {
   payment_status?: PaymentStatus;
   transaction_type?: TransactionType;
   order_type?: OrderType;
-  wallet_id?: string;
   from_user_id?: string;
   to_user_id?: string;
   order_id?: string;

@@ -1,6 +1,8 @@
 import { ProfileDetail, ProfileSummary } from "@/types/user-types"
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 function statusColor(status: string) {
   switch (status?.toUpperCase()) {
@@ -61,5 +63,19 @@ export const userColumns: ColumnDef<ProfileDetail>[] = [
     accessorKey: "created_at",
     header: "Joined",
     cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString(),
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => (
+      <Link
+        href={`/admin/users/${row.original.id}/transactions`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Button variant="outline" size="sm">
+          Transactions
+        </Button>
+      </Link>
+    ),
   },
 ]

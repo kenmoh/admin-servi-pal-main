@@ -16,7 +16,6 @@ export interface User {
   isBlocked?: boolean
   isVerified?: boolean
   kycStatus?: "pending" | "verified" | "rejected"
-  wallet?: Wallet
 }
 
 export interface Vendor {
@@ -39,7 +38,6 @@ export interface Vendor {
   joinedDate?: Date
   responseTime?: string
   cancellationRate?: number
-  wallet?: Wallet
   isBlocked?: boolean
   accountHoldReason?: string
   accountHoldAmount?: number
@@ -146,25 +144,4 @@ export interface DashboardStats {
   totalRevenue: number
   openComplaints: number
   activeDeliveries: number
-}
-
-export interface WalletTransaction {
-  id: string
-  walletId: string
-  type: "credit" | "debit"
-  amount: number
-  description: string
-  reason: "order_payment" | "refund" | "commission" | "payout" | "adjustment"
-  balance: number
-  timestamp: Date
-}
-
-export interface Wallet {
-  id: string
-  userId?: string
-  vendorId?: string
-  balance: number
-  escrowBalance: number
-  transactions: WalletTransaction[]
-  lastUpdated: Date
 }

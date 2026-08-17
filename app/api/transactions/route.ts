@@ -7,7 +7,6 @@ const ALLOWED_PARAMS = [
   "payment_status",
   "transaction_type",
   "order_type",
-  "wallet_id",
   "from_user_id",
   "to_user_id",
   "order_id",

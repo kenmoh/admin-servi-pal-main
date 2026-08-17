@@ -8,7 +8,7 @@ import { useQuery } from '@tanstack/react-query'
 import { DashboardOverviewResponse } from '@/types/analytics-types'
 import { fetchApi, safeToFixed } from '@/lib/utils'
 import {
-  Users, ShoppingBag, TrendingUp, Wallet,
+  Users, ShoppingBag, TrendingUp,
   ArrowUpRight, Star, Bike, UtensilsCrossed,
   WashingMachine, Store, AlertTriangle,
 } from 'lucide-react'
@@ -85,7 +85,7 @@ export default function DashboardPage() {
             <KpiCard title="Total Users" value={num(data.users.total)} sub={`+${num(data.users.new_30d)} this month`} icon={Users} />
             <KpiCard title="Total Orders" value={num(data.orders.totals.all_orders)} sub={`+${num(data.orders.totals.orders_30d)} this month`} icon={ShoppingBag} />
             <KpiCard title="Total Revenue" value={fmt(data.revenue.total)} sub={`${fmt(data.revenue.revenue_30d)} this month`} icon={TrendingUp} />
-            <KpiCard title="Wallet Balance" value={fmt(data.wallets.total_balance)} sub={`${fmt(data.wallets.total_escrow)} in escrow`} icon={Wallet} />
+            <KpiCard title="Avg Order Value" value={fmt(data.orders.totals.all_orders > 0 ? data.revenue.total / data.orders.totals.all_orders : 0)} sub="revenue ÷ total orders" icon={ShoppingBag} />
             <KpiCard title="Tx Volume (30d)" value={fmt(data.transactions.volume_30d)} sub={`${num(data.transactions.count_30d)} transactions`} icon={ArrowUpRight} />
             <KpiCard title="Avg Rating" value={safeToFixed(data.reviews.avg_rating, 2)} sub={`${num(data.reviews.total)} reviews · ${safeToFixed(data.reviews.five_star_pct, 0)}% five-star`} icon={Star} />
             <KpiCard title="Active Users" value={num(data.users.active)} sub={`${num(data.users.blocked)} blocked`} icon={Users} />
@@ -147,8 +147,6 @@ export default function DashboardPage() {
                 <StatRow label="Volume (30d)" value={fmt(data.transactions.volume_30d)} />
                 <StatRow label="Total Count" value={num(data.transactions.total_count)} />
                 <StatRow label="Count (30d)" value={num(data.transactions.count_30d)} />
-                <StatRow label="Total Wallets" value={num(data.wallets.total_wallets)} />
-                <StatRow label="Escrow Balance" value={fmt(data.wallets.total_escrow)} />
               </CardContent>
             </Card>
           </div>
