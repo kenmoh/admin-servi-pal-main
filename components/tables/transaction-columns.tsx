@@ -32,9 +32,36 @@ export const transactionColumns: ColumnDef<TransactionItem>[] = [
     ),
   },
   {
-    id: "from_to",
-    header: "From / To",
-    cell: ({ row }) => row.original.from_name || row.original.to_name || "—",
+    accessorKey: "details",
+    header: "Direction",
+    cell: ({ row }) => {
+      const label = row.original.details?.label;
+      if (label === "DEBIT") {
+        return (
+          <Badge variant="secondary" className="bg-red-500/15 text-red-600">
+            DEBIT
+          </Badge>
+        );
+      }
+      if (label === "CREDIT") {
+        return (
+          <Badge variant="secondary" className="bg-green-500/15 text-green-600">
+            CREDIT
+          </Badge>
+        );
+      }
+      return <span className="text-muted-foreground">—</span>;
+    },
+  },
+  {
+    accessorKey: "from_name",
+    header: "From",
+    cell: ({ row }) => row.original.from_name || "—",
+  },
+  {
+    accessorKey: "to_name",
+    header: "To",
+    cell: ({ row }) => row.original.to_name || "—",
   },
   {
     accessorKey: "amount",

@@ -360,7 +360,15 @@ export function UserDetailDrawer() {
                   txData.data.map((tx: TransactionItem) => (
                     <div key={tx.id} className="flex items-center justify-between text-sm py-1.5 border-b last:border-0">
                       <div>
-                        <p className="font-medium">{tx.transaction_type}</p>
+                        <p className="font-medium flex items-center gap-1.5">
+                          {tx.transaction_type}
+                          {tx.details?.label === "DEBIT" && (
+                            <Badge variant="secondary" className="bg-red-500/15 text-red-600 text-[10px]">DEBIT</Badge>
+                          )}
+                          {tx.details?.label === "CREDIT" && (
+                            <Badge variant="secondary" className="bg-green-500/15 text-green-600 text-[10px]">CREDIT</Badge>
+                          )}
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           {tx.from_name || tx.to_name || "—"} · {new Date(tx.created_at).toLocaleDateString()}
                         </p>
