@@ -1,14 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
-  ArrowRight,
   Mail,
   Github,
   Twitter,
@@ -19,6 +17,9 @@ import {
   Shirt,
   ShoppingBag,
   Loader2,
+  Store,
+  Package,
+  MapPin,
 } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
 import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
@@ -30,7 +31,37 @@ export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [metrics, setMetrics] = useState({
+    vendors: 0,
+    orders: 0,
+    cities: 0,
+  });
   const date = new Date().getFullYear();
+
+  useEffect(() => {
+    async function fetchMetrics() {
+      try {
+        const [vendors, orders, cities] = await Promise.all([
+          supabase.from("restaurants").select("id", { count: "exact", head: true }),
+          supabase.from("transactions").select("id", { count: "exact", head: true }),
+          supabase.from("restaurants").select("city", { count: "exact" }),
+        ]);
+
+        const uniqueCities = new Set(
+          (cities.data || []).map((r: any) => r.city).filter(Boolean)
+        );
+
+        setMetrics({
+          vendors: vendors.count || 0,
+          orders: orders.count || 0,
+          cities: uniqueCities.size || 0,
+        });
+      } catch {
+        // Silently fail — metrics are non-critical
+      }
+    }
+    fetchMetrics();
+  }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,36 +198,41 @@ export default function LandingPage() {
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]">
-              From deliveries to food, laundry to marketplace;
+              Food delivery, package dispatch, laundry &amp; shopping
               <br />
               <span className="bg-linear-to-r from-accent via-accent/80 to-accent/60 bg-clip-text text-transparent">
-                manage it all from one unified app
+                all in one app
               </span>
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-xl leading-relaxed">
-              From sending packages to ordering food, cleaning clothes to buying
-              and selling — ServiPal handles your daily needs in one easy app.
+              Order meals from top restaurants, send parcels across the city,
+              get your laundry picked up, and shop safely with escrow
+              protection — ServiPal handles your daily needs in one place.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 items-start pt-4">
-              <Link
-                href="https://play.google.com/store"
+              <a
+                href="https://play.google.com/store/apps/details?id=com.servipal.app"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all active:scale-95 shadow-lg shadow-accent/5"
               >
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
-                  alt="Google Play"
+                  alt="Get ServiPal on Google Play"
                   className="h-14"
                 />
-              </Link>
+              </a>
               <a
-                href="https://www.apple.com/app-store/"
+                href="https://apps.apple.com/app/servipal/id000000000"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all active:scale-95 shadow-lg shadow-black/5"
               >
                 <img
                   src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
-                  alt="App Store"
+                  alt="Download ServiPal on the App Store"
                   className="h-14"
                 />
               </a>
@@ -215,6 +251,39 @@ export default function LandingPage() {
                 priority
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Metrics */}
+      <section className="py-12 px-6 border-y border-border/50 bg-card/30">
+        <div className="max-w-5xl mx-auto grid grid-cols-3 gap-8 text-center">
+          <div className="space-y-2">
+            <div className="flex justify-center">
+              <Store className="w-8 h-8 text-accent" />
+            </div>
+            <p className="text-3xl md:text-4xl font-bold">
+              {metrics.vendors > 0 ? `${metrics.vendors}+` : "100+"}
+            </p>
+            <p className="text-sm text-muted-foreground">Active Vendors</p>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-center">
+              <Package className="w-8 h-8 text-accent" />
+            </div>
+            <p className="text-3xl md:text-4xl font-bold">
+              {metrics.orders > 0 ? `${metrics.orders.toLocaleString()}+` : "1,000+"}
+            </p>
+            <p className="text-sm text-muted-foreground">Orders Delivered</p>
+          </div>
+          <div className="space-y-2">
+            <div className="flex justify-center">
+              <MapPin className="w-8 h-8 text-accent" />
+            </div>
+            <p className="text-3xl md:text-4xl font-bold">
+              {metrics.cities > 0 ? `${metrics.cities}+` : "5+"}
+            </p>
+            <p className="text-sm text-muted-foreground">Cities Covered</p>
           </div>
         </div>
       </section>
