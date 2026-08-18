@@ -303,9 +303,9 @@ export default function CommissionWithdrawalsPage() {
             </>
           ) : (
             <>
-              <Card className="border-orange-200 bg-orange-50/50">
+              <Card>
                 <CardHeader className="flex flex-row items-center justify-between pb-2">
-                  <CardTitle className="text-sm font-medium text-orange-700">
+                  <CardTitle className="text-sm font-medium text-muted-foreground">
                     Available to Withdraw
                   </CardTitle>
                   <div className="p-2 rounded-md bg-orange-500/10 text-orange-500">
@@ -313,7 +313,7 @@ export default function CommissionWithdrawalsPage() {
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-orange-700">
+                  <p className="text-2xl font-bold">
                     {formatAmount(balance?.available_balance)}
                   </p>
                 </CardContent>
