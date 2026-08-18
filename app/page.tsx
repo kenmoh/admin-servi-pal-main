@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
 import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
-import { OrganizationJsonLd, WebSiteJsonLd } from "@/components/seo/json-ld";
+import { OrganizationJsonLd, WebSiteJsonLd, ServiceJsonLd } from "@/components/seo/json-ld";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
 
@@ -82,6 +82,30 @@ export default function LandingPage() {
         description="Multi-vendor lifestyle application for delivery, food ordering, laundry services, and P2P marketplace."
         url={siteUrl}
         image={`${siteUrl}/mainicon.png`}
+      />
+      <ServiceJsonLd
+        name="Food Delivery"
+        description="Order food from your favourite restaurants and get it delivered fast. Jollof rice, pizza, and more at your doorstep."
+        url={`${siteUrl}#food`}
+        serviceType="Food Delivery"
+      />
+      <ServiceJsonLd
+        name="Package Delivery"
+        description="Send documents, parcels, and gifts across the city with real-time tracking and registered dispatch riders."
+        url={`${siteUrl}#delivery`}
+        serviceType="Package Delivery"
+      />
+      <ServiceJsonLd
+        name="Laundry Service"
+        description="Professional laundry pickup and delivery. Premium dry cleaning, eco-friendly detergents, and stain removal experts."
+        url={`${siteUrl}#laundry`}
+        serviceType="Laundry Service"
+      />
+      <ServiceJsonLd
+        name="Online Marketplace"
+        description="Shop with confidence using our escrow-protected P2P marketplace. Buy and sell safely across Nigeria."
+        url={`${siteUrl}#marketplace`}
+        serviceType="Online Marketplace"
       />
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
@@ -183,7 +207,7 @@ export default function LandingPage() {
             <div className="absolute -inset-4 bg-linear-to-tr from-accent/20 to-transparent rounded-3xl blur-2xl group-hover:opacity-75 transition duration-500 opacity-50" />
             <div className="relative overflow-hidden rounded-3xl border border-border/50 shadow-2xl">
               <Image
-                src="/header_images.png"
+                src="/optimized/header_images.webp"
                 alt="ServiPal App Interface"
                 width={600}
                 height={600}
@@ -238,7 +262,7 @@ export default function LandingPage() {
               </div>
               <div className="relative w-full lg:w-[340px] shrink-0">
                 <Image
-                  src="/delivery.png"
+                  src="/optimized/delivery.webp"
                   alt="ServiPal Delivery App"
                   width={340}
                   height={600}
@@ -279,7 +303,7 @@ export default function LandingPage() {
               </div>
               <div className="relative w-full lg:w-[340px] shrink-0">
                 <Image
-                  src="/food.png"
+                  src="/optimized/food.webp"
                   alt="ServiPal Food Ordering App"
                   width={340}
                   height={600}
@@ -320,7 +344,7 @@ export default function LandingPage() {
               </div>
               <div className="relative w-full lg:w-[340px] shrink-0">
                 <Image
-                  src="/laundry.png"
+                  src="/optimized/laundry.webp"
                   alt="ServiPal Laundry App"
                   width={340}
                   height={600}
@@ -361,7 +385,7 @@ export default function LandingPage() {
               </div>
               <div className="relative w-full lg:w-[340px] shrink-0">
                 <Image
-                  src="/marketplace.png"
+                  src="/optimized/marketplace.webp"
                   alt="ServiPal Marketplace App"
                   width={340}
                   height={600}

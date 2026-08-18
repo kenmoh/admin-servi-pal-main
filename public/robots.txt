@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /about
+Allow: /faqs
+Allow: /privacy
+Allow: /terms-of-service
+Allow: /support
+
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://servi-pal.com/sitemap.xml

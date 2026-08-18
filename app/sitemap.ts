@@ -1,47 +1,22 @@
 import type { MetadataRoute } from "next";
 
+const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
+
+const publicRoutes = [
+  { path: "", priority: 1.0, changeFrequency: "weekly" as const },
+  { path: "/about", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/faqs", priority: 0.8, changeFrequency: "monthly" as const },
+  { path: "/privacy", priority: 0.5, changeFrequency: "yearly" as const },
+  { path: "/terms-of-service", priority: 0.5, changeFrequency: "yearly" as const },
+  { path: "/support", priority: 0.6, changeFrequency: "monthly" as const },
+];
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
-
-  // Public pages that should be indexed
-  const publicPages = [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 1.0,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/faqs`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/privacy`,
-      lastModified: new Date(),
-      changeFrequency: "yearly" as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/terms-of-service`,
-      lastModified: new Date(),
-      changeFrequency: "yearly" as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/support`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    },
-  ];
-
-  return publicPages;
+  return publicRoutes.map(({ path, priority, changeFrequency }) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date(),
+    changeFrequency,
+    priority,
+  }));
 }
