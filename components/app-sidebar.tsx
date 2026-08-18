@@ -93,6 +93,11 @@ const data = {
       url: "/admin/platform-commission",
       icon: <ReceiptText />,
     },
+    {
+      name: "Commission Withdrawals",
+      url: "/admin/commission-withdrawals",
+      icon: <Landmark />,
+    },
   ],
   monitoring: [
     {

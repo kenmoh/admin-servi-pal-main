@@ -62,3 +62,50 @@ export interface CommissionSummary {
   total_commission: string | number;
   transaction_count: number;
 }
+
+// ── Commission Withdrawal Types ──────────────────────────────────────
+export type WithdrawalStatus = "PENDING" | "COMPLETED" | "FAILED";
+
+export interface CommissionWithdrawalBalance {
+  available_balance: string | number;
+  total_withdrawn: string | number;
+  total_commission: string | number;
+}
+
+export interface CommissionWithdrawalOut {
+  id: string;
+  amount: string | number;
+  period_start: string | null;
+  period_end: string | null;
+  status: WithdrawalStatus;
+  reference: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string | null;
+}
+
+export interface CommissionWithdrawalListResponse {
+  meta: PageInfo;
+  data: CommissionWithdrawalOut[];
+}
+
+export interface CommissionWithdrawalCreate {
+  amount: number;
+  period_start?: string;
+  period_end?: string;
+  reference?: string;
+  notes?: string;
+}
+
+export interface CommissionWithdrawalRecordResult {
+  withdrawal_id: string;
+  amount: string | number;
+  commissions_linked: number;
+}
+
+export interface CommissionLedgerWeek {
+  week_start: string;
+  accrued: string | number;
+  withdrawn: string | number;
+  running_balance: string | number;
+}
