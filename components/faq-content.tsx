@@ -308,8 +308,8 @@ const FAQContent = () => {
             filteredCategories.map((category, idx) => (
               <section key={idx} className="space-y-4">
                 <h2 className="text-2xl font-bold mb-4 border-b pb-2 flex items-center">
-                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm mr-3">
-                    {category.questions.length}
+                  <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-semibold mr-3">
+                    {String.fromCharCode(65 + idx)}
                   </span>
                   {category.category}
                 </h2>
