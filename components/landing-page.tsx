@@ -21,7 +21,7 @@ import { supabase } from "@/supabase/supabase";
 import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
 import { OrganizationJsonLd, WebSiteJsonLd, ServiceJsonLd } from "@/components/seo/json-ld";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://servi-pal.com";
 
 export default function LandingPage() {
   const [email, setEmail] = useState("");

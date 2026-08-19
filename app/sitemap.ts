@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 const baseUrl =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://servi-pal.com";
 
 const publicRoutes = [
   { path: "", priority: 1.0, changeFrequency: "weekly" as const },

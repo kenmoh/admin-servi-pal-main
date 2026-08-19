@@ -16,7 +16,7 @@ export function MetadataUpdater({
   ogImage,
 }: PageMetadata) {
   const siteUrl =
-    process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
+    process.env.NEXT_PUBLIC_SITE_URL || "https://servi-pal.com";
 
   useEffect(() => {
     // Update document title

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import AboutContent from "@/components/about-content";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://admin.servi-pal.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://servi-pal.com";
 
 export const metadata: Metadata = {
   title: "About ServiPal — Our Mission & Services",
