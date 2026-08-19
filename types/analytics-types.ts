@@ -249,3 +249,56 @@ export interface LeaderboardParams {
 }
 
 export type VendorOrderType = 'FOOD' | 'LAUNDRY' | 'PRODUCT'
+
+// ──────────────────────────────────────────────────────────────
+// Growth Analytics
+// ──────────────────────────────────────────────────────────────
+export interface GrowthMetric {
+  current: number
+  previous: number
+  growth_pct: number
+}
+
+export interface GrowthPeriod {
+  users: GrowthMetric
+  orders: GrowthMetric
+  revenue: GrowthMetric
+}
+
+export interface GrowthMetricsResponse {
+  weekly: GrowthPeriod
+  monthly: GrowthPeriod
+  all_time: {
+    total_users: number
+    total_orders: number
+    total_revenue: number
+  }
+}
+
+export interface GrowthTrendPoint {
+  period_start: string
+  new_users: number
+  food_orders: number
+  product_orders: number
+  laundry_orders: number
+  delivery_orders: number
+  total_orders: number
+  revenue: number
+}
+
+export interface GrowthSummaryPeriod {
+  users: number
+  yesterday_users: number
+  user_growth_pct: number
+  orders: number
+  yesterday_orders: number
+  order_growth_pct: number
+  revenue: number
+  yesterday_revenue: number
+  revenue_growth_pct: number
+}
+
+export interface GrowthSummaryResponse {
+  today: GrowthSummaryPeriod
+  this_week: GrowthSummaryPeriod
+}

@@ -17,7 +17,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { LayoutDashboardIcon, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon, ReceiptText, Landmark } from "lucide-react"
+import { LayoutDashboardIcon, ChartBarIcon, UsersIcon, Settings2Icon, CircleHelpIcon, SearchIcon, Bike, ForkKnife, WashingMachine, StoreIcon, ShieldAlertIcon, ScrollTextIcon, MailIcon, ActivityIcon, ShieldCheckIcon, HandCoins, ArrowLeftRightIcon, ReceiptText, Landmark, TrendingUpIcon } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -32,6 +32,11 @@ const data = {
       title: "Analytics",
       url: "/admin/analytics",
       icon: <ChartBarIcon />,
+    },
+    {
+      title: "Growth",
+      url: "/admin/growth",
+      icon: <TrendingUpIcon />,
     },
     {
       title: "Users",
