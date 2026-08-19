@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -17,9 +17,6 @@ import {
   Shirt,
   ShoppingBag,
   Loader2,
-  Store,
-  Package,
-  MapPin,
 } from "lucide-react";
 import { supabase } from "@/supabase/supabase";
 import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
@@ -31,37 +28,31 @@ export default function LandingPage() {
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [metrics, setMetrics] = useState({
-    vendors: 0,
-    orders: 0,
-    cities: 0,
-  });
+  // TODO: Uncomment when metrics are available in Supabase
+  // const [metrics, setMetrics] = useState({ vendors: 0, orders: 0, cities: 0 });
+  //
+  // useEffect(() => {
+  //   async function fetchMetrics() {
+  //     try {
+  //       const [vendors, orders, cities] = await Promise.all([
+  //         supabase.from("restaurants").select("id", { count: "exact", head: true }),
+  //         supabase.from("transactions").select("id", { count: "exact", head: true }),
+  //         supabase.from("restaurants").select("city", { count: "exact" }),
+  //       ]);
+  //       const uniqueCities = new Set(
+  //         (cities.data || []).map((r: any) => r.city).filter(Boolean)
+  //       );
+  //       setMetrics({
+  //         vendors: vendors.count || 0,
+  //         orders: orders.count || 0,
+  //         cities: uniqueCities.size || 0,
+  //       });
+  //     } catch { /* silent */ }
+  //   }
+  //   fetchMetrics();
+  // }, []);
+
   const date = new Date().getFullYear();
-
-  useEffect(() => {
-    async function fetchMetrics() {
-      try {
-        const [vendors, orders, cities] = await Promise.all([
-          supabase.from("restaurants").select("id", { count: "exact", head: true }),
-          supabase.from("transactions").select("id", { count: "exact", head: true }),
-          supabase.from("restaurants").select("city", { count: "exact" }),
-        ]);
-
-        const uniqueCities = new Set(
-          (cities.data || []).map((r: any) => r.city).filter(Boolean)
-        );
-
-        setMetrics({
-          vendors: vendors.count || 0,
-          orders: orders.count || 0,
-          cities: uniqueCities.size || 0,
-        });
-      } catch {
-        // Silently fail — metrics are non-critical
-      }
-    }
-    fetchMetrics();
-  }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -255,38 +246,33 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Trust Metrics */}
+      {/* Trust Metrics — uncomment when data is available
       <section className="py-12 px-6 border-y border-border/50 bg-card/30">
         <div className="max-w-5xl mx-auto grid grid-cols-3 gap-8 text-center">
           <div className="space-y-2">
             <div className="flex justify-center">
               <Store className="w-8 h-8 text-accent" />
             </div>
-            <p className="text-3xl md:text-4xl font-bold">
-              {metrics.vendors > 0 ? `${metrics.vendors}+` : "100+"}
-            </p>
+            <p className="text-3xl md:text-4xl font-bold">{metrics.vendors}+</p>
             <p className="text-sm text-muted-foreground">Active Vendors</p>
           </div>
           <div className="space-y-2">
             <div className="flex justify-center">
               <Package className="w-8 h-8 text-accent" />
             </div>
-            <p className="text-3xl md:text-4xl font-bold">
-              {metrics.orders > 0 ? `${metrics.orders.toLocaleString()}+` : "1,000+"}
-            </p>
+            <p className="text-3xl md:text-4xl font-bold">{metrics.orders.toLocaleString()}+</p>
             <p className="text-sm text-muted-foreground">Orders Delivered</p>
           </div>
           <div className="space-y-2">
             <div className="flex justify-center">
               <MapPin className="w-8 h-8 text-accent" />
             </div>
-            <p className="text-3xl md:text-4xl font-bold">
-              {metrics.cities > 0 ? `${metrics.cities}+` : "5+"}
-            </p>
+            <p className="text-3xl md:text-4xl font-bold">{metrics.cities}+</p>
             <p className="text-sm text-muted-foreground">Cities Covered</p>
           </div>
         </div>
       </section>
+      */}
 
       {/* Services You Control - FlowArt Scroll Section */}
       <section className="py-24 px-6 bg-linear-to-b from-card/30 to-background border-y border-border/50">
