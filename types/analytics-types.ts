@@ -296,6 +296,9 @@ export interface GrowthSummaryPeriod {
   revenue: number
   yesterday_revenue: number
   revenue_growth_pct: number
+  last_week_users: number
+  last_week_orders: number
+  last_week_revenue: number
 }
 
 export interface GrowthSummaryResponse {

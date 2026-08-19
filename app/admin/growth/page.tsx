@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { getAccessToken } from "@/util/utils";
+import { fetchApi } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -37,17 +37,9 @@ import type {
   GrowthSummaryResponse,
 } from "@/types/analytics-types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "";
-
 async function fetchGrowth<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
-  const token = await getAccessToken();
-  if (!token) throw new Error("No token");
   const sp = new URLSearchParams({ endpoint, ...params });
-  const res = await fetch(`${API_URL}/api/analytics?${sp}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw new Error(`${res.status}`);
-  return res.json();
+  return fetchApi(`/api/analytics?${sp}`) as Promise<T>;
 }
 
 function GrowthIndicator({ value, invert = false }: { value: number; invert?: boolean }) {
