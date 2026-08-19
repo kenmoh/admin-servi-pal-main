@@ -202,7 +202,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 items-start pt-4">
               <a
-                href="https://play.google.com/store/apps/details?id=com.servipal.app"
+                href="https://play.google.com/store/apps/details?id=com.kenmoh.servipal"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-xl flex items-center justify-center gap-2 hover:scale-105 transition-all active:scale-95 shadow-lg shadow-accent/5"
