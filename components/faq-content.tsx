@@ -235,10 +235,12 @@ const FAQContent = () => {
     id,
     question,
     answer,
+    number,
   }: {
     id: string;
     question: string;
     answer: string;
+    number: number;
   }) => {
     const isOpen = openItems.includes(id);
 
@@ -248,7 +250,12 @@ const FAQContent = () => {
           onClick={() => toggleItem(id)}
           className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-accent/5 transition-colors"
         >
-          <span className="font-medium pr-4">{question}</span>
+          <span className="flex items-center gap-3 font-medium pr-4">
+            <span className="inline-flex items-center justify-center w-7 h-7 shrink-0 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+              {number}
+            </span>
+            {question}
+          </span>
           <ChevronDown
             className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform ${
               isOpen ? "rotate-180" : ""
@@ -307,8 +314,8 @@ const FAQContent = () => {
                   {category.category}
                 </h2>
                 <div className="space-y-3">
-                  {category.questions.map((q) => (
-                    <FAQItem key={q.id} {...q} />
+                  {category.questions.map((q, qIdx) => (
+                    <FAQItem key={q.id} {...q} number={qIdx + 1} />
                   ))}
                 </div>
               </section>

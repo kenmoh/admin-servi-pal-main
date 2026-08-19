@@ -7,9 +7,6 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import {
   Mail,
-  Github,
-  Twitter,
-  Linkedin,
   CheckCircle2,
   Bike,
   Utensils,
@@ -17,6 +14,7 @@ import {
   ShoppingBag,
   Loader2,
 } from "lucide-react";
+import { TikTokIcon, FacebookIcon, InstagramIcon } from "@/components/social-icons";
 import { supabase } from "@/supabase/supabase";
 import FlowArt, { FlowSection } from "@/components/ui/story-scroll";
 import { OrganizationJsonLd, WebSiteJsonLd, ServiceJsonLd } from "@/components/seo/json-ld";
@@ -93,9 +91,9 @@ export default function LandingPage() {
         url={siteUrl}
         image={`${siteUrl}/og-image.png`}
         sameAs={[
-          "https://twitter.com/servipal",
-          "https://linkedin.com/company/servipal",
-          "https://github.com/servipal",
+          "https://www.tiktok.com/@servipal",
+          "https://www.facebook.com/profile.php?id=61577850530753",
+          "https://www.instagram.com/servipal_",
         ]}
       />
       <WebSiteJsonLd
@@ -576,22 +574,31 @@ export default function LandingPage() {
               <h4 className="font-semibold mb-4">Connect</h4>
               <div className="flex gap-3">
                 <a
-                  href="#"
+                  href="https://www.tiktok.com/@servipal"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="ServiPal on TikTok"
                   className="w-10 h-10 rounded-lg bg-card border border-border hover:border-accent/50 flex items-center justify-center transition"
                 >
-                  <Github className="w-5 h-5" />
+                  <TikTokIcon className="w-5 h-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.facebook.com/profile.php?id=61577850530753"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="ServiPal on Facebook"
                   className="w-10 h-10 rounded-lg bg-card border border-border hover:border-accent/50 flex items-center justify-center transition"
                 >
-                  <Twitter className="w-5 h-5" />
+                  <FacebookIcon className="w-5 h-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/servipal_?igsh=d3VtaXhpbHhhYWZ4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="ServiPal on Instagram"
                   className="w-10 h-10 rounded-lg bg-card border border-border hover:border-accent/50 flex items-center justify-center transition"
                 >
-                  <Linkedin className="w-5 h-5" />
+                  <InstagramIcon className="w-5 h-5" />
                 </a>
               </div>
             </div>
