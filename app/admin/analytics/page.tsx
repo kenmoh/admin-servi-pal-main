@@ -304,30 +304,36 @@ function StatusPie({
   return (
     <div className="space-y-2">
       <p className="text-sm font-medium">{title}</p>
-      <div className="h-40">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={data}
-              dataKey="count"
-              nameKey="status"
-              cx="50%"
-              cy="50%"
-              outerRadius={60}
-              label={({ status, percentage }) =>
-                `${status} ${safeToFixed(percentage, 0)}%`
-              }
-              labelLine={false}
-              fontSize={9}
-            >
-              {data.map((_, i) => (
-                <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip formatter={(v, n) => [v, n]} />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
+      {data.length === 0 ? (
+        <div className="h-40 flex items-center justify-center border rounded-md border-dashed">
+          <span className="text-xs text-muted-foreground">No data yet</span>
+        </div>
+      ) : (
+        <div className="h-40">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie
+                data={data}
+                dataKey="count"
+                nameKey="status"
+                cx="50%"
+                cy="50%"
+                outerRadius={60}
+                label={({ status, percentage }) =>
+                  `${status} ${safeToFixed(percentage, 0)}%`
+                }
+                labelLine={false}
+                fontSize={9}
+              >
+                {data.map((_, i) => (
+                  <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(v, n) => [v, n]} />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
     </div>
   );
 }
