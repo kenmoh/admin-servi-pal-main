@@ -509,20 +509,26 @@ function WebhookAuditTab({ onLoadingChange }: { onLoadingChange?: (loading: bool
               value={filterEvent}
               onChange={(e) => setFilterEvent(e.target.value)}
             />
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">From</span>
+            <div className="relative">
+              <span className="absolute left-3 top-1.5 text-[10px] leading-none text-muted-foreground pointer-events-none">
+                From
+              </span>
               <Input
                 type="date"
                 value={filterDateFrom}
                 onChange={(e) => setFilterDateFrom(e.target.value)}
+                className="pt-5 pb-1"
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">To</span>
+            <div className="relative">
+              <span className="absolute left-3 top-1.5 text-[10px] leading-none text-muted-foreground pointer-events-none">
+                To
+              </span>
               <Input
                 type="date"
                 value={filterDateTo}
                 onChange={(e) => setFilterDateTo(e.target.value)}
+                className="pt-5 pb-1"
               />
             </div>
           </div>
