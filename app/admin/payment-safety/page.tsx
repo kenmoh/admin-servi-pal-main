@@ -447,16 +447,103 @@ function WebhookAuditTab({ onLoadingChange }: { onLoadingChange?: (loading: bool
 
   useEffect(() => { onLoadingChange?.(isLoading) }, [isLoading, onLoadingChange])
 
+  const [filterTxRef, setFilterTxRef] = useState('')
+  const [filterTxId, setFilterTxId] = useState('')
+  const [filterEvent, setFilterEvent] = useState('')
+  const [filterDateFrom, setFilterDateFrom] = useState('')
+  const [filterDateTo, setFilterDateTo] = useState('')
+
   const logs = data?.logs ?? []
+
+  const filteredLogs = logs.filter((log) => {
+    if (filterTxRef.trim() && !log.tx_ref?.toLowerCase().includes(filterTxRef.trim().toLowerCase())) {
+      return false
+    }
+    if (filterTxId.trim() && String(log.tx_id ?? '') !== filterTxId.trim()) {
+      return false
+    }
+    if (filterEvent.trim() && !log.event_type?.toLowerCase().includes(filterEvent.trim().toLowerCase())) {
+      return false
+    }
+    if (filterDateFrom) {
+      const from = new Date(filterDateFrom).getTime()
+      if (new Date(log.created_at).getTime() < from) return false
+    }
+    if (filterDateTo) {
+      const to = new Date(filterDateTo).getTime() + 86399999
+      if (new Date(log.created_at).getTime() > to) return false
+    }
+    return true
+  })
+
+  const hasFilters =
+    filterTxRef || filterTxId || filterEvent || filterDateFrom || filterDateTo
+
+  const clearFilters = () => {
+    setFilterTxRef('')
+    setFilterTxId('')
+    setFilterEvent('')
+    setFilterDateFrom('')
+    setFilterDateTo('')
+  }
 
   if (isLoading) return <LoadingState label="Loading webhook logs..." />
 
   return (
     <div className="space-y-4">
-      {logs.length === 0 ? (
+      <Card>
+        <CardContent className="py-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            <Input
+              placeholder="Filter by TX Ref..."
+              value={filterTxRef}
+              onChange={(e) => setFilterTxRef(e.target.value)}
+            />
+            <Input
+              placeholder="Filter by TX ID..."
+              value={filterTxId}
+              onChange={(e) => setFilterTxId(e.target.value)}
+            />
+            <Input
+              placeholder="Filter by Event..."
+              value={filterEvent}
+              onChange={(e) => setFilterEvent(e.target.value)}
+            />
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">From</span>
+              <Input
+                type="date"
+                value={filterDateFrom}
+                onChange={(e) => setFilterDateFrom(e.target.value)}
+              />
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">To</span>
+              <Input
+                type="date"
+                value={filterDateTo}
+                onChange={(e) => setFilterDateTo(e.target.value)}
+              />
+            </div>
+          </div>
+          {hasFilters && (
+            <div className="mt-3 flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">
+                Showing {filteredLogs.length} of {logs.length} logs
+              </p>
+              <Button variant="outline" size="sm" onClick={clearFilters}>
+                <RotateCcw className="w-3 h-3 mr-1" />
+                Clear Filters
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {filteredLogs.length === 0 ? (
         <Card className="p-12 text-center">
           <FileText className="w-12 h-12 mx-auto mb-4 text-muted-foreground/40" />
-          <p className="text-muted-foreground">No webhook logs yet</p>
+          <p className="text-muted-foreground">{logs.length === 0 ? 'No webhook logs yet' : 'No webhook logs match your filters'}</p>
         </Card>
       ) : (
         <div className="overflow-x-auto">
@@ -474,7 +561,7 @@ function WebhookAuditTab({ onLoadingChange }: { onLoadingChange?: (loading: bool
               </tr>
             </thead>
             <tbody>
-              {logs.map((log) => (
+              {filteredLogs.map((log) => (
                 <tr key={log.id} className="border-b last:border-0">
                   <td className="py-2 px-3 text-sm">{log.source}</td>
                   <td className="py-2 px-3">
