@@ -455,7 +455,7 @@ function TransactionSection() {
               >
                 <AreaChart
                   data={data.trend}
-                  margin={{ top: 15, right: 10, left: 0, bottom: 0 }}
+                  margin={{ top: 25, right: 10, left: 0, bottom: 0 }}
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
@@ -470,7 +470,7 @@ function TransactionSection() {
                     yAxisId="left"
                     tick={{ fontSize: 11 }}
                     tickFormatter={(v) => fmt(v)}
-                    width={60}
+                    width={70}
                   />
                   <YAxis
                     yAxisId="right"
