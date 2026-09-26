@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppProvider } from "@/lib/context";
 import { QueryProvider } from "@/components/query-provider";
+import { Analytics } from "@vercel/analytics/next"
 
 
 const geistSans = Geist({
@@ -119,7 +120,7 @@ export default function RootLayout({
             </AppProvider>
           </QueryProvider>
         </ThemeProvider>
-
+     <Analytics />
       </body>
     </html>
   );
